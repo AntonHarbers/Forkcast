@@ -1,35 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Calendar from "react-calendar";
+import "./App.css";
+import DailyView from "./components/DailyView";
+import { useEffect, useState } from "react";
+import { Value } from "react-calendar/src/shared/types.js";
+import MealData from "./classes/MealData";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [day, setDay] = useState<Date>(new Date());
+  const [mealData, setMealData] = useState<MealData[] | []>([]);
+
+  const AddMealHandler = (newDay: Date) => {
+    const newMeal = new MealData("1", "Test Meal", newDay, 0, false);
+    setMealData([...mealData, newMeal]);
+  };
+
+  useEffect(() => {
+    console.log(mealData);
+  }, [mealData]);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Calendar
+        onChange={(e: Value) => {
+          if (e instanceof Date) setDay(e);
+        }}
+      />
+      <DailyView
+        day={day}
+        AddMealHandler={AddMealHandler}
+        dailyMeals={mealData.filter((item) => item.date === day)}
+      />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
