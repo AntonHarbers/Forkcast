@@ -5,6 +5,8 @@ import { useLocation } from 'react-router'
 const navigation = [
     { name: 'Meal Planning', href: '/', current: true },
     { name: 'Shopping List', href: '/shopping_list', current: false },
+    { name: 'Ingredients', href: '/ingredients', current: false },
+
 ]
 
 function classNames(...classes: string[]) {
