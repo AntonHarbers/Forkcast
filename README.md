@@ -1,50 +1,36 @@
-# React + TypeScript + Vite
+# Forkcast
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Todos:
 
-Currently, two official plugins are available:
+### Functionality:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[] Shopping List Page
+[] CRUD Shop-Data and UI
+[] Tabs for different shops
+[] Set up dummy shop data
+[] CRUD Ingredient Blueprints
+[] Set up dummy Ingredient data
+[] Meal Form - Populate ingredient dropdown from saved ingredient blueprints
+[] Add Amount input to meal form
+[] Deal with meal order
+[] checkmark to set meal as "done" (these ingredients should NOT show up in the shopping lists later)
+[] Update/Delete Meal Data
+[] Set up dummy Meal Data
+[] when opening shop tab:
+[] Ingredients that have been added to the meals should appear in shopping list (with their appropriate amounts) if they are still in the future
+[] Checkbox to toggle bought/not bought
 
-## Expanding the ESLint configuration
+### Styling:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+[] Calendar
+[] Daily View - Meal Planning
+[] Shopping List Page
+[] Ingredients Page
 
-- Configure the top-level `parserOptions` property like this:
+### Later:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+[] Set up database connection to mongoDB
+[] User Data/Accounts with clerk
+[] Backend API with Express or Appwrite server functions?
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Notes:
