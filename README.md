@@ -4,7 +4,6 @@
 
 ### Functionality:
 
-[] Shopping List Page
 [] CRUD Shop-Data and UI
 [] Tabs for different shops
 [] Set up dummy shop data
