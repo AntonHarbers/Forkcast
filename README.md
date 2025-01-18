@@ -4,9 +4,9 @@
 
 ### Functionality:
 
-[] CRUD Shop-Data and UI
-[] Tabs for different shops
-[] Set up dummy shop data
+[✔] CRUD Shop-Data and UI
+[✔] Tabs for different shops
+[✔] Set up dummy shop data
 [] CRUD Ingredient Blueprints
 [] Set up dummy Ingredient data
 [] Meal Form - Populate ingredient dropdown from saved ingredient blueprints
