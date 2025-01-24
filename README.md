@@ -10,8 +10,8 @@
 [~] CRUD Ingredient Blueprints
 [✔] Reset forms on submit
 [✔] Set up context for global data (stores, ingredients, meals etc.)
-[] Edit Ingredient Blueprint Form
-[] Delete Ingredient Blueprint
+[✔] Edit Ingredient Blueprint Form
+[✔] Delete Ingredient Blueprint
 [] Basic Display of Ingredient data
 [] Set up dummy Ingredient data
 [] Show ingredients as options in making a meal

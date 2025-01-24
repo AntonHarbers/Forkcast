@@ -12,7 +12,7 @@ export default function ShoppingListPage() {
 
     return (
         <div>
-            <div>Shopping List</div>
+            <h1 className="mx-auto w-full text-center text-5xl m-10">Shopping List</h1>
             <NewShopForm storeData={stores} setStoreData={setStores} />
             {/* Shopping List Container */}
             <div className="bg-slate-200 w-[80%] mx-auto flex flex-col gap-10 p-2 m-10">

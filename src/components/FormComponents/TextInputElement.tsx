@@ -5,16 +5,18 @@ export default function TextInputElement<InputType extends Record<string, unknow
         register,
         placeholder,
         registerName,
-        required
+        required,
+        defaultValue = ""
     }:
         {
             register: UseFormRegister<InputType>,
             placeholder: string,
             registerName: Path<InputType>,
-            required: boolean
+            required: boolean,
+            defaultValue?: string
         }
 ) {
     return (
-        <input className="p-2 bg-blue-500 rounded-md m-2 text-white placeholder-slate-300" placeholder={placeholder} {...register(registerName, { required: required })} />
+        <input defaultValue={defaultValue} className="p-2 bg-blue-500 rounded-md m-2 text-white placeholder-slate-300" placeholder={placeholder} {...register(registerName, { required: required })} />
     )
 }

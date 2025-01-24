@@ -27,9 +27,9 @@ export default function NewMealForm({
   }, [isSubmitSuccessful, reset])
 
   return (
-    <div>
+    <div className="flex w-full">
       {/* New Meal Form */}
-      <form onSubmit={
+      <form className="flex flex-col w-80 mx-auto" onSubmit={
         handleSubmit(onSubmit)
       }>
         <TextInputElement register={register} placeholder={"Meal Name"} registerName={"name"} required={true} />

@@ -16,3 +16,8 @@ export interface AppContextType {
   selectedDay: Date;
   setSelectedDay: React.Dispatch<React.SetStateAction<Date>>;
 }
+
+export type IngredientFormInputs = {
+  name: string;
+  storeUid: string;
+};

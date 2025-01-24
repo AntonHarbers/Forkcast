@@ -25,9 +25,8 @@ export default function DailyView({
 
   return (
     <>
-      <div>{day?.toDateString()}</div>
+      <div className="text-slate-800 text-3xl text-center my-10">{day?.toDateString()}</div>
 
-      <NewMealForm onSubmit={onSubmit} />
 
       {/* Daily-view Meals */}
       <div>
@@ -35,6 +34,8 @@ export default function DailyView({
           return <DailyViewMeals key={mealItem.uid} index={index} name={mealItem.name} />;
         })}
       </div>
+      <NewMealForm onSubmit={onSubmit} />
+
     </>
   );
 }

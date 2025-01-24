@@ -6,8 +6,6 @@ export default function DailyViewMeals({
   name: string;
 }) {
   return (
-    <div>
-      <div key={index}>{name}</div>
-    </div>
+    <div className="w-auto border-b p-2 m-10 text-2xl text-center" key={index}>{name}</div>
   );
 }

@@ -26,16 +26,24 @@ function MealPlanPage() {
 
   return (
     <>
-      <Calendar
-        onChange={(e: Value) => {
-          if (e instanceof Date) setSelectedDay(e);
-        }}
-      />
-      <DailyView
-        day={selectedDay}
-        AddMealHandler={AddMealHandler}
-        dailyMeals={meals.filter((item) => item.date === selectedDay.toDateString())}
-      />
+      <h1 className="mx-auto w-full text-center text-5xl m-10">Meal Plan</h1>
+      <div>
+        <div className="justify-center flex">
+          <Calendar
+            className={"react-calendar"}
+            onChange={(e: Value) => {
+              if (e instanceof Date) setSelectedDay(e);
+            }}
+          />
+        </div>
+
+        <DailyView
+          day={selectedDay}
+          AddMealHandler={AddMealHandler}
+          dailyMeals={meals.filter((item) => item.date === selectedDay.toDateString())}
+        />
+      </div>
+
     </>
   );
 }
