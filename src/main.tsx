@@ -6,18 +6,22 @@ import MealPlanPage from './pages/MealPlanPage.tsx'
 import ShoppingListPage from './pages/ShoppingListPage.tsx'
 import MainLayout from './pages/MainLayout.tsx'
 import IngredientsPage from './pages/IngredientsPage.tsx'
+import { AppProvider } from './context/AppContext.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<MainLayout />}>
-          <Route index element={<MealPlanPage />} />
-          <Route path='shopping_list' element={<ShoppingListPage />} />
-          <Route path='ingredients' element={<IngredientsPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AppProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<MainLayout />}>
+            <Route index element={<MealPlanPage />} />
+            <Route path='shopping_list' element={<ShoppingListPage />} />
+            <Route path='ingredients' element={<IngredientsPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AppProvider>
+
   </StrictMode>,
 )

@@ -4,13 +4,13 @@ export default function StoreTabItem(
     {
         setSelectedStore,
         item,
-        selectedStore
+        selectedStore,
     }
         :
         {
-            setSelectedStore: React.Dispatch<React.SetStateAction<StoreData>>,
+            setSelectedStore: React.Dispatch<React.SetStateAction<StoreData | null>>,
             item: StoreData, setEditingStore: React.Dispatch<React.SetStateAction<StoreData | null>>,
-            selectedStore: StoreData | null
+            selectedStore: StoreData | null,
         }
 ) {
     return (

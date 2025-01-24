@@ -1,7 +1,7 @@
 import { SubmitHandler } from "react-hook-form";
 import MealData from "../classes/MealData";
-import NewMealForm from "./dailyViewComponents/NewMealForm";
-import DailyViewMeals from "./dailyViewComponents/DailyViewMeals";
+import NewMealForm from "./MealPlanningComponents/NewMealForm";
+import DailyViewMeals from "./MealPlanningComponents/DailyViewMeals";
 
 type Inputs = {
   name: string;
@@ -32,7 +32,7 @@ export default function DailyView({
       {/* Daily-view Meals */}
       <div>
         {dailyMeals.map((mealItem, index) => {
-          return <DailyViewMeals index={index} name={mealItem.name} />;
+          return <DailyViewMeals key={mealItem.uid} index={index} name={mealItem.name} />;
         })}
       </div>
     </>
