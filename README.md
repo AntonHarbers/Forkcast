@@ -8,12 +8,13 @@
 [✔] Tabs for different shops
 [✔] Set up dummy shop data
 [~] CRUD Ingredient Blueprints
-    [] Set up context for global data (stores, ingredients, meals etc.)
+[✔] Reset forms on submit
+[✔] Set up context for global data (stores, ingredients, meals etc.)
 [] Edit Ingredient Blueprint Form
 [] Delete Ingredient Blueprint
 [] Basic Display of Ingredient data
-[] Show ingredients as options in making a meal
 [] Set up dummy Ingredient data
+[] Show ingredients as options in making a meal
 [] Meal Form - Populate ingredient dropdown from saved ingredient blueprints
 [] Add Amount input to meal form
 [] Deal with meal order

@@ -1,12 +1,12 @@
 import Calendar from "react-calendar";
-import { useState } from "react";
 import { Value } from "react-calendar/src/shared/types.js";
 import DailyView from "../components/DailyView";
 import MealData from "../classes/MealData";
+import { v4 } from "uuid";
+import { useAppContext } from "../context/useAppContext";
 
 function MealPlanPage() {
-  const [day, setDay] = useState<Date>(new Date());
-  const [mealData, setMealData] = useState<MealData[] | []>([]);
+  const { meals, setMeals, selectedDay, setSelectedDay } = useAppContext()
 
   const AddMealHandler = (
     newDay: Date,
@@ -14,27 +14,27 @@ function MealPlanPage() {
     ingredients: string[]
   ) => {
     const newMeal = new MealData(
-      "1",
+      v4(),
       name,
       ingredients,
       newDay.toDateString(),
       0,
       false
     );
-    setMealData([...mealData, newMeal]);
+    setMeals([...meals, newMeal]);
   };
 
   return (
     <>
       <Calendar
         onChange={(e: Value) => {
-          if (e instanceof Date) setDay(e);
+          if (e instanceof Date) setSelectedDay(e);
         }}
       />
       <DailyView
-        day={day}
+        day={selectedDay}
         AddMealHandler={AddMealHandler}
-        dailyMeals={mealData.filter((item) => item.date === day.toDateString())}
+        dailyMeals={meals.filter((item) => item.date === selectedDay.toDateString())}
       />
     </>
   );

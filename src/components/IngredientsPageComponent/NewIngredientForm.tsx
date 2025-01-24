@@ -1,4 +1,7 @@
 import { useForm } from "react-hook-form"
+import TextInputElement from "../FormComponents/TextInputElement"
+import SubmitInputElement from "../FormComponents/SubmitInputElement"
+import { useEffect } from "react"
 
 type Inputs = {
     name: string,
@@ -9,15 +12,20 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Input
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitSuccessful },
+        reset
     } = useForm<Inputs>()
+
+    useEffect(() => {
+        reset()
+    }, [isSubmitSuccessful, reset])
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <input placeholder="Name..." {...register('name', { required: true })} />
+            <TextInputElement register={register} placeholder={"Name..."} registerName={"name"} required={true} />
             {/* A select with every possible store as an option */}
             {errors.name && <span>This field is required!</span>}
-            <input type="submit" />
+            <SubmitInputElement submitInputText="Add New Ingredient" />
         </form>
     )
 }

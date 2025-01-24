@@ -11,13 +11,11 @@ type Inputs = {
 
 
 export default function IngredientsPage() {
-
+    const { ingredientBlueprints, setIngredientBlueprints } = useAppContext()
 
     const HandleNewIngredientFormSubmit: SubmitHandler<Inputs> = (data) => {
         setIngredientBlueprints([...ingredientBlueprints, new IngredientBlueprint(v4(), data.name, data.storeUid)])
     }
-
-    const { ingredientBlueprints, setIngredientBlueprints } = useAppContext()
 
     return (
         <div>

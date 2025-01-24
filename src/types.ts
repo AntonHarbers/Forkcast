@@ -11,4 +11,8 @@ export interface AppContextType {
   >;
   setStores: React.Dispatch<React.SetStateAction<StoreData[]>>;
   setMeals: React.Dispatch<React.SetStateAction<MealData[]>>;
+  currentStoreTab: StoreData | null;
+  setCurrentStoreTab: React.Dispatch<React.SetStateAction<StoreData | null>>;
+  selectedDay: Date;
+  setSelectedDay: React.Dispatch<React.SetStateAction<Date>>;
 }
