@@ -1,12 +1,21 @@
+import { IngredientBlueprintType } from '../types';
+
 // dummyData.ts
-export const dummyIngredients = [
-  { id: '1', name: 'Tomato', quantity: 5 },
-  { id: '2', name: 'Cheese', quantity: 2 },
+export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
+  { uid: '1', name: 'Tomato', storeUid: '123' },
+  { uid: '2', name: 'Cheese', storeUid: '123' },
+  { uid: '3', name: 'Onion', storeUid: '123' },
+  { uid: '4', name: 'Burger', storeUid: '123' },
+  { uid: '5', name: 'Chips', storeUid: '123' },
+  { uid: '6', name: 'Banana', storeUid: '123' },
 ];
 
-export const dummyShops = [
-  { id: '1', name: 'SuperMart', location: 'Main Street' },
-  { id: '2', name: 'Farmers Market', location: 'Downtown' },
+export const StoreDataDB = [
+  { uid: '1', name: 'Default', location: 'Default' },
+  { uid: '2', name: 'ALDI', location: 'CP' },
+  { uid: '3', name: 'REWE', location: 'CP' },
+  { uid: '4', name: 'GLOBUS', location: '-' },
+  { uid: '5', name: 'LIDL', location: '-' },
 ];
 
 export const dummyMeals = [
