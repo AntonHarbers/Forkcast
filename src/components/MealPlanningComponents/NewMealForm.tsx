@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import TextInputElement from "../FormComponents/TextInputElement";
 import SubmitInputElement from "../FormComponents/SubmitInputElement";
 import { useEffect } from "react";
+import { useAppContext } from "../../context/useAppContext";
 
 // Type Def.
 type Inputs = {
@@ -22,6 +23,8 @@ export default function NewMealForm({
 
   } = useForm<Inputs>();
 
+  const { ingredientBlueprints } = useAppContext()
+
   useEffect(() => {
     reset()
   }, [isSubmitSuccessful, reset])
@@ -34,9 +37,9 @@ export default function NewMealForm({
       }>
         <TextInputElement register={register} placeholder={"Meal Name"} registerName={"name"} required={true} />
         <select multiple {...register("ingredients")}>
-          <option value="Apple">Apple</option>
-          <option value="Banana">Banana</option>
-          <option value="Candy">Candy</option>
+          {ingredientBlueprints.map(item => {
+            return <option key={item.uid} value={item.name}>{item.name}</option>
+          })}
         </select>
         {errors.name && <span>This field is required</span>}
         <SubmitInputElement submitInputText="Add New Meal!" />

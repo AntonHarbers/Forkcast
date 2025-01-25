@@ -21,3 +21,15 @@ export type IngredientFormInputs = {
   name: string;
   storeUid: string;
 };
+
+export type IngredientBlueprintType = {
+  uid: string;
+  name: string;
+  storeUid: string;
+};
+
+export type StoreType = {
+  uid: string;
+  name: string;
+  location: string;
+};

@@ -3,7 +3,7 @@ import { AppContextType } from "../types";
 import IngredientBlueprint from "../classes/IngredientBlueprint";
 import StoreData from "../classes/StoreData";
 import MealData from "../classes/MealData";
-import { v4 } from "uuid";
+import { IngredientBlueprintDataDB, StoreDataDB } from "../data/dummy";
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
 
@@ -16,10 +16,8 @@ const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [selectedDay, setSelectedDay] = useState<Date>(new Date());
 
     useEffect(() => {
-        setIngredientBlueprints([
-            new IngredientBlueprint(v4(), "Test 1", "10")
-        ])
-        setStores([new StoreData(v4(), "Default", "Default"), new StoreData(v4(), "ALDI", "Camp Phoenix"), new StoreData(v4(), "REWE", "Camp Phoenix"), new StoreData(v4(), "GLOBUS", "-")])
+        setIngredientBlueprints(IngredientBlueprintDataDB.map(item => new IngredientBlueprint(item.uid, item.name, item.storeUid)))
+        setStores(StoreDataDB.map(item => new StoreData(item.uid, item.name, item.location)))
     }, [])
 
     useEffect(() => {
