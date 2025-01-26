@@ -10,6 +10,7 @@ import IngredientListItem from "../components/IngredientsPageComponent/Ingredien
 type Inputs = {
     name: string,
     storeUid: string,
+    unitId: string,
 }
 
 
@@ -17,7 +18,7 @@ export default function IngredientsPage() {
     const { ingredientBlueprints, setIngredientBlueprints } = useAppContext()
     const [editingIngredientBlueprint, setEditingIngredientBlueprint] = useState<IngredientBlueprint | null>(null)
     const HandleNewIngredientFormSubmit: SubmitHandler<Inputs> = (data) => {
-        setIngredientBlueprints([...ingredientBlueprints, new IngredientBlueprint(v4(), data.name, data.storeUid)])
+        setIngredientBlueprints([...ingredientBlueprints, new IngredientBlueprint(v4(), data.name, data.storeUid, data.unitId)])
     }
 
     return (

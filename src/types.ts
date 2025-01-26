@@ -20,12 +20,14 @@ export interface AppContextType {
 export type IngredientFormInputs = {
   name: string;
   storeUid: string;
+  unitId: string;
 };
 
 export type IngredientBlueprintType = {
   uid: string;
   name: string;
   storeUid: string;
+  unitId: string;
 };
 
 export type StoreType = {

@@ -15,6 +15,8 @@
 [✔] Basic Display of Ingredient data
 [✔] Set up dummy Ingredient data
 [✔] Show ingredients as options in making a meal
+[] Ingredient Blueprint measurement units crud
+[] Ingredient Blueprint Store crud
 [] Add Amount input to meal form
 [] Deal with meal order
 [] checkmark to set meal as "done" (these ingredients should NOT show up in the shopping lists later)
