@@ -16,7 +16,7 @@ const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [selectedDay, setSelectedDay] = useState<Date>(new Date());
 
     useEffect(() => {
-        setIngredientBlueprints(IngredientBlueprintDataDB.map(item => new IngredientBlueprint(item.uid, item.name, item.storeUid)))
+        setIngredientBlueprints(IngredientBlueprintDataDB.map(item => new IngredientBlueprint(item.uid, item.name, item.storeUid, "0")))
         setStores(StoreDataDB.map(item => new StoreData(item.uid, item.name, item.location)))
     }, [])
 

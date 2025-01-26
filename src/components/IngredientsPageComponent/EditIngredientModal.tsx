@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import IngredientBlueprint from "../../classes/IngredientBlueprint"
 import { useAppContext } from "../../context/useAppContext"
 import TextInputElement from "../FormComponents/TextInputElement"
+import { UnitData } from "../../data/dummy"
 
 export default function EditIngredientModal({
     editingIngredientBlueprint,
@@ -13,7 +14,7 @@ export default function EditIngredientModal({
     setEditingIngredientBlueprint: React.Dispatch<React.SetStateAction<IngredientBlueprint | null>>
 }) {
 
-    const { ingredientBlueprints, setIngredientBlueprints } = useAppContext()
+    const { ingredientBlueprints, setIngredientBlueprints, stores } = useAppContext()
 
     const {
         register,
@@ -34,7 +35,7 @@ export default function EditIngredientModal({
     const SubmitUpdateIngredientBlueprintForm: SubmitHandler<IngredientFormInputs> = (data) => {
         if (editingIngredientBlueprint) {
             const updatedIngredientBlueprints = ingredientBlueprints.map(blueprint => {
-                return blueprint.uid === editingIngredientBlueprint.uid ? new IngredientBlueprint(blueprint.uid, data.name, data.storeUid) : blueprint
+                return blueprint.uid === editingIngredientBlueprint.uid ? new IngredientBlueprint(blueprint.uid, data.name, data.storeUid, data.unitId) : blueprint
             })
             setIngredientBlueprints(updatedIngredientBlueprints)
         }
@@ -44,6 +45,8 @@ export default function EditIngredientModal({
     useEffect(() => {
         if (editingIngredientBlueprint) {
             setValue('name', editingIngredientBlueprint.name)
+            setValue('storeUid', editingIngredientBlueprint.storeUid)
+            setValue('unitId', editingIngredientBlueprint.unitId)
         }
     }, [setValue, editingIngredientBlueprint])
 
@@ -61,6 +64,16 @@ export default function EditIngredientModal({
             <form onSubmit={handleSubmit(SubmitUpdateIngredientBlueprintForm)} className="flex flex-col gap-2 p-2">
                 <TextInputElement placeholder={editingIngredientBlueprint.name} register={register} registerName="name" required={true} />
                 {errors.name && <span>This field is required!</span>}
+                <select {...register('unitId')}>
+                    {UnitData.map(item => {
+                        return item.id === editingIngredientBlueprint.unitId ? <option key={item.id} value={item.id} selected>{item.name}</option> : <option key={item.id} value={item.id}>{item.name}</option>
+                    })}
+                </select>
+                <select {...register('storeUid')}>
+                    {stores.map(item => {
+                        return item.uid === editingIngredientBlueprint.storeUid ? <option key={item.uid} value={item.uid} selected>{item.name}</option> : <option key={item.uid} value={item.uid}>{item.name}</option>
+                    })}
+                </select>
                 <input type="submit" />
             </form>
             <button onClick={() => OnDeleteIngredientBlueprintBtnClick()}>DELETE INGREDIENT BLUEPRINT</button>
