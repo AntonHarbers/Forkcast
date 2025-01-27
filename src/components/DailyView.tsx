@@ -2,10 +2,11 @@ import { SubmitHandler } from "react-hook-form";
 import MealData from "../classes/MealData";
 import NewMealForm from "./MealPlanningComponents/NewMealForm";
 import DailyViewMeals from "./MealPlanningComponents/DailyViewMeals";
+import { MealIngredientType } from "../types";
 
 type Inputs = {
   name: string;
-  ingredients: string[];
+  ingredients: MealIngredientType[];
 };
 
 export default function DailyView({
@@ -14,7 +15,7 @@ export default function DailyView({
   dailyMeals,
 }: {
   day: Date;
-  AddMealHandler: (newDay: Date, name: string, ingredients: string[]) => void;
+  AddMealHandler: (newDay: Date, name: string, ingredients: MealIngredientType[]) => void;
   dailyMeals: MealData[];
 }) {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
@@ -27,14 +28,14 @@ export default function DailyView({
     <>
       <div className="text-slate-800 text-3xl text-center my-10">{day?.toDateString()}</div>
 
+      <NewMealForm onSubmit={onSubmit} />
 
       {/* Daily-view Meals */}
       <div>
-        {dailyMeals.map((mealItem, index) => {
-          return <DailyViewMeals key={mealItem.uid} index={index} name={mealItem.name} />;
+        {dailyMeals.map((mealItem) => {
+          return <DailyViewMeals key={mealItem.uid} meal={mealItem} />;
         })}
       </div>
-      <NewMealForm onSubmit={onSubmit} />
 
     </>
   );
