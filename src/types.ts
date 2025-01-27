@@ -35,3 +35,17 @@ export type StoreType = {
   name: string;
   location: string;
 };
+
+export type MealIngredientType = {
+  id: string;
+  blueprintId: string;
+  amount: number;
+};
+
+export type MealDataType = {
+  id: string;
+  name: string;
+  order?: number;
+  ingredients: MealIngredientType[];
+  date: string;
+};

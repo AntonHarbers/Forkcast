@@ -4,6 +4,7 @@ import DailyView from "../components/DailyView";
 import MealData from "../classes/MealData";
 import { v4 } from "uuid";
 import { useAppContext } from "../context/useAppContext";
+import { MealIngredientType } from "../types";
 
 function MealPlanPage() {
   const { meals, setMeals, selectedDay, setSelectedDay } = useAppContext()
@@ -11,7 +12,7 @@ function MealPlanPage() {
   const AddMealHandler = (
     newDay: Date,
     name: string,
-    ingredients: string[]
+    ingredients: MealIngredientType[]
   ) => {
     const newMeal = new MealData(
       v4(),
@@ -19,7 +20,6 @@ function MealPlanPage() {
       ingredients,
       newDay.toDateString(),
       0,
-      false
     );
     setMeals([...meals, newMeal]);
   };

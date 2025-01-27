@@ -1,4 +1,4 @@
-import { IngredientBlueprintType } from '../types';
+import { IngredientBlueprintType, MealDataType } from '../types';
 
 // dummyData.ts
 export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
@@ -18,11 +18,16 @@ export const StoreDataDB = [
   { uid: '5', name: 'LIDL', location: '-' },
 ];
 
-export const dummyMeals = [
+export const dummyMeals: MealDataType[] = [
   {
     id: '1',
     name: 'Pizza',
-    ingredients: [{ id: '2', name: 'Cheese', quantity: 1 }],
+    ingredients: [
+      { id: '0', blueprintId: '1', amount: 2 },
+      { id: '1', blueprintId: '2', amount: 1 },
+    ],
+    date: 'Mon Jan 27 2025',
+    order: 0,
   },
 ];
 
