@@ -1,14 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StoreData from "../classes/StoreData";
 import NewShopForm from "../components/ShoppingListComponents/NewShopForm";
 import StoreTabItem from "../components/ShoppingListComponents/StoreTabItem";
 import EditStoreModal from "../components/ShoppingListComponents/EditStoreModal";
 import { useAppContext } from "../context/useAppContext";
+import { MealIngredientType } from "../types";
+import IngredientBlueprint from "../classes/IngredientBlueprint";
+import { UnitData } from "../data/dummy";
+
+type ShoppingListItemType = {
+    MealIngredients: MealIngredientType
+    Blueprint: IngredientBlueprint
+}
 
 export default function ShoppingListPage() {
-    const { stores, setStores, currentStoreTab, setCurrentStoreTab } = useAppContext()
+    const { stores, setStores, currentStoreTab, setCurrentStoreTab, meals, ingredientBlueprints } = useAppContext()
     const [editingStore, setEditingStore] = useState<StoreData | null>(null)
 
+    const [shoppingList, setShoppingList] = useState<ShoppingListItemType[]>([])
+
+    useEffect(() => {
+        const shopIngredients: ShoppingListItemType[] = []
+
+        meals.forEach(meal => {
+            meal.ingredients.forEach(mealIngredients => {
+                const blueprint = ingredientBlueprints.find(blueprint => blueprint.uid == mealIngredients.blueprintId)
+                if (!blueprint) return
+                if (blueprint?.storeUid === currentStoreTab?.uid) {
+                    shopIngredients.push({ MealIngredients: mealIngredients, Blueprint: blueprint })
+                }
+            })
+        })
+        setShoppingList(shopIngredients)
+    }, [currentStoreTab, ingredientBlueprints, meals])
 
     return (
         <div>
@@ -36,9 +60,17 @@ export default function ShoppingListPage() {
                                 Ingredients...
 
                             </div>
+                            <div>
+                                {shoppingList.map(shoppingListItem => {
+                                    return <div key={shoppingListItem.MealIngredients.id}>
+                                        <div>{shoppingListItem.Blueprint.name}</div>
+                                        <div>{shoppingListItem.MealIngredients.amount}</div>
+                                        <div>{UnitData.find(unitItem => unitItem.id === shoppingListItem.Blueprint.unitId)?.name}</div>
+                                    </div>
+                                })}
+                            </div>
                         </div>
                     </>}
-
             </div>
         </div>
     )
