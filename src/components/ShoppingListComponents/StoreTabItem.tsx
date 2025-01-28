@@ -13,6 +13,8 @@ export default function StoreTabItem(
             selectedStore: StoreData | null,
         }
 ) {
+
+
     return (
         <div className="bg-slate-500 p-4 text-gray-400 font-bold">
             <button onClick={() => setSelectedStore(item)} className={`${selectedStore?.name === item.name && "text-white"}`}>{item.name}</button>
