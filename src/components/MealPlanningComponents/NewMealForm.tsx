@@ -59,11 +59,8 @@ export default function NewMealForm({
       }>
         <TextInputElement register={register} placeholder={"Meal Name"} registerName={"name"} required={true} />
         {errors.name && <span>This field is required</span>}
-
-        {/* Search box that displays ingredients based on regex pattern */}
         <div>
           <input type="text" value={searchTerm} onChange={HandleSearchChange} className="p-2 rounded-md w-full" />
-
         </div>
         <div className="flex flex-col">
           {filteredIngredients.map(item => {
@@ -79,16 +76,13 @@ export default function NewMealForm({
             )
           })}
         </div>
-        {/* Can add ingredients to the meal from here */}
-        {/* If they are added then it should spawn a div with the ingredient name and an input field for its amount and an input field for its unit */}
-        {/* Once everything is set the new meal should be created and show up with all its details in the dailyview */}
         {fields.map((field, index) => (
-          <div key={field.id}>
-            <div>{ingredientBlueprints.find(item => item.uid === field.blueprintId)?.name}</div>
+          <div className="flex items-center gap-2" key={field.id}>
+            <div className="w-[50%]">{ingredientBlueprints.find(item => item.uid === field.blueprintId)?.name}</div>
             <input hidden {...register(`ingredients.${index}.blueprintId`)} />
-            <input type="number" {...register(`ingredients.${index}.amount`)} />
+            <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`)} />
             <div>{UnitData.find(unitItem => unitItem.id === ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
-            <button type="button" onClick={() => remove(index)}>
+            <button className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1" type="button" onClick={() => remove(index)}>
               Remove
             </button>
           </div>

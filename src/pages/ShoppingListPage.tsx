@@ -20,9 +20,17 @@ export default function ShoppingListPage() {
     const [shoppingList, setShoppingList] = useState<ShoppingListItemType[]>([])
 
     useEffect(() => {
+
         const shopIngredients: ShoppingListItemType[] = []
 
         meals.forEach(meal => {
+            const mealDate = new Date(meal.date)
+            console.log(mealDate)
+            const currentDate = new Date()
+            console.log(currentDate)
+            if (meal.finished || (mealDate.getDate() < currentDate.getDate() && mealDate.getMonth() <= currentDate.getMonth() && mealDate.getFullYear() <= currentDate.getFullYear())) {
+                return
+            }
             meal.ingredients.forEach(mealIngredients => {
                 const blueprint = ingredientBlueprints.find(blueprint => blueprint.uid == mealIngredients.blueprintId)
                 if (!blueprint) return
@@ -62,10 +70,13 @@ export default function ShoppingListPage() {
                             </div>
                             <div>
                                 {shoppingList.map(shoppingListItem => {
-                                    return <div key={shoppingListItem.MealIngredients.id}>
+                                    return <div className="flex justify-between" key={shoppingListItem.MealIngredients.id}>
+                                        <div className="flex gap-1">
+                                            <div className="font-bold">{shoppingListItem.MealIngredients.amount}</div>
+                                            <div>{UnitData.find(unitItem => unitItem.id === shoppingListItem.Blueprint.unitId)?.name}</div>
+                                        </div>
                                         <div>{shoppingListItem.Blueprint.name}</div>
-                                        <div>{shoppingListItem.MealIngredients.amount}</div>
-                                        <div>{UnitData.find(unitItem => unitItem.id === shoppingListItem.Blueprint.unitId)?.name}</div>
+                                        <input type="checkbox" />
                                     </div>
                                 })}
                             </div>

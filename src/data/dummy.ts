@@ -26,8 +26,9 @@ export const dummyMeals: MealDataType[] = [
       { id: '0', blueprintId: '1', amount: 2 },
       { id: '1', blueprintId: '2', amount: 1 },
     ],
-    date: 'Mon Jan 27 2025',
+    date: 'Wed Jan 29 2025',
     order: 0,
+    finished: false,
   },
 ];
 

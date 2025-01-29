@@ -18,7 +18,7 @@ const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     useEffect(() => {
         setIngredientBlueprints(IngredientBlueprintDataDB.map(item => new IngredientBlueprint(item.uid, item.name, item.storeUid, "0")))
         setStores(StoreDataDB.map(item => new StoreData(item.uid, item.name, item.location)))
-        setMeals(dummyMeals.map(item => new MealData(item.id, item.name, item.ingredients, item.date, item.order || 1)))
+        setMeals(dummyMeals.map(item => new MealData(item.id, item.name, item.ingredients, item.date, item.order || 1, item.finished)))
     }, [])
 
     useEffect(() => {

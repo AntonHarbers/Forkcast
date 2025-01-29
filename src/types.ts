@@ -48,4 +48,5 @@ export type MealDataType = {
   order?: number;
   ingredients: MealIngredientType[];
   date: string;
+  finished: boolean;
 };

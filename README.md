@@ -17,11 +17,13 @@
 [✔] Show ingredients as options in making a meal
 [✔] Ingredient Blueprint measurement units crud
 [✔] Ingredient Blueprint Store crud
-[] Searchable selection box for new meal ingredients
-[] adjustable new meal ingredient amounts
-[] Deal with meal order
-[] checkmark to set meal as "done" (these ingredients should NOT show up in the shopping lists later)
+[✔] Searchable selection box for new meal ingredients
+[✔] adjustable new meal ingredient amounts
+[✔] basic meal data Styling
+[✔] checkmark to set meal as "done"
+[✔] shopping list should not show done or past Ingredients
 [] Update/Delete Meal Data
+[] Deal with meal order
 [] Set up dummy Meal Data
 [] when opening shop tab:
 [] Ingredients that have been added to the meals should appear in shopping list (with their appropriate amounts) if they are still in the future
