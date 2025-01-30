@@ -6,14 +6,15 @@ class MealData {
     public name: string,
     public ingredients: MealIngredientType[],
     public date: string,
-    public order: number
-  ) //public preset: boolean
-  {
+    public order: number,
+    public finished: boolean //public preset: boolean
+  ) {
     this.uid = uid;
     this.name = name;
     this.ingredients = ingredients;
     this.date = date;
     this.order = order;
+    this.finished = finished;
     //this.preset = preset;
   }
 }
