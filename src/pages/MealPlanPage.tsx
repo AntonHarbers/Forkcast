@@ -19,7 +19,7 @@ function MealPlanPage() {
       name,
       ingredients,
       newDay.toDateString(),
-      0,
+      0, false
     );
     setMeals([...meals, newMeal]);
   };

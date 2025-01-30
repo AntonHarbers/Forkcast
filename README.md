@@ -22,12 +22,16 @@
 [✔] basic meal data Styling
 [✔] checkmark to set meal as "done"
 [✔] shopping list should not show done or past Ingredients
-[] Update/Delete Meal Data
-[] Deal with meal order
+[✔] Update/Delete Meal Data
 [] Set up dummy Meal Data
+[] Deal with meal order
 [] when opening shop tab:
-[] Ingredients that have been added to the meals should appear in shopping list (with their appropriate amounts) if they are still in the future
+[] Ingredients that have been added to the meals should appear in shopping list (with their appropriate amounts), summed up in a way where multiple meal ingredients are added together amount wise
+[] Sort the ingredients by area in shop
 [] Checkbox to toggle bought/not bought
+[] refactor everything
+[] ready it for API intregration with dummy api calls and optimistic updates and loading states working
+[] Think about tying everything to certain users and set up clerk maybe
 
 ### Styling:
 

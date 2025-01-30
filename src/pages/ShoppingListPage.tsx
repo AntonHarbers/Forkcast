@@ -25,9 +25,7 @@ export default function ShoppingListPage() {
 
         meals.forEach(meal => {
             const mealDate = new Date(meal.date)
-            console.log(mealDate)
             const currentDate = new Date()
-            console.log(currentDate)
             if (meal.finished || (mealDate.getDate() < currentDate.getDate() && mealDate.getMonth() <= currentDate.getMonth() && mealDate.getFullYear() <= currentDate.getFullYear())) {
                 return
             }
@@ -64,10 +62,6 @@ export default function ShoppingListPage() {
                                 {currentStoreTab.name != "Default" && <button className="text-xl hover:font-bold active:font-mono" onClick={() => setEditingStore(currentStoreTab)}>Edit</button>}
                             </div>
                             <div className="text-sm">{currentStoreTab.location}</div>
-                            <div className="my-6">
-                                Ingredients...
-
-                            </div>
                             <div>
                                 {shoppingList.map(shoppingListItem => {
                                     return <div className="flex justify-between" key={shoppingListItem.MealIngredients.id}>

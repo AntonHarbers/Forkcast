@@ -20,7 +20,6 @@ export default function DailyView({
 }) {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     // Create the MealData object and save it to AllMeals Array
-    console.log(data);
     AddMealHandler(day, data.name, data.ingredients);
   };
 

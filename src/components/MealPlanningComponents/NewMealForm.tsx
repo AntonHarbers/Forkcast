@@ -27,6 +27,7 @@ export default function NewMealForm({
     control
   } = useForm<Inputs>();
 
+
   const { fields, append, remove } = useFieldArray({ control, name: "ingredients" })
 
   const { ingredientBlueprints } = useAppContext()
