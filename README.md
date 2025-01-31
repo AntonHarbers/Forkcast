@@ -23,8 +23,8 @@
 [✔] checkmark to set meal as "done"
 [✔] shopping list should not show done or past Ingredients
 [✔] Update/Delete Meal Data
-[] Set up dummy Meal Data
-[] Deal with meal order
+[✔] Set up dummy Meal Data
+[✔] Deal with meal order (meal order defaults to last one, can be moved accordingly)
 [] when opening shop tab:
 [] Ingredients that have been added to the meals should appear in shopping list (with their appropriate amounts), summed up in a way where multiple meal ingredients are added together amount wise
 [] Sort the ingredients by area in shop

@@ -14,13 +14,21 @@ function MealPlanPage() {
     name: string,
     ingredients: MealIngredientType[]
   ) => {
+
+    // get the highest order of this day
+    let highest = 0;
+
+    meals.filter(meal => meal.date === selectedDay.toDateString()).forEach(meal => highest = Math.max(highest, meal.order))
+
     const newMeal = new MealData(
       v4(),
       name,
       ingredients,
       newDay.toDateString(),
-      0, false
+      highest + 1,
+      false,
     );
+
     setMeals([...meals, newMeal]);
   };
 
@@ -40,7 +48,7 @@ function MealPlanPage() {
         <DailyView
           day={selectedDay}
           AddMealHandler={AddMealHandler}
-          dailyMeals={meals.filter((item) => item.date === selectedDay.toDateString())}
+          dailyMeals={meals.filter((item) => item.date === selectedDay.toDateString()).sort((a, b) => a.order - b.order)}
         />
       </div>
 
