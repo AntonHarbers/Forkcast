@@ -14,9 +14,13 @@ type Inputs = {
 };
 
 export default function DailyViewMeals({
-  meal
+  meal,
+  prevId,
+  nextId,
 }: {
-  meal: MealData
+  meal: MealData,
+  prevId: string | null,
+  nextId: string | null
 }) {
   const { ingredientBlueprints, setMeals, meals } = useAppContext()
   const [editing, setEditing] = useState(false)
@@ -97,6 +101,44 @@ export default function DailyViewMeals({
     setMeals(UpdatedMeals);
   }
 
+  const ShiftMealUp = () => {
+    const nextMeal = meals.find(mealData => mealData.uid === nextId)
+    if (!nextMeal) return
+    const savedOrder = nextMeal.order
+    nextMeal.order = meal.order
+    meal.order = savedOrder
+    const newMeals = meals.map(mealData => {
+      if (mealData.uid === nextId) {
+        return nextMeal
+      } else if (mealData.uid === meal.uid) {
+        return meal
+      } else {
+        return mealData
+      }
+    })
+
+    setMeals(newMeals)
+  }
+
+  const ShiftMealDown = () => {
+    const prevMeal = meals.find(mealData => mealData.uid === prevId)
+    if (!prevMeal) return
+    const savedOrder = prevMeal.order
+    prevMeal.order = meal.order
+    meal.order = savedOrder
+    const newMeals = meals.map(mealData => {
+      if (mealData.uid === prevId) {
+        return prevMeal
+      } else if (mealData.uid === meal.uid) {
+        return meal
+      } else {
+        return mealData
+      }
+    })
+
+    setMeals(newMeals)
+  }
+
   useEffect(() => {
     reset({ ingredients: [] })
   }, [isSubmitSuccessful, reset])
@@ -128,6 +170,10 @@ export default function DailyViewMeals({
             </div>
 
             <button onClick={DeleteMeal} className="bg-red-300 p-1 text-lg rounded-sm hover:bg-red-400 active:bg-red-500">Delete</button>
+            <div className="flex flex-col">
+              {prevId && <button type="button" onClick={ShiftMealDown}>Down</button>}
+              {nextId && <button type="button" onClick={ShiftMealUp}>Up</button>}
+            </div>
             <input type="submit" className="bg-blue-300 hover:bg-blue-400 active:bg-blue-500 rounded-sm p-1 text-lg" />
           </div>
           {fields.map((field, index) => (
@@ -165,8 +211,6 @@ export default function DailyViewMeals({
           )
         })}
       </div>}
-
-
     </div>
   );
 }

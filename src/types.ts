@@ -45,7 +45,7 @@ export type MealIngredientType = {
 export type MealDataType = {
   id: string;
   name: string;
-  order?: number;
+  order: number;
   ingredients: MealIngredientType[];
   date: string;
   finished: boolean;
