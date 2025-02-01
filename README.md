@@ -25,10 +25,11 @@
 [✔] Update/Delete Meal Data
 [✔] Set up dummy Meal Data
 [✔] Deal with meal order (meal order defaults to last one, can be moved accordingly)
-[] when opening shop tab:
-[] Ingredients that have been added to the meals should appear in shopping list (with their appropriate amounts), summed up in a way where multiple meal ingredients are added together amount wise
-[] Sort the ingredients by area in shop
-[] Checkbox to toggle bought/not bought
+[✔] when opening shop tab:
+[✔] Ingredients that have been added to the meals should appear in shopping list (with their appropriate amounts), summed up in a way where multiple meal ingredients are added together amount wise
+[✔] Checkbox to toggle bought/not bought
+[] CRUD FOR UNIT TYPES?
+[] Sort the ingredients by area in shop (CRUD FOR AREA?)
 [] refactor everything
 [] ready it for API intregration with dummy api calls and optimistic updates and loading states working
 [] Think about tying everything to certain users and set up clerk maybe
@@ -42,7 +43,7 @@
 
 ### Later:
 
-[] Set up database connection to mongoDB
+[] Set up database connection to postgres using drizzle
 [] User Data/Accounts with clerk
 [] Backend API with Express or Appwrite server functions?
 
