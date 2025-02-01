@@ -40,6 +40,7 @@ export type MealIngredientType = {
   id: string;
   blueprintId: string;
   amount: number;
+  bought: boolean;
 };
 
 export type MealDataType = {

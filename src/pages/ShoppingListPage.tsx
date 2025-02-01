@@ -8,37 +8,66 @@ import { MealIngredientType } from "../types";
 import IngredientBlueprint from "../classes/IngredientBlueprint";
 import { UnitData } from "../data/dummy";
 
+// we want to condense every mealIngredient with this blueprint into a single data type
+// array of mealingredients
+// mapped to blueprint
+
 type ShoppingListItemType = {
-    MealIngredients: MealIngredientType
-    Blueprint: IngredientBlueprint
+    BlueprintIngredients: Map<IngredientBlueprint, MealIngredientType[]>
+    //MealIngredients: MealIngredientType
+    //Blueprint: IngredientBlueprint
 }
 
 export default function ShoppingListPage() {
-    const { stores, setStores, currentStoreTab, setCurrentStoreTab, meals, ingredientBlueprints } = useAppContext()
+    const { stores, setStores, currentStoreTab, setCurrentStoreTab, meals, ingredientBlueprints, setMeals } = useAppContext()
     const [editingStore, setEditingStore] = useState<StoreData | null>(null)
 
-    const [shoppingList, setShoppingList] = useState<ShoppingListItemType[]>([])
+    const [shoppingList, setShoppingList] = useState<ShoppingListItemType>({ BlueprintIngredients: new Map() })
 
     useEffect(() => {
 
-        const shopIngredients: ShoppingListItemType[] = []
+        const shopIngredients: ShoppingListItemType = { BlueprintIngredients: new Map() }
 
         meals.forEach(meal => {
             const mealDate = new Date(meal.date)
             const currentDate = new Date()
-            if (meal.finished || (mealDate.getDate() < currentDate.getDate() && mealDate.getMonth() <= currentDate.getMonth() && mealDate.getFullYear() <= currentDate.getFullYear())) {
+            currentDate.setHours(0, 0, 0, 0) // Normalizes the date for comparison
+            if (meal.finished || mealDate < currentDate) {
                 return
             }
             meal.ingredients.forEach(mealIngredients => {
                 const blueprint = ingredientBlueprints.find(blueprint => blueprint.uid == mealIngredients.blueprintId)
                 if (!blueprint) return
                 if (blueprint?.storeUid === currentStoreTab?.uid) {
-                    shopIngredients.push({ MealIngredients: mealIngredients, Blueprint: blueprint })
+                    if (shopIngredients.BlueprintIngredients.has(blueprint)) {
+                        shopIngredients.BlueprintIngredients.get(blueprint)?.push(mealIngredients)
+                    } else {
+                        shopIngredients.BlueprintIngredients.set(blueprint, [mealIngredients])
+                    }
                 }
             })
         })
         setShoppingList(shopIngredients)
     }, [currentStoreTab, ingredientBlueprints, meals])
+
+    const ToggleMealIngredientsBought = (checked: boolean, blueprintId: string) => {
+        // find every ingredient in this array
+        // set its bought to the new value
+        const newMeals = meals.map(meal => {
+            const newMeal = meal
+            newMeal.ingredients = meal.ingredients.map(ingredientDataItem => {
+                if (ingredientDataItem.blueprintId === blueprintId) {
+                    const copy = ingredientDataItem
+                    copy.bought = checked
+                    return copy
+                }
+
+                return ingredientDataItem
+            })
+            return newMeal
+        })
+        setMeals(newMeals)
+    }
 
     return (
         <div>
@@ -63,14 +92,27 @@ export default function ShoppingListPage() {
                             </div>
                             <div className="text-sm">{currentStoreTab.location}</div>
                             <div>
-                                {shoppingList.map(shoppingListItem => {
-                                    return <div className="flex justify-between" key={shoppingListItem.MealIngredients.id}>
+                                {Array.from(shoppingList.BlueprintIngredients.entries()).map(shoppingListItem => {
+                                    let total: number = 0
+                                    let totalUnbought: number = 0
+                                    shoppingListItem[1].forEach(item => {
+                                        if (item.bought) {
+                                            total += item.amount
+                                        } else {
+                                            totalUnbought += item.amount
+                                        }
+                                    })
+                                    return <div className="flex justify-between" key={shoppingListItem[0].uid}>
                                         <div className="flex gap-1">
-                                            <div className="font-bold">{shoppingListItem.MealIngredients.amount}</div>
-                                            <div>{UnitData.find(unitItem => unitItem.id === shoppingListItem.Blueprint.unitId)?.name}</div>
+                                            <div className="flex gap-2">
+                                                {totalUnbought != 0 && <div className="font-bold">{totalUnbought}</div>}
+                                                {totalUnbought != 0 && total != 0 && <div>/</div>}
+                                                {total != 0 && <div className="font-bold">{total + totalUnbought}</div>}
+                                            </div>
+                                            <div>{UnitData.find(unitItem => unitItem.id === shoppingListItem[0].unitId)?.name}</div>
                                         </div>
-                                        <div>{shoppingListItem.Blueprint.name}</div>
-                                        <input type="checkbox" />
+                                        <div>{shoppingListItem[0].name}</div>
+                                        <input type="checkbox" checked={shoppingListItem[1].every(item => item.bought)} onChange={(e) => ToggleMealIngredientsBought(e.target.checked, shoppingListItem[0].uid)} />
                                     </div>
                                 })}
                             </div>

@@ -69,7 +69,7 @@ export default function NewMealForm({
               <div className="bg-green-100 p-3 rounded-md border border-slate-600 m-2 flex justify-between items-center" key={item.uid}>
                 <div>{item.name}</div>
                 <button type="button" className="bg-green-500 rounded-md p-2 hover:bg-green-600 active:bg-green-800" onClick={() => {
-                  append({ amount: 0, id: v4(), blueprintId: item.uid })
+                  append({ amount: 0, id: v4(), blueprintId: item.uid, bought: false })
                   setFilteredIngredients([])
                   setSearchTerm("")
                 }}>Add</button>
@@ -81,7 +81,7 @@ export default function NewMealForm({
           <div className="flex items-center gap-2" key={field.id}>
             <div className="w-[50%]">{ingredientBlueprints.find(item => item.uid === field.blueprintId)?.name}</div>
             <input hidden {...register(`ingredients.${index}.blueprintId`)} />
-            <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`)} />
+            <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`, { valueAsNumber: true })} />
             <div>{UnitData.find(unitItem => unitItem.id === ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
             <button className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1" type="button" onClick={() => remove(index)}>
               Remove
