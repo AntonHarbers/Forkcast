@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import MealData from "../../classes/MealData";
 import { useAppContext } from "../../context/useAppContext";
-import { UnitData } from "../../data/dummy";
 import { useFieldArray, useForm } from "react-hook-form";
 import { MealIngredientType } from "../../types";
 import IngredientBlueprint from "../../classes/IngredientBlueprint";
@@ -22,7 +21,7 @@ export default function DailyViewMeals({
   prevId: string | null,
   nextId: string | null
 }) {
-  const { ingredientBlueprints, setMeals, meals } = useAppContext()
+  const { ingredientBlueprints, setMeals, meals, ingredientUnits } = useAppContext()
   const [editing, setEditing] = useState(false)
 
   const {
@@ -75,7 +74,7 @@ export default function DailyViewMeals({
   const EditMeal = () => {
     // put this mealData into the new Meal form and let that form handle the update
     setEditing(!editing)
-    meal.ingredients.forEach(data => append({ amount: data.amount, id: data.id, blueprintId: data.blueprintId }))
+    meal.ingredients.forEach(data => append({ amount: data.amount, id: data.id, blueprintId: data.blueprintId, bought: data.bought }))
   }
 
   const SubmitEditMeal = (data: Inputs) => {
@@ -160,7 +159,7 @@ export default function DailyViewMeals({
                   <div className="bg-green-100 p-3 rounded-md border border-slate-600 m-2 flex justify-between items-center" key={item.uid}>
                     <div>{item.name}</div>
                     <button type="button" className="bg-green-500 rounded-md p-2 hover:bg-green-600 active:bg-green-800" onClick={() => {
-                      append({ amount: 0, id: v4(), blueprintId: item.uid })
+                      append({ amount: 0, id: v4(), blueprintId: item.uid, bought: false })
                       setFilteredIngredients([])
                       setSearchTerm("")
                     }}>Add</button>
@@ -182,7 +181,7 @@ export default function DailyViewMeals({
               <input hidden {...register(`ingredients.${index}.blueprintId`)} />
               <div className="flex gap-1">
                 <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`)} />
-                <div>{UnitData.find(unitItem => unitItem.id === ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
+                <div>{ingredientUnits.find(unitItem => unitItem.id === ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
               </div>
               <button className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1" type="button" onClick={() => remove(index)}>
                 Remove
@@ -205,7 +204,7 @@ export default function DailyViewMeals({
               <div className="text-lg">{ingredientBlueprints.find(item => item.uid === ingredient.blueprintId)?.name || "Name Err"}</div>
               <div className="flex gap-1">
                 <div className="text-lg font-bold">{ingredient.amount}</div>
-                <div className="text-lg">{UnitData.find(unit => unit.id === ingredientBlueprints.find(item => item.uid === ingredient.blueprintId)?.unitId)?.name || "Unit Err"}</div>
+                <div className="text-lg">{ingredientUnits.find(unit => unit.id === ingredientBlueprints.find(item => item.uid === ingredient.blueprintId)?.unitId)?.name || "Unit Err"}</div>
               </div>
             </div>
           )

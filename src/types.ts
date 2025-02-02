@@ -1,6 +1,7 @@
 import IngredientBlueprint from './classes/IngredientBlueprint';
 import MealData from './classes/MealData';
 import StoreData from './classes/StoreData';
+import Unit from './classes/UnitData';
 
 export interface AppContextType {
   ingredientBlueprints: IngredientBlueprint[];
@@ -15,7 +16,18 @@ export interface AppContextType {
   setCurrentStoreTab: React.Dispatch<React.SetStateAction<StoreData | null>>;
   selectedDay: Date;
   setSelectedDay: React.Dispatch<React.SetStateAction<Date>>;
+  ingredientUnits: Unit[];
+  setIngredientUnits: React.Dispatch<React.SetStateAction<Unit[]>>;
 }
+
+export type ShopFormInputType = {
+  name: string;
+  location: string;
+};
+
+export type IngredientUnitFormInputType = {
+  name: string;
+};
 
 export type IngredientFormInputs = {
   name: string;
@@ -28,6 +40,11 @@ export type IngredientBlueprintType = {
   name: string;
   storeUid: string;
   unitId: string;
+};
+
+export type IngredientUnit = {
+  id: string;
+  name: string;
 };
 
 export type StoreType = {
