@@ -4,7 +4,6 @@ import { useEffect } from "react"
 import IngredientBlueprint from "../../classes/IngredientBlueprint"
 import { useAppContext } from "../../context/useAppContext"
 import TextInputElement from "../FormComponents/TextInputElement"
-import { UnitData } from "../../data/dummy"
 
 export default function EditIngredientModal({
     editingIngredientBlueprint,
@@ -14,7 +13,7 @@ export default function EditIngredientModal({
     setEditingIngredientBlueprint: React.Dispatch<React.SetStateAction<IngredientBlueprint | null>>
 }) {
 
-    const { ingredientBlueprints, setIngredientBlueprints, stores } = useAppContext()
+    const { ingredientUnits, ingredientBlueprints, setIngredientBlueprints, stores } = useAppContext()
 
     const {
         register,
@@ -65,9 +64,9 @@ export default function EditIngredientModal({
                 <TextInputElement placeholder={editingIngredientBlueprint.name} register={register} registerName="name" required={true} />
                 {errors.name && <span>This field is required!</span>}
                 <select {...register('unitId')}>
-                    {UnitData.map(item => {
-                        return item.id === editingIngredientBlueprint.unitId ? <option key={item.id} value={item.id} selected>{item.name}</option> : <option key={item.id} value={item.id}>{item.name}</option>
-                    })}
+                    {ingredientUnits.map(item => !item.isDeleted &&
+                        item.id === editingIngredientBlueprint.unitId ? <option key={item.id} value={item.id} selected>{item.name}</option> : <option key={item.id} value={item.id}>{item.name}</option>
+                    )}
                 </select>
                 <select {...register('storeUid')}>
                     {stores.map(item => {

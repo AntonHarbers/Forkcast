@@ -4,11 +4,8 @@ import TextInputElement from "../FormComponents/TextInputElement";
 import SubmitInputElement from "../FormComponents/SubmitInputElement";
 import { useEffect } from "react";
 import { v4 } from "uuid";
+import { ShopFormInputType } from "../../types";
 
-type ShopFormInputType = {
-    name: string;
-    location: string;
-}
 
 export default function NewShopForm({ storeData, setStoreData }: { storeData: [] | StoreData[], setStoreData: React.Dispatch<React.SetStateAction<[] | StoreData[]>> }) {
     const {

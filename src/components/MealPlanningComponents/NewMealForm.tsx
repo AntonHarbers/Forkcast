@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useAppContext } from "../../context/useAppContext";
 import { MealIngredientType } from "../../types";
 import { v4 } from "uuid";
-import { UnitData } from "../../data/dummy";
 import IngredientBlueprint from "../../classes/IngredientBlueprint";
 
 // Type Def.
@@ -30,7 +29,7 @@ export default function NewMealForm({
 
   const { fields, append, remove } = useFieldArray({ control, name: "ingredients" })
 
-  const { ingredientBlueprints } = useAppContext()
+  const { ingredientBlueprints, ingredientUnits } = useAppContext()
 
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [filteredIngredients, setFilteredIngredients] = useState<IngredientBlueprint[]>([])
@@ -82,7 +81,7 @@ export default function NewMealForm({
             <div className="w-[50%]">{ingredientBlueprints.find(item => item.uid === field.blueprintId)?.name}</div>
             <input hidden {...register(`ingredients.${index}.blueprintId`)} />
             <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`, { valueAsNumber: true })} />
-            <div>{UnitData.find(unitItem => unitItem.id === ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
+            <div>{ingredientUnits.find(unitItem => unitItem.id === ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
             <button className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1" type="button" onClick={() => remove(index)}>
               Remove
             </button>

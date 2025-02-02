@@ -3,7 +3,6 @@ import TextInputElement from "../FormComponents/TextInputElement"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
 import { useEffect } from "react"
 import { IngredientFormInputs } from "../../types"
-import { UnitData } from "../../data/dummy"
 import { useAppContext } from "../../context/useAppContext"
 
 
@@ -15,7 +14,7 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
         reset
     } = useForm<IngredientFormInputs>()
 
-    const { stores } = useAppContext()
+    const { stores, ingredientUnits } = useAppContext()
 
     useEffect(() => {
         reset()
@@ -27,9 +26,9 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
             {/* A select with every possible store as an option */}
             {errors.name && <span>This field is required!</span>}
             <select {...register('unitId')}>
-                {UnitData.map(item => {
-                    return <option key={item.id} value={item.id}>{item.name}</option>
-                })}
+                {ingredientUnits.map(item => !item.isDeleted &&
+                    <option key={item.id} value={item.id}>{item.name}</option>
+                )}
             </select>
             <select {...register('storeUid')}>
                 {stores.map(item => {

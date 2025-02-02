@@ -30,6 +30,7 @@
 [✔] Checkbox to toggle bought/not bought
 [] CRUD FOR UNIT TYPES?
 [] Sort the ingredients by area in shop (CRUD FOR AREA?)
+[] Rework data to be soft deleted instead of hard (isDeleted flag with deletedAt timestamp, deleted items no longer show up or should be pulled from api)
 [] refactor everything
 [] ready it for API intregration with dummy api calls and optimistic updates and loading states working
 [] Think about tying everything to certain users and set up clerk maybe

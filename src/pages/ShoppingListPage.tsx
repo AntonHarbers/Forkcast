@@ -6,7 +6,6 @@ import EditStoreModal from "../components/ShoppingListComponents/EditStoreModal"
 import { useAppContext } from "../context/useAppContext";
 import { MealIngredientType } from "../types";
 import IngredientBlueprint from "../classes/IngredientBlueprint";
-import { UnitData } from "../data/dummy";
 
 // we want to condense every mealIngredient with this blueprint into a single data type
 // array of mealingredients
@@ -23,6 +22,8 @@ export default function ShoppingListPage() {
     const [editingStore, setEditingStore] = useState<StoreData | null>(null)
 
     const [shoppingList, setShoppingList] = useState<ShoppingListItemType>({ BlueprintIngredients: new Map() })
+
+    const { ingredientUnits } = useAppContext()
 
     useEffect(() => {
 
@@ -109,7 +110,7 @@ export default function ShoppingListPage() {
                                                 {totalUnbought != 0 && total != 0 && <div>/</div>}
                                                 {total != 0 && <div className="font-bold">{total + totalUnbought}</div>}
                                             </div>
-                                            <div>{UnitData.find(unitItem => unitItem.id === shoppingListItem[0].unitId)?.name}</div>
+                                            <div>{ingredientUnits.find(unitItem => unitItem.id === shoppingListItem[0].unitId)?.name}</div>
                                         </div>
                                         <div>{shoppingListItem[0].name}</div>
                                         <input type="checkbox" checked={shoppingListItem[1].every(item => item.bought)} onChange={(e) => ToggleMealIngredientsBought(e.target.checked, shoppingListItem[0].uid)} />
