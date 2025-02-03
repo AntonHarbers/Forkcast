@@ -36,7 +36,6 @@ export default function EditIngredientModal({
 
     const SubmitUpdateIngredientBlueprintForm: SubmitHandler<IngredientFormInputs> = (data) => {
         if (editingIngredientBlueprint) {
-            console.log(data.categoryId)
             if (!data.categoryId) data.categoryId = null
             const updatedIngredientBlueprints = ingredientBlueprints.map(blueprint => {
                 return blueprint.uid === editingIngredientBlueprint.uid ? new IngredientBlueprint(blueprint.uid, data.name, data.storeUid, data.unitId, data.categoryId) : blueprint
@@ -52,8 +51,20 @@ export default function EditIngredientModal({
             setValue('storeUid', editingIngredientBlueprint.storeUid)
             setValue('unitId', editingIngredientBlueprint.unitId)
         }
-        console.log(editingIngredientBlueprint)
     }, [setValue, editingIngredientBlueprint])
+
+    useEffect(() => {
+        const categoriesOfSelectedStore = categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId)
+        if (categoriesOfSelectedStore.length === 0) {
+            setValue('categoryId', null)
+        } else {
+            if (editingIngredientBlueprint && editingIngredientBlueprint.categoryId) {
+                setValue('categoryId', editingIngredientBlueprint.categoryId)
+            } else {
+                setValue('categoryId', categoriesOfSelectedStore[0].id)
+            }
+        }
+    }, [categories, setValue, selectedStoreId, editingIngredientBlueprint])
 
     useEffect(() => {
         reset()
@@ -90,3 +101,6 @@ export default function EditIngredientModal({
         </div>
     )
 }
+
+
+// when selecting a new store only use first index if our category doesnt match any

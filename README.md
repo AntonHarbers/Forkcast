@@ -49,3 +49,5 @@
 [] Backend API with Express or Appwrite server functions?
 
 ## Notes:
+
+Sort the dropdown of the categories by their order #

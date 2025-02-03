@@ -1,19 +1,53 @@
 import { useEffect } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import StoreData from "../../classes/StoreData"
+import { useAppContext } from "../../context/useAppContext"
+import Category from "../../classes/CategoryData"
+import { v4 } from "uuid"
+import TextInputElement from "../FormComponents/TextInputElement"
+import SubmitInputElement from "../FormComponents/SubmitInputElement"
 
 type Inputs = {
     name: string,
     location: string,
 }
 
+type CategoryFormInputs = {
+    name: string
+}
+
 export default function EditStoreModal({ editingStore, storeData, setStoreData, setEditingStore, }: { editingStore: StoreData | null, storeData: StoreData[] | [], setStoreData: React.Dispatch<React.SetStateAction<StoreData[] | []>>, setEditingStore: React.Dispatch<React.SetStateAction<StoreData | null>> }) {
+    const { categories, setCategories } = useAppContext()
+
+
     const {
         register,
         handleSubmit,
         formState: { errors },
         setValue
     } = useForm<Inputs>()
+
+    const {
+        register: registerNested,
+        handleSubmit: handleSubmitNested,
+        formState: { errors: errosNested, isSubmitSuccessful: isSubmitSuccessfulNested },
+        reset: resetNested
+    } = useForm<CategoryFormInputs>()
+
+    useEffect(() => {
+        resetNested()
+    }, [isSubmitSuccessfulNested, resetNested])
+
+    const AddNewCategory: SubmitHandler<CategoryFormInputs> = (data) => {
+        if (editingStore) {
+            // figure out what the highest order is of all categories belonging to this store
+            const highest = categories.reduce((max, cat) => {
+                return cat.order > max ? cat.order : max
+            }, 0)
+            const newCat = new Category(v4(), data.name, highest, editingStore.uid, false, new Date().toDateString())
+            setCategories([...categories, newCat])
+        }
+    }
 
     const OnDeleteStoreBtnClick = () => {
         if (editingStore) {
@@ -31,6 +65,21 @@ export default function EditStoreModal({ editingStore, storeData, setStoreData, 
             setStoreData(updatedStores)
         }
         setEditingStore(null)
+    }
+
+    const RemoveCategory = (categoryId: string) => {
+        const newCategories = categories.map(item => {
+            if (item.id === categoryId) {
+                const updatedCategory = new Category(item.id, item.name, item.order, item.storeId, true, new Date().toDateString())
+                return updatedCategory
+            }
+
+            return item
+        })
+
+        setCategories(newCategories)
+
+
     }
 
     useEffect(() => {
@@ -52,7 +101,18 @@ export default function EditStoreModal({ editingStore, storeData, setStoreData, 
                     {errors.name && <span>This field is required!</span>}
                     <input className="p-2 rounded-md" defaultValue={editingStore.location} {...register("location", { required: true })} />
                     {errors.location && <span>This field is required!</span>}
+                    <div>Active Categories</div>
+                    <div>{categories.filter(item => !item.isDeleted && item.storeId === editingStore.uid).map(item => <div className="flex gap-2" key={item.id}>
+                        <div>{item.name}</div>
+                        <button type="button" onClick={() => RemoveCategory(item.id)}>Remove</button>
+                    </div>
+                    )}</div>
                     <input type="submit" />
+                </form>
+                <form onSubmit={handleSubmitNested(AddNewCategory)}>
+                    <TextInputElement placeholder="Category Name..." register={registerNested} registerName="name" required />
+                    {errosNested.name && <span>This field is required</span>}
+                    <SubmitInputElement submitInputText="Add Category" />
                 </form>
                 <button onClick={() => OnDeleteStoreBtnClick()}>DELETE STORE</button>
             </div>

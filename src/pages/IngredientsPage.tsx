@@ -21,7 +21,6 @@ export default function IngredientsPage() {
     const HandleNewIngredientFormSubmit: SubmitHandler<Inputs> = (data) => {
         if (!data.categoryId) data.categoryId = null
         const newIngredient = new IngredientBlueprint(v4(), data.name, data.storeUid, data.unitId, data.categoryId)
-        console.log(newIngredient)
         setIngredientBlueprints([...ingredientBlueprints, newIngredient])
 
     }

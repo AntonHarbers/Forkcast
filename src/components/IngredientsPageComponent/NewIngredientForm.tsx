@@ -12,7 +12,8 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
         handleSubmit,
         formState: { errors, isSubmitSuccessful },
         reset,
-        control
+        control,
+        setValue
     } = useForm<IngredientFormInputs>()
 
     const selectedStoreId = useWatch({ control, name: 'storeUid' })
@@ -22,6 +23,16 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
     useEffect(() => {
         reset()
     }, [isSubmitSuccessful, reset])
+
+    useEffect(() => {
+        const categoriesOfStore = categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId)
+
+        if (categoriesOfStore.length === 0) {
+            setValue('categoryId', null)
+        } else {
+            setValue('categoryId', categoriesOfStore[0].id)
+        }
+    }, [setValue, selectedStoreId, categories])
 
     return (
         <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>

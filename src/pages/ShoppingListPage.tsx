@@ -23,7 +23,7 @@ export default function ShoppingListPage() {
 
     const [shoppingList, setShoppingList] = useState<ShoppingListItemType>({ BlueprintIngredients: new Map() })
 
-    const { ingredientUnits } = useAppContext()
+    const { ingredientUnits, categories } = useAppContext()
 
     useEffect(() => {
 
@@ -93,29 +93,33 @@ export default function ShoppingListPage() {
                             </div>
                             <div className="text-sm">{currentStoreTab.location}</div>
                             <div>
-                                {Array.from(shoppingList.BlueprintIngredients.entries()).map(shoppingListItem => {
-                                    let total: number = 0
-                                    let totalUnbought: number = 0
-                                    shoppingListItem[1].forEach(item => {
-                                        if (item.bought) {
-                                            total += item.amount
-                                        } else {
-                                            totalUnbought += item.amount
-                                        }
+                                {Array.from(shoppingList.BlueprintIngredients.entries())
+                                    .sort((a, b) => {
+                                        return (categories.find(cat => cat.id == a[0].categoryId)?.order ?? 0) - (categories.find(cat => cat.id == b[0].categoryId)?.order ?? 0)
                                     })
-                                    return <div className="flex justify-between" key={shoppingListItem[0].uid}>
-                                        <div className="flex gap-1">
-                                            <div className="flex gap-2">
-                                                {totalUnbought != 0 && <div className="font-bold">{totalUnbought}</div>}
-                                                {totalUnbought != 0 && total != 0 && <div>/</div>}
-                                                {total != 0 && <div className="font-bold">{total + totalUnbought}</div>}
+                                    .map(shoppingListItem => {
+                                        let total: number = 0
+                                        let totalUnbought: number = 0
+                                        shoppingListItem[1].forEach(item => {
+                                            if (item.bought) {
+                                                total += item.amount
+                                            } else {
+                                                totalUnbought += item.amount
+                                            }
+                                        })
+                                        return <div className="flex justify-between" key={shoppingListItem[0].uid}>
+                                            <div className="flex gap-1">
+                                                <div className="flex gap-2">
+                                                    {totalUnbought != 0 && <div className="font-bold">{totalUnbought}</div>}
+                                                    {totalUnbought != 0 && total != 0 && <div>/</div>}
+                                                    {total != 0 && <div className="font-bold">{total + totalUnbought}</div>}
+                                                </div>
+                                                <div>{ingredientUnits.find(unitItem => unitItem.id === shoppingListItem[0].unitId)?.name}</div>
                                             </div>
-                                            <div>{ingredientUnits.find(unitItem => unitItem.id === shoppingListItem[0].unitId)?.name}</div>
+                                            <div>{shoppingListItem[0].name}</div>
+                                            <input type="checkbox" checked={shoppingListItem[1].every(item => item.bought)} onChange={(e) => ToggleMealIngredientsBought(e.target.checked, shoppingListItem[0].uid)} />
                                         </div>
-                                        <div>{shoppingListItem[0].name}</div>
-                                        <input type="checkbox" checked={shoppingListItem[1].every(item => item.bought)} onChange={(e) => ToggleMealIngredientsBought(e.target.checked, shoppingListItem[0].uid)} />
-                                    </div>
-                                })}
+                                    })}
                             </div>
                         </div>
                     </>}
