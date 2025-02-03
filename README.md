@@ -28,7 +28,7 @@
 [✔] when opening shop tab:
 [✔] Ingredients that have been added to the meals should appear in shopping list (with their appropriate amounts), summed up in a way where multiple meal ingredients are added together amount wise
 [✔] Checkbox to toggle bought/not bought
-[] CRUD FOR UNIT TYPES?
+[✔] CRUD FOR UNIT TYPES?
 [] Sort the ingredients by area in shop (CRUD FOR AREA?)
 [] Rework data to be soft deleted instead of hard (isDeleted flag with deletedAt timestamp, deleted items no longer show up or should be pulled from api)
 [] refactor everything

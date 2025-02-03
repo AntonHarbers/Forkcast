@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import TextInputElement from "../FormComponents/TextInputElement"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
 import { useEffect } from "react"
@@ -11,10 +11,13 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
         register,
         handleSubmit,
         formState: { errors, isSubmitSuccessful },
-        reset
+        reset,
+        control
     } = useForm<IngredientFormInputs>()
 
-    const { stores, ingredientUnits } = useAppContext()
+    const selectedStoreId = useWatch({ control, name: 'storeUid' })
+
+    const { stores, ingredientUnits, categories } = useAppContext()
 
     useEffect(() => {
         reset()
@@ -35,6 +38,11 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
                     return <option key={item.uid} value={item.uid}>{item.name}</option>
                 })}
             </select>
+            {categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted).length != 0 && <select {...register('categoryId')}>
+                {categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted).map(item => <option key={item.id} value={item.id}>{item.name}</option>
+                )}
+            </select>}
+
             <SubmitInputElement submitInputText="Add New Ingredient" />
         </form>
     )

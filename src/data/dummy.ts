@@ -1,13 +1,14 @@
+import Category from '../classes/CategoryData';
 import { IngredientBlueprintType, MealDataType } from '../types';
 
 // dummyData.ts
 export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
-  { uid: '1', name: 'Tomato', storeUid: '1', unitId: '0' },
-  { uid: '2', name: 'Cheese', storeUid: '1', unitId: '0' },
-  { uid: '3', name: 'Onion', storeUid: '2', unitId: '0' },
-  { uid: '4', name: 'Burger', storeUid: '2', unitId: '0' },
-  { uid: '5', name: 'Chips', storeUid: '3', unitId: '0' },
-  { uid: '6', name: 'Banana', storeUid: '3', unitId: '0' },
+  { uid: '1', name: 'Tomato', storeUid: '1', unitId: '0', categoryId: null },
+  { uid: '2', name: 'Cheese', storeUid: '1', unitId: '0', categoryId: null },
+  { uid: '3', name: 'Onion', storeUid: '2', unitId: '0', categoryId: '3' },
+  { uid: '4', name: 'Burger', storeUid: '2', unitId: '0', categoryId: null },
+  { uid: '5', name: 'Chips', storeUid: '3', unitId: '0', categoryId: null },
+  { uid: '6', name: 'Banana', storeUid: '3', unitId: '0', categoryId: null },
 ];
 
 export const StoreDataDB = [
@@ -16,6 +17,41 @@ export const StoreDataDB = [
   { uid: '3', name: 'REWE', location: 'CP' },
   { uid: '4', name: 'GLOBUS', location: '-' },
   { uid: '5', name: 'LIDL', location: '-' },
+];
+
+export const CategoryDummyData: Category[] = [
+  {
+    id: '1',
+    name: 'Veggies',
+    order: 0,
+    storeId: '2',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    id: '2',
+    name: 'Fruits',
+    order: 1,
+    storeId: '2',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    id: '3',
+    name: 'Mock Meat',
+    order: 2,
+    storeId: '2',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    id: '4',
+    name: 'Drinks',
+    order: 3,
+    storeId: '3',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
 ];
 
 export const dummyMeals: MealDataType[] = [
