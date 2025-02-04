@@ -29,7 +29,7 @@ const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
     useEffect(() => {
         setCurrentStoreTab(stores[0])
-    }, [stores, meals])
+    }, [stores])
 
     return (
         <AppContext.Provider value={{ categories, setCategories, selectedDay, setSelectedDay, currentStoreTab, setCurrentStoreTab, ingredientBlueprints, stores, meals, setIngredientBlueprints, setMeals, setStores, ingredientUnits, setIngredientUnits }}>

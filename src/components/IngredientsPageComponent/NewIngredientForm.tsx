@@ -50,7 +50,7 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
                 })}
             </select>
             {categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted).length != 0 && <select {...register('categoryId')}>
-                {categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted).map(item => <option key={item.id} value={item.id}>{item.name}</option>
+                {categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted).sort((a, b) => a.order - b.order).map(item => <option key={item.id} value={item.id}>{item.name}</option>
                 )}
             </select>}
 

@@ -15,9 +15,3 @@ export default class Category {
     this.deletedAt = deletedAt;
   }
 }
-
-// categories should show up in every store if they belong to that store and have not been deleted
-// under the categories we should see a list of the ingredients belonging to that category
-// null categories should show up last
-// update category button, changes the name
-// up and down arrows to change the order

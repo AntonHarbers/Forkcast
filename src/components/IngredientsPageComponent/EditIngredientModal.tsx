@@ -91,7 +91,7 @@ export default function EditIngredientModal({
                     )}
                 </select>
                 {categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).length != 0 && <select {...register('categoryId')} defaultValue={editingIngredientBlueprint.categoryId || categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted)[0].id}>
-                    {categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).map(item =>
+                    {categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).sort((a, b) => a.order - b.order).map(item =>
                         <option key={item.id} value={item.id} >{item.name}</option>
                     )}
                 </select>}
