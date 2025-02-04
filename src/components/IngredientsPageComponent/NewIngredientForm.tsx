@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import TextInputElement from "../FormComponents/TextInputElement"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
 import { useEffect } from "react"
@@ -11,14 +11,28 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
         register,
         handleSubmit,
         formState: { errors, isSubmitSuccessful },
-        reset
+        reset,
+        control,
+        setValue
     } = useForm<IngredientFormInputs>()
 
-    const { stores, ingredientUnits } = useAppContext()
+    const selectedStoreId = useWatch({ control, name: 'storeUid' })
+
+    const { stores, ingredientUnits, categories } = useAppContext()
 
     useEffect(() => {
         reset()
     }, [isSubmitSuccessful, reset])
+
+    useEffect(() => {
+        const categoriesOfStore = categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId)
+
+        if (categoriesOfStore.length === 0) {
+            setValue('categoryId', null)
+        } else {
+            setValue('categoryId', categoriesOfStore[0].id)
+        }
+    }, [setValue, selectedStoreId, categories])
 
     return (
         <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
@@ -35,6 +49,11 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
                     return <option key={item.uid} value={item.uid}>{item.name}</option>
                 })}
             </select>
+            {categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted).length != 0 && <select {...register('categoryId')}>
+                {categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted).sort((a, b) => a.order - b.order).map(item => <option key={item.id} value={item.id}>{item.name}</option>
+                )}
+            </select>}
+
             <SubmitInputElement submitInputText="Add New Ingredient" />
         </form>
     )

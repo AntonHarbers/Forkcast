@@ -1,13 +1,14 @@
+import Category from '../classes/CategoryData';
 import { IngredientBlueprintType, MealDataType } from '../types';
 
 // dummyData.ts
 export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
-  { uid: '1', name: 'Tomato', storeUid: '1', unitId: '0' },
-  { uid: '2', name: 'Cheese', storeUid: '1', unitId: '0' },
-  { uid: '3', name: 'Onion', storeUid: '2', unitId: '0' },
-  { uid: '4', name: 'Burger', storeUid: '2', unitId: '0' },
-  { uid: '5', name: 'Chips', storeUid: '3', unitId: '0' },
-  { uid: '6', name: 'Banana', storeUid: '3', unitId: '0' },
+  { uid: '1', name: 'Tomato', storeUid: '2', unitId: '0', categoryId: null },
+  { uid: '2', name: 'Cheese', storeUid: '2', unitId: '0', categoryId: null },
+  { uid: '3', name: 'Onion', storeUid: '2', unitId: '0', categoryId: '3' },
+  { uid: '4', name: 'Burger', storeUid: '2', unitId: '0', categoryId: null },
+  { uid: '5', name: 'Chips', storeUid: '3', unitId: '0', categoryId: null },
+  { uid: '6', name: 'Banana', storeUid: '3', unitId: '0', categoryId: null },
 ];
 
 export const StoreDataDB = [
@@ -18,6 +19,41 @@ export const StoreDataDB = [
   { uid: '5', name: 'LIDL', location: '-' },
 ];
 
+export const CategoryDummyData: Category[] = [
+  {
+    id: '1',
+    name: 'Veggies',
+    order: 0,
+    storeId: '2',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    id: '2',
+    name: 'Fruits',
+    order: 1,
+    storeId: '2',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    id: '3',
+    name: 'Mock Meat',
+    order: 2,
+    storeId: '2',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    id: '4',
+    name: 'Drinks',
+    order: 3,
+    storeId: '3',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+];
+
 export const dummyMeals: MealDataType[] = [
   {
     id: '1',
@@ -26,7 +62,7 @@ export const dummyMeals: MealDataType[] = [
       { id: '0', blueprintId: '1', amount: 2, bought: false },
       { id: '1', blueprintId: '2', amount: 1, bought: false },
     ],
-    date: 'Thu Jan 30 2025',
+    date: new Date().toDateString(),
     order: 0,
     finished: false,
   },
@@ -37,7 +73,7 @@ export const dummyMeals: MealDataType[] = [
       { id: '4', blueprintId: '3', amount: 2, bought: false },
       { id: '3', blueprintId: '2', amount: 2, bought: false },
     ],
-    date: 'Thu Jan 30 2025',
+    date: new Date().toDateString(),
     order: 1,
     finished: true,
   },
@@ -49,7 +85,7 @@ export const dummyMeals: MealDataType[] = [
       { id: '6', blueprintId: '6', amount: 4, bought: false },
       { id: '7', blueprintId: '2', amount: 5, bought: true },
     ],
-    date: 'Sat Feb 01 2025',
+    date: new Date().toDateString(),
     order: 1,
     finished: false,
   },
@@ -60,7 +96,7 @@ export const dummyMeals: MealDataType[] = [
       { id: '8', blueprintId: '1', amount: 2, bought: false },
       { id: '9', blueprintId: '2', amount: 1, bought: true },
     ],
-    date: 'Sat Feb 01 2025',
+    date: new Date().toDateString(),
     order: 0,
     finished: false,
   },

@@ -28,7 +28,6 @@ function MealPlanPage() {
       highest + 1,
       false,
     );
-    console.log(ingredients)
     setMeals([...meals, newMeal]);
   };
 

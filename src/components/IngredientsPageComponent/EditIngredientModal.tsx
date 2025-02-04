@@ -1,4 +1,4 @@
-import { SubmitHandler, useForm } from "react-hook-form"
+import { SubmitHandler, useForm, useWatch } from "react-hook-form"
 import { IngredientFormInputs } from "../../types"
 import { useEffect } from "react"
 import IngredientBlueprint from "../../classes/IngredientBlueprint"
@@ -13,7 +13,7 @@ export default function EditIngredientModal({
     setEditingIngredientBlueprint: React.Dispatch<React.SetStateAction<IngredientBlueprint | null>>
 }) {
 
-    const { ingredientUnits, ingredientBlueprints, setIngredientBlueprints, stores } = useAppContext()
+    const { ingredientUnits, ingredientBlueprints, setIngredientBlueprints, stores, categories } = useAppContext()
 
     const {
         register,
@@ -21,7 +21,10 @@ export default function EditIngredientModal({
         formState: { errors, isSubmitSuccessful },
         setValue,
         reset,
+        control
     } = useForm<IngredientFormInputs>()
+
+    const selectedStoreId = useWatch({ control, name: "storeUid" })
 
     const OnDeleteIngredientBlueprintBtnClick = () => {
         if (editingIngredientBlueprint) {
@@ -33,8 +36,9 @@ export default function EditIngredientModal({
 
     const SubmitUpdateIngredientBlueprintForm: SubmitHandler<IngredientFormInputs> = (data) => {
         if (editingIngredientBlueprint) {
+            if (!data.categoryId) data.categoryId = null
             const updatedIngredientBlueprints = ingredientBlueprints.map(blueprint => {
-                return blueprint.uid === editingIngredientBlueprint.uid ? new IngredientBlueprint(blueprint.uid, data.name, data.storeUid, data.unitId) : blueprint
+                return blueprint.uid === editingIngredientBlueprint.uid ? new IngredientBlueprint(blueprint.uid, data.name, data.storeUid, data.unitId, data.categoryId) : blueprint
             })
             setIngredientBlueprints(updatedIngredientBlueprints)
         }
@@ -50,6 +54,19 @@ export default function EditIngredientModal({
     }, [setValue, editingIngredientBlueprint])
 
     useEffect(() => {
+        const categoriesOfSelectedStore = categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId)
+        if (categoriesOfSelectedStore.length === 0) {
+            setValue('categoryId', null)
+        } else {
+            if (editingIngredientBlueprint && editingIngredientBlueprint.categoryId) {
+                setValue('categoryId', editingIngredientBlueprint.categoryId)
+            } else {
+                setValue('categoryId', categoriesOfSelectedStore[0].id)
+            }
+        }
+    }, [categories, setValue, selectedStoreId, editingIngredientBlueprint])
+
+    useEffect(() => {
         reset()
     }, [isSubmitSuccessful, reset])
 
@@ -63,19 +80,27 @@ export default function EditIngredientModal({
             <form onSubmit={handleSubmit(SubmitUpdateIngredientBlueprintForm)} className="flex flex-col gap-2 p-2">
                 <TextInputElement placeholder={editingIngredientBlueprint.name} register={register} registerName="name" required={true} />
                 {errors.name && <span>This field is required!</span>}
-                <select {...register('unitId')}>
+                <select {...register('unitId')} defaultValue={editingIngredientBlueprint.unitId}>
                     {ingredientUnits.map(item => !item.isDeleted &&
-                        item.id === editingIngredientBlueprint.unitId ? <option key={item.id} value={item.id} selected>{item.name}</option> : <option key={item.id} value={item.id}>{item.name}</option>
+                        <option key={item.id} value={item.id}>{item.name}</option>
                     )}
                 </select>
-                <select {...register('storeUid')}>
-                    {stores.map(item => {
-                        return item.uid === editingIngredientBlueprint.storeUid ? <option key={item.uid} value={item.uid} selected>{item.name}</option> : <option key={item.uid} value={item.uid}>{item.name}</option>
-                    })}
+                <select {...register('storeUid')} defaultValue={editingIngredientBlueprint.storeUid}>
+                    {stores.map(item =>
+                        <option key={item.uid} value={item.uid} >{item.name}</option>
+                    )}
                 </select>
+                {categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).length != 0 && <select {...register('categoryId')} defaultValue={editingIngredientBlueprint.categoryId || categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted)[0].id}>
+                    {categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).sort((a, b) => a.order - b.order).map(item =>
+                        <option key={item.id} value={item.id} >{item.name}</option>
+                    )}
+                </select>}
                 <input type="submit" />
             </form>
             <button onClick={() => OnDeleteIngredientBlueprintBtnClick()}>DELETE INGREDIENT BLUEPRINT</button>
         </div>
     )
 }
+
+
+// when selecting a new store only use first index if our category doesnt match any

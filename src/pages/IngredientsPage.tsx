@@ -11,6 +11,7 @@ type Inputs = {
     name: string,
     storeUid: string,
     unitId: string,
+    categoryId: string | null
 }
 
 
@@ -18,7 +19,10 @@ export default function IngredientsPage() {
     const { ingredientBlueprints, setIngredientBlueprints } = useAppContext()
     const [editingIngredientBlueprint, setEditingIngredientBlueprint] = useState<IngredientBlueprint | null>(null)
     const HandleNewIngredientFormSubmit: SubmitHandler<Inputs> = (data) => {
-        setIngredientBlueprints([...ingredientBlueprints, new IngredientBlueprint(v4(), data.name, data.storeUid, data.unitId)])
+        if (!data.categoryId) data.categoryId = null
+        const newIngredient = new IngredientBlueprint(v4(), data.name, data.storeUid, data.unitId, data.categoryId)
+        setIngredientBlueprints([...ingredientBlueprints, newIngredient])
+
     }
 
     return (

@@ -28,9 +28,13 @@
 [✔] when opening shop tab:
 [✔] Ingredients that have been added to the meals should appear in shopping list (with their appropriate amounts), summed up in a way where multiple meal ingredients are added together amount wise
 [✔] Checkbox to toggle bought/not bought
-[] CRUD FOR UNIT TYPES?
-[] Sort the ingredients by area in shop (CRUD FOR AREA?)
+[✔] CRUD FOR UNIT TYPES?
+[✔] Sort the ingredients by area in shop (CRUD FOR AREA?)
 [] Rework data to be soft deleted instead of hard (isDeleted flag with deletedAt timestamp, deleted items no longer show up or should be pulled from api)
+[] reducer for global state
+[] virtualize data (ask gpt)
+[] make sure not to mutate date but to duplicate it with ... operator wherever needed
+[] useMemo implementation on anything that requires heavy compute
 [] refactor everything
 [] ready it for API intregration with dummy api calls and optimistic updates and loading states working
 [] Think about tying everything to certain users and set up clerk maybe
@@ -49,3 +53,5 @@
 [] Backend API with Express or Appwrite server functions?
 
 ## Notes:
+
+Sort the dropdown of the categories by their order #
