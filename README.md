@@ -31,7 +31,7 @@
 [✔] CRUD FOR UNIT TYPES?
 [✔] Sort the ingredients by area in shop (CRUD FOR AREA?)
 [✔] reducer for global state
-[] Rework data to be soft deleted instead of hard (isDeleted flag with deletedAt timestamp, deleted items no longer show up or should be pulled from api) / put this in our reducer
+[✔] Rework data to be soft deleted instead of hard (isDeleted flag with deletedAt timestamp, deleted items no longer show up or should be pulled from api) / put this in our reducer
 [✔] Soft Delete - Categories
 [✔] Soft Delete - IngredientBlueprints
 [✔] Soft Delete - Shops
