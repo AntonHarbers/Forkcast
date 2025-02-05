@@ -28,8 +28,7 @@ export default function EditIngredientModal({
 
     const OnDeleteIngredientBlueprintBtnClick = () => {
         if (editingIngredientBlueprint) {
-            const newIngredientBlueprintData = state.ingredientBlueprints.filter(item => item.uid != editingIngredientBlueprint.uid)
-            dispatch({ type: "SET_INGREDIENT_BLUEPRINTS", payload: newIngredientBlueprintData })
+            dispatch({ type: "DELETE_INGREDIENT_BLUEPRINT", payload: editingIngredientBlueprint.uid })
         }
         setEditingIngredientBlueprint(null)
     }
@@ -38,7 +37,7 @@ export default function EditIngredientModal({
         if (editingIngredientBlueprint) {
             if (!data.categoryId) data.categoryId = null
             const updatedIngredientBlueprints = state.ingredientBlueprints.map(blueprint => {
-                return blueprint.uid === editingIngredientBlueprint.uid ? new IngredientBlueprint(blueprint.uid, data.name, data.storeUid, data.unitId, data.categoryId) : blueprint
+                return blueprint.uid === editingIngredientBlueprint.uid ? new IngredientBlueprint(blueprint.uid, data.name, data.storeUid, data.unitId, data.categoryId, blueprint.isDeleted, blueprint.deletedAt) : blueprint
             })
             dispatch({ type: "SET_INGREDIENT_BLUEPRINTS", payload: updatedIngredientBlueprints })
         }
@@ -86,7 +85,7 @@ export default function EditIngredientModal({
                     )}
                 </select>
                 <select {...register('storeUid')} defaultValue={editingIngredientBlueprint.storeUid}>
-                    {state.stores.map(item =>
+                    {state.stores.filter(item => !item.isDeleted).map(item =>
                         <option key={item.uid} value={item.uid} >{item.name}</option>
                     )}
                 </select>

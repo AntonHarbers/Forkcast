@@ -19,7 +19,7 @@ export default function NewShopForm() {
     const { dispatch, state } = useAppContext()
 
     const SubmitNewShopForm: SubmitHandler<ShopFormInputType> = (data) => {
-        const newStore = new StoreData(v4(), data.name, data.location)
+        const newStore = new StoreData(v4(), data.name, data.location, false, new Date().toDateString())
         dispatch({ type: "SET_STORES", payload: [...state.stores, newStore] })
     }
 

@@ -46,8 +46,6 @@ export default function DailyViewMeals({
     dispatch({ type: "SET_MEALS", payload: newMeals })
   }
 
-
-
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [filteredIngredients, setFilteredIngredients] = useState<IngredientBlueprint[]>([])
   const HandleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,15 +57,12 @@ export default function DailyViewMeals({
     }
 
     const regex = new RegExp(e.target.value, "i")
-    const filtered = state.ingredientBlueprints.filter(ingredient => regex.test(ingredient.name))
+    const filtered = state.ingredientBlueprints.filter(ingredient => regex.test(ingredient.name) && !ingredient.isDeleted)
     setFilteredIngredients(filtered)
   }
 
   const DeleteMeal = () => {
-    const newMeals = state.meals.filter(mealData => {
-      return mealData.uid != meal.uid
-    })
-    dispatch({ type: "SET_MEALS", payload: newMeals })
+    dispatch({ type: "DELETE_MEAL", payload: meal.uid })
   }
 
   const EditMeal = () => {
@@ -86,7 +81,9 @@ export default function DailyViewMeals({
       data.ingredients,
       meal.date,
       meal.order,
-      meal.finished
+      meal.finished,
+      meal.isDeleted,
+      meal.deletedAt
     );
 
     const UpdatedMeals = state.meals.map(mealData => {
@@ -167,7 +164,7 @@ export default function DailyViewMeals({
               })}
             </div>
 
-            <button onClick={DeleteMeal} className="bg-red-300 p-1 text-lg rounded-sm hover:bg-red-400 active:bg-red-500">Delete</button>
+            <button onClick={DeleteMeal} type="button" className="bg-red-300 p-1 text-lg rounded-sm hover:bg-red-400 active:bg-red-500">Delete</button>
             <div className="flex flex-col">
               {prevId && <button type="button" onClick={ShiftMealDown}>Down</button>}
               {nextId && <button type="button" onClick={ShiftMealUp}>Up</button>}

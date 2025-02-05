@@ -27,6 +27,8 @@ function MealPlanPage() {
       newDay.toDateString(),
       highest + 1,
       false,
+      false,
+      new Date().toDateString()
     );
     dispatch({ type: "SET_MEALS", payload: [...state.meals, newMeal] })
   };

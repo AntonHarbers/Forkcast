@@ -27,15 +27,15 @@ const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     useEffect(() => {
         dispatch({
             type: "SET_INGREDIENT_BLUEPRINTS",
-            payload: IngredientBlueprintDataDB.map(item => new IngredientBlueprint(item.uid, item.name, item.storeUid, "0", item.categoryId))
+            payload: IngredientBlueprintDataDB.map(item => new IngredientBlueprint(item.uid, item.name, item.storeUid, "0", item.categoryId, false, new Date().toDateString()))
         })
         dispatch({
             type: "SET_STORES",
-            payload: StoreDataDB.map(item => new StoreData(item.uid, item.name, item.location))
+            payload: StoreDataDB.map(item => new StoreData(item.uid, item.name, item.location, false, new Date().toDateString()))
         })
         dispatch({
             type: "SET_MEALS",
-            payload: dummyMeals.map(item => new MealData(item.id, item.name, item.ingredients, item.date, item.order, item.finished))
+            payload: dummyMeals.map(item => new MealData(item.id, item.name, item.ingredients, item.date, item.order, item.finished, false, new Date().toDateString()))
         })
         dispatch({
             type: "SET_INGREDIENT_UNITS",
@@ -53,6 +53,10 @@ const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             dispatch({ type: "SET_CURRENT_STORE_TAB", payload: state.stores[0] })
         }
     }, [state.stores, state.currentStoreTab])
+
+    useEffect(() => {
+        console.log(state)
+    }, [state])
 
     return (
         <AppContext.Provider value={{ state, dispatch }}>

@@ -45,7 +45,7 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
                 )}
             </select>
             <select {...register('storeUid')}>
-                {state.stores.map(item => {
+                {state.stores.filter(item => !item.isDeleted).map(item => {
                     return <option key={item.uid} value={item.uid}>{item.name}</option>
                 })}
             </select>

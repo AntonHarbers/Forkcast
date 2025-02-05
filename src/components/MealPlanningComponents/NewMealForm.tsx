@@ -47,7 +47,7 @@ export default function NewMealForm({
     }
 
     const regex = new RegExp(e.target.value, "i")
-    const filtered = state.ingredientBlueprints.filter(ingredient => regex.test(ingredient.name))
+    const filtered = state.ingredientBlueprints.filter(ingredient => regex.test(ingredient.name) && !ingredient.isDeleted)
     setFilteredIngredients(filtered)
   }
 

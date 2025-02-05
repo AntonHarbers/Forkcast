@@ -57,16 +57,16 @@ export default function EditStoreModal({ editingStore, setEditingStore, }: { edi
 
     const OnDeleteStoreBtnClick = () => {
         if (editingStore) {
-            const newStoreData = state.stores.filter(item => item.name != editingStore.name)
-            dispatch({ type: "SET_STORES", payload: newStoreData })
+            dispatch({ type: "DELETE_STORE", payload: editingStore.uid })
         }
         setEditingStore(null)
+        dispatch({ type: "SET_CURRENT_STORE_TAB", payload: state.stores[0] })
     }
 
     const SubmitUpdateStoreForm: SubmitHandler<Inputs> = (data) => {
         if (editingStore) {
             const updatedStores = state.stores.map(store => {
-                return store.name === editingStore.name ? new StoreData(store.uid, data.name, data.location) : store
+                return store.name === editingStore.name ? new StoreData(store.uid, data.name, data.location, editingStore.isDeleted, editingStore.deletedAt) : store
             })
             dispatch({ type: "SET_STORES", payload: updatedStores })
         }
@@ -85,15 +85,7 @@ export default function EditStoreModal({ editingStore, setEditingStore, }: { edi
     }
 
     const RemoveCategory = (categoryId: string) => {
-        const newCategories = state.categories.map(item => {
-            if (item.id === categoryId) {
-                const updatedCategory = new Category(item.id, item.name, item.order, item.storeId, true, new Date().toDateString())
-                return updatedCategory
-            }
-
-            return item
-        })
-        dispatch({ type: 'SET_CATEGORIES', payload: newCategories })
+        dispatch({ type: "DELETE_CATEGORY", payload: categoryId })
     }
 
     useEffect(() => {

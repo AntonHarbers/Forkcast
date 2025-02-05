@@ -18,7 +18,7 @@ export default function ShoppingListPage() {
     const shoppingList: ShoppingListItemType = useMemo(() => {
         const shopIngredients: ShoppingListItemType = { BlueprintIngredients: new Map() }
 
-        state.meals.forEach(meal => {
+        state.meals.filter(meal => !meal.isDeleted).forEach(meal => {
             const mealDate = new Date(meal.date)
             const currentDate = new Date()
             currentDate.setHours(0, 0, 0, 0) // Normalizes the date for comparison
@@ -41,8 +41,6 @@ export default function ShoppingListPage() {
     }, [state.currentStoreTab, state.ingredientBlueprints, state.meals])
 
     const ToggleMealIngredientsBought = (checked: boolean, blueprintId: string) => {
-        // find every ingredient in this array
-        // set its bought to the new value
         const newMeals = state.meals.map(meal => ({
             ...meal,
             ingredients: meal.ingredients.map(ingredientDataItem => {
@@ -78,7 +76,7 @@ export default function ShoppingListPage() {
                 {/* Shop Tabs */}
                 <div>
                     <div className="flex bg-slate-200 justify-center">
-                        {state.stores.map(item => <div key={item.uid}><StoreTabItem item={item} /></div>)}
+                        {state.stores.filter(item => !item.isDeleted).map(item => <div key={item.uid}><StoreTabItem item={item} /></div>)}
                     </div>
                 </div>
                 <EditStoreModal editingStore={editingStore} setEditingStore={setEditingStore} />

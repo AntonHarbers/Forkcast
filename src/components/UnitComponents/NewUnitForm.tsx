@@ -8,11 +8,11 @@ import TextInputElement from "../FormComponents/TextInputElement"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
 
 export default function NewUnitForm() {
-    const { setIngredientUnits, ingredientUnits } = useAppContext()
+    const { state, dispatch } = useAppContext()
 
     const HandleNewUnitSubmit: SubmitHandler<IngredientUnitFormInputType> = (data) => {
         const newUnit = new Unit(v4(), data.name, false, new Date().toDateString())
-        setIngredientUnits([...ingredientUnits, newUnit])
+        dispatch({ type: "SET_INGREDIENT_UNITS", payload: [...state.ingredientUnits, newUnit] })
     }
 
     const {

@@ -30,12 +30,20 @@
 [✔] Checkbox to toggle bought/not bought
 [✔] CRUD FOR UNIT TYPES?
 [✔] Sort the ingredients by area in shop (CRUD FOR AREA?)
-[] reducer for global state
-[] Rework data to be soft deleted instead of hard (isDeleted flag with deletedAt timestamp, deleted items no longer show up or should be pulled from api)
-[] virtualize data (ask gpt)
+[✔] reducer for global state
+[] Rework data to be soft deleted instead of hard (isDeleted flag with deletedAt timestamp, deleted items no longer show up or should be pulled from api) / put this in our reducer
+[✔] Soft Delete - Categories
+[✔] Soft Delete - IngredientBlueprints
+[✔] Soft Delete - Shops
+[✔] Soft Delete - Meals
+[✔] Soft Delete - Units
+
 [] make sure not to mutate date but to duplicate it with ... operator wherever needed
 [] useMemo implementation on anything that requires heavy compute
+[] virtualize data (ask gpt)
 [] refactor everything
+[] Move all types into types.ts
+[] use classes as types wherever possible
 [] ready it for API intregration with dummy api calls and optimistic updates and loading states working
 [] Think about tying everything to certain users and set up clerk maybe
 
