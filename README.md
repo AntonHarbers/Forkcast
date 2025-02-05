@@ -30,8 +30,8 @@
 [✔] Checkbox to toggle bought/not bought
 [✔] CRUD FOR UNIT TYPES?
 [✔] Sort the ingredients by area in shop (CRUD FOR AREA?)
-[] Rework data to be soft deleted instead of hard (isDeleted flag with deletedAt timestamp, deleted items no longer show up or should be pulled from api)
 [] reducer for global state
+[] Rework data to be soft deleted instead of hard (isDeleted flag with deletedAt timestamp, deleted items no longer show up or should be pulled from api)
 [] virtualize data (ask gpt)
 [] make sure not to mutate date but to duplicate it with ... operator wherever needed
 [] useMemo implementation on anything that requires heavy compute

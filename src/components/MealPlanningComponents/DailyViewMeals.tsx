@@ -21,7 +21,7 @@ export default function DailyViewMeals({
   prevId: string | null,
   nextId: string | null
 }) {
-  const { ingredientBlueprints, setMeals, meals, ingredientUnits } = useAppContext()
+  const { state, dispatch } = useAppContext()
   const [editing, setEditing] = useState(false)
 
   const {
@@ -34,7 +34,7 @@ export default function DailyViewMeals({
   const { fields, append, remove } = useFieldArray({ control, name: "ingredients" })
 
   const ToggleMealDone = () => {
-    const newMeals = meals.map(mealData => {
+    const newMeals = state.meals.map(mealData => {
       if (mealData.uid === meal.uid) {
         const copy = meal
         copy.finished = !meal.finished
@@ -43,8 +43,7 @@ export default function DailyViewMeals({
         return mealData
       }
     })
-
-    setMeals(newMeals)
+    dispatch({ type: "SET_MEALS", payload: newMeals })
   }
 
 
@@ -60,15 +59,15 @@ export default function DailyViewMeals({
     }
 
     const regex = new RegExp(e.target.value, "i")
-    const filtered = ingredientBlueprints.filter(ingredient => regex.test(ingredient.name))
+    const filtered = state.ingredientBlueprints.filter(ingredient => regex.test(ingredient.name))
     setFilteredIngredients(filtered)
   }
 
   const DeleteMeal = () => {
-    const newMeals = meals.filter(mealData => {
+    const newMeals = state.meals.filter(mealData => {
       return mealData.uid != meal.uid
     })
-    setMeals(newMeals)
+    dispatch({ type: "SET_MEALS", payload: newMeals })
   }
 
   const EditMeal = () => {
@@ -90,23 +89,23 @@ export default function DailyViewMeals({
       meal.finished
     );
 
-    const UpdatedMeals = meals.map(mealData => {
+    const UpdatedMeals = state.meals.map(mealData => {
       if (mealData.uid === meal.uid) {
         return newMeal
       }
       return mealData
     })
 
-    setMeals(UpdatedMeals);
+    dispatch({ type: "SET_MEALS", payload: UpdatedMeals })
   }
 
   const ShiftMealUp = () => {
-    const nextMeal = meals.find(mealData => mealData.uid === nextId)
+    const nextMeal = state.meals.find(mealData => mealData.uid === nextId)
     if (!nextMeal) return
     const savedOrder = nextMeal.order
     nextMeal.order = meal.order
     meal.order = savedOrder
-    const newMeals = meals.map(mealData => {
+    const newMeals = state.meals.map(mealData => {
       if (mealData.uid === nextId) {
         return nextMeal
       } else if (mealData.uid === meal.uid) {
@@ -116,16 +115,16 @@ export default function DailyViewMeals({
       }
     })
 
-    setMeals(newMeals)
+    dispatch({ type: "SET_MEALS", payload: newMeals })
   }
 
   const ShiftMealDown = () => {
-    const prevMeal = meals.find(mealData => mealData.uid === prevId)
+    const prevMeal = state.meals.find(mealData => mealData.uid === prevId)
     if (!prevMeal) return
     const savedOrder = prevMeal.order
     prevMeal.order = meal.order
     meal.order = savedOrder
-    const newMeals = meals.map(mealData => {
+    const newMeals = state.meals.map(mealData => {
       if (mealData.uid === prevId) {
         return prevMeal
       } else if (mealData.uid === meal.uid) {
@@ -135,7 +134,7 @@ export default function DailyViewMeals({
       }
     })
 
-    setMeals(newMeals)
+    dispatch({ type: "SET_MEALS", payload: newMeals })
   }
 
   useEffect(() => {
@@ -177,11 +176,11 @@ export default function DailyViewMeals({
           </div>
           {fields.map((field, index) => (
             <div key={field.id} className="flex justify-between gap-2">
-              <div className="text-lg">{ingredientBlueprints.find(item => item.uid === field.blueprintId)?.name || "Name Err"}</div>
+              <div className="text-lg">{state.ingredientBlueprints.find(item => item.uid === field.blueprintId)?.name || "Name Err"}</div>
               <input hidden {...register(`ingredients.${index}.blueprintId`)} />
               <div className="flex gap-1">
                 <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`)} />
-                <div>{ingredientUnits.find(unitItem => unitItem.id === ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
+                <div>{state.ingredientUnits.find(unitItem => unitItem.id === state.ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
               </div>
               <button className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1" type="button" onClick={() => remove(index)}>
                 Remove
@@ -201,10 +200,10 @@ export default function DailyViewMeals({
         {meal.ingredients.map(ingredient => {
           return (
             <div key={ingredient.id} className="flex justify-between gap-2">
-              <div className="text-lg">{ingredientBlueprints.find(item => item.uid === ingredient.blueprintId)?.name || "Name Err"}</div>
+              <div className="text-lg">{state.ingredientBlueprints.find(item => item.uid === ingredient.blueprintId)?.name || "Name Err"}</div>
               <div className="flex gap-1">
                 <div className="text-lg font-bold">{ingredient.amount}</div>
-                <div className="text-lg">{ingredientUnits.find(unit => unit.id === ingredientBlueprints.find(item => item.uid === ingredient.blueprintId)?.unitId)?.name || "Unit Err"}</div>
+                <div className="text-lg">{state.ingredientUnits.find(unit => unit.id === state.ingredientBlueprints.find(item => item.uid === ingredient.blueprintId)?.unitId)?.name || "Unit Err"}</div>
               </div>
             </div>
           )

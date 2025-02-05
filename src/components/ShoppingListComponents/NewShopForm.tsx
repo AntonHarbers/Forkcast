@@ -5,9 +5,10 @@ import SubmitInputElement from "../FormComponents/SubmitInputElement";
 import { useEffect } from "react";
 import { v4 } from "uuid";
 import { ShopFormInputType } from "../../types";
+import { useAppContext } from "../../context/useAppContext";
 
 
-export default function NewShopForm({ storeData, setStoreData }: { storeData: [] | StoreData[], setStoreData: React.Dispatch<React.SetStateAction<[] | StoreData[]>> }) {
+export default function NewShopForm() {
     const {
         register,
         handleSubmit,
@@ -15,9 +16,11 @@ export default function NewShopForm({ storeData, setStoreData }: { storeData: []
         reset
     } = useForm<ShopFormInputType>();
 
+    const { dispatch, state } = useAppContext()
+
     const SubmitNewShopForm: SubmitHandler<ShopFormInputType> = (data) => {
         const newStore = new StoreData(v4(), data.name, data.location)
-        setStoreData([...storeData, newStore])
+        dispatch({ type: "SET_STORES", payload: [...state.stores, newStore] })
     }
 
     useEffect(() => {

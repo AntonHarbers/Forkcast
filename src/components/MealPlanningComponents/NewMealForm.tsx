@@ -29,7 +29,7 @@ export default function NewMealForm({
 
   const { fields, append, remove } = useFieldArray({ control, name: "ingredients" })
 
-  const { ingredientBlueprints, ingredientUnits } = useAppContext()
+  const { state } = useAppContext()
 
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [filteredIngredients, setFilteredIngredients] = useState<IngredientBlueprint[]>([])
@@ -47,7 +47,7 @@ export default function NewMealForm({
     }
 
     const regex = new RegExp(e.target.value, "i")
-    const filtered = ingredientBlueprints.filter(ingredient => regex.test(ingredient.name))
+    const filtered = state.ingredientBlueprints.filter(ingredient => regex.test(ingredient.name))
     setFilteredIngredients(filtered)
   }
 
@@ -78,10 +78,10 @@ export default function NewMealForm({
         </div>
         {fields.map((field, index) => (
           <div className="flex items-center gap-2" key={field.id}>
-            <div className="w-[50%]">{ingredientBlueprints.find(item => item.uid === field.blueprintId)?.name}</div>
+            <div className="w-[50%]">{state.ingredientBlueprints.find(item => item.uid === field.blueprintId)?.name}</div>
             <input hidden {...register(`ingredients.${index}.blueprintId`)} />
             <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`, { valueAsNumber: true })} />
-            <div>{ingredientUnits.find(unitItem => unitItem.id === ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
+            <div>{state.ingredientUnits.find(unitItem => unitItem.id === state.ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
             <button className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1" type="button" onClick={() => remove(index)}>
               Remove
             </button>
