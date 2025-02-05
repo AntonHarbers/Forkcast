@@ -6,21 +6,21 @@ import { useAppContext } from "../../context/useAppContext";
 import TextInputElement from "../FormComponents/TextInputElement";
 import SubmitInputElement from "../FormComponents/SubmitInputElement";
 
-export default function UnitListItem({ unit, HandleUnitDelete }: { unit: Unit, HandleUnitDelete: (unitId: string) => void }) {
+export default function UnitListItem({ unit }: { unit: Unit }) {
 
     const [isEditing, setIsEditing] = useState<boolean>(false)
 
     const { handleSubmit, register, formState: { errors, isSubmitSuccessful }, reset } = useForm<IngredientUnitFormInputType>()
 
-    const { ingredientUnits, setIngredientUnits } = useAppContext()
+    const { state, dispatch } = useAppContext()
 
     const HandleEditToggle = () => {
         setIsEditing(true)
     }
 
     const HandleSubmitUpdateUnit: SubmitHandler<IngredientUnitFormInputType> = (data) => {
-        const newUnits = ingredientUnits.map(unitItem => unitItem.id === unit.id ? new Unit(unit.id, data.name, unit.isDeleted, unit.deletedAt) : unitItem)
-        setIngredientUnits(newUnits)
+        const newUnits = state.ingredientUnits.map(unitItem => unitItem.id === unit.id ? new Unit(unit.id, data.name, unit.isDeleted, unit.deletedAt) : unitItem)
+        dispatch({ type: "SET_INGREDIENT_UNITS", payload: newUnits })
         setIsEditing(false)
     }
 
@@ -32,7 +32,7 @@ export default function UnitListItem({ unit, HandleUnitDelete }: { unit: Unit, H
         <form className="flex gap-2" onSubmit={handleSubmit(HandleSubmitUpdateUnit)}>
             <TextInputElement placeholder="Unit Name..." register={register} registerName="name" required defaultValue={unit.name} />
             {errors.name && <span>This field is required!</span>}
-            <button type='button' onClick={() => HandleUnitDelete(unit.id)}>Delete</button>
+            <button type='button' onClick={() => dispatch({ type: "DELETE_INGREDIENT_UNIT", payload: unit.id })}>Delete</button>
             <SubmitInputElement submitInputText="Update Unit" />
         </form>
     ) : (

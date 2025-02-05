@@ -31,7 +31,7 @@ export default function DailyView({
 
       {/* Daily-view Meals */}
       <div>
-        {dailyMeals.map((mealItem, index) => {
+        {dailyMeals.filter(item => !item.isDeleted).map((mealItem, index) => {
           return <DailyViewMeals key={mealItem.uid} meal={mealItem} prevId={dailyMeals[index - 1] ? dailyMeals[index - 1].uid : null} nextId={dailyMeals[index + 1] ? dailyMeals[index + 1].uid : null} />;
         })}
       </div>

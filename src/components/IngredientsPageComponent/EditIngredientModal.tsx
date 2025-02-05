@@ -13,7 +13,7 @@ export default function EditIngredientModal({
     setEditingIngredientBlueprint: React.Dispatch<React.SetStateAction<IngredientBlueprint | null>>
 }) {
 
-    const { ingredientUnits, ingredientBlueprints, setIngredientBlueprints, stores, categories } = useAppContext()
+    const { dispatch, state } = useAppContext()
 
     const {
         register,
@@ -28,8 +28,7 @@ export default function EditIngredientModal({
 
     const OnDeleteIngredientBlueprintBtnClick = () => {
         if (editingIngredientBlueprint) {
-            const newIngredientBlueprintData = ingredientBlueprints.filter(item => item.uid != editingIngredientBlueprint.uid)
-            setIngredientBlueprints(newIngredientBlueprintData)
+            dispatch({ type: "DELETE_INGREDIENT_BLUEPRINT", payload: editingIngredientBlueprint.uid })
         }
         setEditingIngredientBlueprint(null)
     }
@@ -37,10 +36,10 @@ export default function EditIngredientModal({
     const SubmitUpdateIngredientBlueprintForm: SubmitHandler<IngredientFormInputs> = (data) => {
         if (editingIngredientBlueprint) {
             if (!data.categoryId) data.categoryId = null
-            const updatedIngredientBlueprints = ingredientBlueprints.map(blueprint => {
-                return blueprint.uid === editingIngredientBlueprint.uid ? new IngredientBlueprint(blueprint.uid, data.name, data.storeUid, data.unitId, data.categoryId) : blueprint
+            const updatedIngredientBlueprints = state.ingredientBlueprints.map(blueprint => {
+                return blueprint.uid === editingIngredientBlueprint.uid ? new IngredientBlueprint(blueprint.uid, data.name, data.storeUid, data.unitId, data.categoryId, blueprint.isDeleted, blueprint.deletedAt) : blueprint
             })
-            setIngredientBlueprints(updatedIngredientBlueprints)
+            dispatch({ type: "SET_INGREDIENT_BLUEPRINTS", payload: updatedIngredientBlueprints })
         }
         setEditingIngredientBlueprint(null)
     }
@@ -54,7 +53,7 @@ export default function EditIngredientModal({
     }, [setValue, editingIngredientBlueprint])
 
     useEffect(() => {
-        const categoriesOfSelectedStore = categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId)
+        const categoriesOfSelectedStore = state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId)
         if (categoriesOfSelectedStore.length === 0) {
             setValue('categoryId', null)
         } else {
@@ -64,7 +63,7 @@ export default function EditIngredientModal({
                 setValue('categoryId', categoriesOfSelectedStore[0].id)
             }
         }
-    }, [categories, setValue, selectedStoreId, editingIngredientBlueprint])
+    }, [state.categories, setValue, selectedStoreId, editingIngredientBlueprint])
 
     useEffect(() => {
         reset()
@@ -81,17 +80,17 @@ export default function EditIngredientModal({
                 <TextInputElement placeholder={editingIngredientBlueprint.name} register={register} registerName="name" required={true} />
                 {errors.name && <span>This field is required!</span>}
                 <select {...register('unitId')} defaultValue={editingIngredientBlueprint.unitId}>
-                    {ingredientUnits.map(item => !item.isDeleted &&
+                    {state.ingredientUnits.map(item => !item.isDeleted &&
                         <option key={item.id} value={item.id}>{item.name}</option>
                     )}
                 </select>
                 <select {...register('storeUid')} defaultValue={editingIngredientBlueprint.storeUid}>
-                    {stores.map(item =>
+                    {state.stores.filter(item => !item.isDeleted).map(item =>
                         <option key={item.uid} value={item.uid} >{item.name}</option>
                     )}
                 </select>
-                {categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).length != 0 && <select {...register('categoryId')} defaultValue={editingIngredientBlueprint.categoryId || categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted)[0].id}>
-                    {categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).sort((a, b) => a.order - b.order).map(item =>
+                {state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).length != 0 && <select {...register('categoryId')} defaultValue={editingIngredientBlueprint.categoryId || state.categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted)[0].id}>
+                    {state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).sort((a, b) => a.order - b.order).map(item =>
                         <option key={item.id} value={item.id} >{item.name}</option>
                     )}
                 </select>}

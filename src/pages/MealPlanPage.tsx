@@ -7,7 +7,7 @@ import { useAppContext } from "../context/useAppContext";
 import { MealIngredientType } from "../types";
 
 function MealPlanPage() {
-  const { meals, setMeals, selectedDay, setSelectedDay } = useAppContext()
+  const { state, dispatch } = useAppContext()
 
   const AddMealHandler = (
     newDay: Date,
@@ -18,7 +18,7 @@ function MealPlanPage() {
     // get the highest order of this day
     let highest = 0;
 
-    meals.filter(meal => meal.date === selectedDay.toDateString()).forEach(meal => highest = Math.max(highest, meal.order))
+    state.meals.filter(meal => meal.date === state.selectedDay.toDateString()).forEach(meal => highest = Math.max(highest, meal.order))
 
     const newMeal = new MealData(
       v4(),
@@ -27,8 +27,10 @@ function MealPlanPage() {
       newDay.toDateString(),
       highest + 1,
       false,
+      false,
+      new Date().toDateString()
     );
-    setMeals([...meals, newMeal]);
+    dispatch({ type: "SET_MEALS", payload: [...state.meals, newMeal] })
   };
 
   return (
@@ -39,15 +41,15 @@ function MealPlanPage() {
           <Calendar
             className={"react-calendar"}
             onChange={(e: Value) => {
-              if (e instanceof Date) setSelectedDay(e);
+              if (e instanceof Date) dispatch({ type: 'SET_SELECTED_DAY', payload: e })
             }}
           />
         </div>
 
         <DailyView
-          day={selectedDay}
+          day={state.selectedDay}
           AddMealHandler={AddMealHandler}
-          dailyMeals={meals.filter((item) => item.date === selectedDay.toDateString()).sort((a, b) => a.order - b.order)}
+          dailyMeals={state.meals.filter((item) => item.date === state.selectedDay.toDateString()).sort((a, b) => a.order - b.order)}
         />
       </div>
 

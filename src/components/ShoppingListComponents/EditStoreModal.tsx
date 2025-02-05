@@ -16,8 +16,8 @@ type CategoryFormInputs = {
     name: string
 }
 
-export default function EditStoreModal({ editingStore, storeData, setStoreData, setEditingStore, }: { editingStore: StoreData | null, storeData: StoreData[] | [], setStoreData: React.Dispatch<React.SetStateAction<StoreData[] | []>>, setEditingStore: React.Dispatch<React.SetStateAction<StoreData | null>> }) {
-    const { categories, setCategories } = useAppContext()
+export default function EditStoreModal({ editingStore, setEditingStore, }: { editingStore: StoreData | null, setEditingStore: React.Dispatch<React.SetStateAction<StoreData | null>> }) {
+    const { state, dispatch } = useAppContext()
     const [currentEditingCategory, setCurrentEditingCategory] = useState<null | Category>(null)
 
     const {
@@ -47,54 +47,45 @@ export default function EditStoreModal({ editingStore, storeData, setStoreData, 
     const AddNewCategory: SubmitHandler<CategoryFormInputs> = (data) => {
         if (editingStore) {
             // figure out what the highest order is of all categories belonging to this store
-            const highest = categories.reduce((max, cat) => {
+            const highest = state.categories.reduce((max, cat) => {
                 return cat.order > max ? cat.order : max
             }, 0)
             const newCat = new Category(v4(), data.name, highest, editingStore.uid, false, new Date().toDateString())
-            setCategories([...categories, newCat])
+            dispatch({ type: 'SET_CATEGORIES', payload: [...state.categories, newCat] })
         }
     }
 
     const OnDeleteStoreBtnClick = () => {
         if (editingStore) {
-            const newStoreData = storeData.filter(item => item.name != editingStore.name)
-            setStoreData(newStoreData)
+            dispatch({ type: "DELETE_STORE", payload: editingStore.uid })
         }
         setEditingStore(null)
+        dispatch({ type: "SET_CURRENT_STORE_TAB", payload: state.stores[0] })
     }
 
     const SubmitUpdateStoreForm: SubmitHandler<Inputs> = (data) => {
         if (editingStore) {
-            const updatedStores = storeData.map(store => {
-                return store.name === editingStore.name ? new StoreData(store.uid, data.name, data.location) : store
+            const updatedStores = state.stores.map(store => {
+                return store.name === editingStore.name ? new StoreData(store.uid, data.name, data.location, editingStore.isDeleted, editingStore.deletedAt) : store
             })
-            setStoreData(updatedStores)
+            dispatch({ type: "SET_STORES", payload: updatedStores })
         }
         setEditingStore(null)
     }
 
     const SubmitUpdateCategoryNameForm: SubmitHandler<CategoryFormInputs> = (data) => {
         if (currentEditingCategory) {
-            const updatedCategories = categories.map(cat => ({
+            const updatedCategories = state.categories.map(cat => ({
                 ...cat,
                 name: cat.id === currentEditingCategory.id ? data.name : cat.name
             }))
-            setCategories(updatedCategories)
+            dispatch({ type: 'SET_CATEGORIES', payload: updatedCategories })
         }
         setCurrentEditingCategory(null)
     }
 
     const RemoveCategory = (categoryId: string) => {
-        const newCategories = categories.map(item => {
-            if (item.id === categoryId) {
-                const updatedCategory = new Category(item.id, item.name, item.order, item.storeId, true, new Date().toDateString())
-                return updatedCategory
-            }
-
-            return item
-        })
-
-        setCategories(newCategories)
+        dispatch({ type: "DELETE_CATEGORY", payload: categoryId })
     }
 
     useEffect(() => {
@@ -131,7 +122,7 @@ export default function EditStoreModal({ editingStore, storeData, setStoreData, 
                     <SubmitInputElement submitInputText="Add Category" />
                 </form>
                 <div>Active Categories</div>
-                <div>{categories.filter(item => !item.isDeleted && item.storeId === editingStore.uid).map(item => {
+                <div>{state.categories.filter(item => !item.isDeleted && item.storeId === editingStore.uid).map(item => {
                     if (currentEditingCategory != null && item.id === currentEditingCategory.id) {
                         return <form key={currentEditingCategory.id} className="flex flex-col" onSubmit={handleSubmitCategoryName(SubmitUpdateCategoryNameForm)}>
                             <TextInputElement placeholder="Name..." register={registerCategoryName} registerName="name" required defaultValue={currentEditingCategory.name} />

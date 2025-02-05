@@ -5,23 +5,33 @@ import StoreData from './classes/StoreData';
 import Unit from './classes/UnitData';
 
 export interface AppContextType {
+  state: AppState;
+  dispatch: React.Dispatch<AppAction>;
+}
+
+export type AppState = {
   ingredientBlueprints: IngredientBlueprint[];
   stores: StoreData[];
-  meals: MealData[];
-  setIngredientBlueprints: React.Dispatch<
-    React.SetStateAction<IngredientBlueprint[]>
-  >;
-  setStores: React.Dispatch<React.SetStateAction<StoreData[]>>;
-  setMeals: React.Dispatch<React.SetStateAction<MealData[]>>;
   currentStoreTab: StoreData | null;
-  setCurrentStoreTab: React.Dispatch<React.SetStateAction<StoreData | null>>;
-  selectedDay: Date;
-  setSelectedDay: React.Dispatch<React.SetStateAction<Date>>;
   ingredientUnits: Unit[];
-  setIngredientUnits: React.Dispatch<React.SetStateAction<Unit[]>>;
   categories: Category[];
-  setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
-}
+  meals: MealData[];
+  selectedDay: Date;
+};
+
+export type AppAction =
+  | { type: 'SET_INGREDIENT_BLUEPRINTS'; payload: IngredientBlueprint[] }
+  | { type: 'DELETE_INGREDIENT_BLUEPRINT'; payload: string }
+  | { type: 'SET_STORES'; payload: StoreData[] }
+  | { type: 'DELETE_STORE'; payload: string }
+  | { type: 'SET_INGREDIENT_UNITS'; payload: Unit[] }
+  | { type: 'DELETE_INGREDIENT_UNIT'; payload: string }
+  | { type: 'SET_CATEGORIES'; payload: Category[] }
+  | { type: 'DELETE_CATEGORY'; payload: string }
+  | { type: 'SET_MEALS'; payload: MealData[] }
+  | { type: 'DELETE_MEAL'; payload: string }
+  | { type: 'SET_SELECTED_DAY'; payload: Date }
+  | { type: 'SET_CURRENT_STORE_TAB'; payload: StoreData | null };
 
 export type ShopFormInputType = {
   name: string;
@@ -45,17 +55,23 @@ export type IngredientBlueprintType = {
   storeUid: string;
   unitId: string;
   categoryId: string | null;
+  isDeleted: boolean;
+  deletedAt: string;
 };
 
 export type IngredientUnit = {
   id: string;
   name: string;
+  isDeleted: boolean;
+  deletedAt: string;
 };
 
 export type StoreType = {
   uid: string;
   name: string;
   location: string;
+  isDeleted: boolean;
+  deletedAt: string;
 };
 
 export type MealIngredientType = {
@@ -72,4 +88,6 @@ export type MealDataType = {
   ingredients: MealIngredientType[];
   date: string;
   finished: boolean;
+  isDeleted: boolean;
+  deletedAt: string;
 };

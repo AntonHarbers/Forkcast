@@ -16,13 +16,12 @@ type Inputs = {
 
 
 export default function IngredientsPage() {
-    const { ingredientBlueprints, setIngredientBlueprints } = useAppContext()
+    const { state, dispatch } = useAppContext()
     const [editingIngredientBlueprint, setEditingIngredientBlueprint] = useState<IngredientBlueprint | null>(null)
     const HandleNewIngredientFormSubmit: SubmitHandler<Inputs> = (data) => {
         if (!data.categoryId) data.categoryId = null
-        const newIngredient = new IngredientBlueprint(v4(), data.name, data.storeUid, data.unitId, data.categoryId)
-        setIngredientBlueprints([...ingredientBlueprints, newIngredient])
-
+        const newIngredient = new IngredientBlueprint(v4(), data.name, data.storeUid, data.unitId, data.categoryId, false, new Date().toDateString())
+        dispatch({ type: 'SET_INGREDIENT_BLUEPRINTS', payload: [...state.ingredientBlueprints, newIngredient] })
     }
 
     return (
@@ -33,7 +32,7 @@ export default function IngredientsPage() {
             </div>
             <EditIngredientModal editingIngredientBlueprint={editingIngredientBlueprint} setEditingIngredientBlueprint={setEditingIngredientBlueprint} />
 
-            {ingredientBlueprints.map(item => {
+            {state.ingredientBlueprints.filter(item => !item.isDeleted).map(item => {
                 return (
                     <IngredientListItem key={item.uid} item={item} setEditingIngredientBlueprint={setEditingIngredientBlueprint} />
                 )
