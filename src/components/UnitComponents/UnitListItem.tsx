@@ -19,7 +19,7 @@ export default function UnitListItem({ unit }: { unit: Unit }) {
     }
 
     const HandleSubmitUpdateUnit: SubmitHandler<IngredientUnitFormInputType> = (data) => {
-        const newUnits = state.ingredientUnits.map(unitItem => unitItem.id === unit.id ? new Unit(unit.id, data.name, unit.isDeleted, unit.deletedAt) : unitItem)
+        const newUnits = state.ingredientUnits.map(unitItem => unitItem.id === unit.id ? { ...unit, name: data.name } : unitItem)
         dispatch({ type: "SET_INGREDIENT_UNITS", payload: newUnits })
         setIsEditing(false)
     }

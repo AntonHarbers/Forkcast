@@ -38,7 +38,7 @@ export default function ShoppingListPage() {
             })
         })
         return shopIngredients
-    }, [state.currentStoreTab, state.ingredientBlueprints, state.meals])
+    }, [state.currentStoreTab, state.ingredientBlueprints, state.meals,])
 
     const ToggleMealIngredientsBought = (checked: boolean, blueprintId: string) => {
         const newMeals = state.meals.map(meal => ({
@@ -56,10 +56,6 @@ export default function ShoppingListPage() {
 
     const SwapCategoryOrder = (selectedCategoryId: string, swapCategoryId: string | null, selectedOrder: number, swapOrder: number) => {
         if (swapCategoryId === null) return
-
-        // look for the selected category
-        // look for the swap category
-        // get their orders and swap them
         const newCategories = state.categories.map(cat => ({
             ...cat,
             order: cat.id === selectedCategoryId ? swapOrder : cat.id === swapCategoryId ? selectedOrder : cat.order

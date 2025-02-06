@@ -38,12 +38,18 @@
 [✔] Soft Delete - Meals
 [✔] Soft Delete - Units
 
-[] make sure not to mutate date but to duplicate it with ... operator wherever needed
+Thursday
+[✔] Check why changing category and meal order has no effect
+[✔] make sure not to mutate date but to duplicate it with ... operator wherever needed
 [] useMemo implementation on anything that requires heavy compute
 [] virtualize data (ask gpt)
+Friday
 [] refactor everything
 [] Move all types into types.ts
 [] use classes as types wherever possible
+[] Find components
+
+Saturday
 [] ready it for API intregration with dummy api calls and optimistic updates and loading states working
 [] Think about tying everything to certain users and set up clerk maybe
 
