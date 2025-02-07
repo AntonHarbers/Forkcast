@@ -5,10 +5,11 @@ import MealData from "../classes/MealData";
 import { v4 } from "uuid";
 import { useAppContext } from "../context/useAppContext";
 import { MealIngredientType } from "../types";
+import { useMemo } from "react";
 
 function MealPlanPage() {
   const { state, dispatch } = useAppContext()
-
+  const selectedDayExistingMeals = useMemo(() => state.meals.filter(item => !item.isDeleted && item.date === state.selectedDay.toDateString()), [state.selectedDay, state.meals])
   const AddMealHandler = (
     newDay: Date,
     name: string,
@@ -18,7 +19,7 @@ function MealPlanPage() {
     // get the highest order of this day
     let highest = 0;
 
-    state.meals.filter(meal => meal.date === state.selectedDay.toDateString()).forEach(meal => highest = Math.max(highest, meal.order))
+    selectedDayExistingMeals.forEach(meal => highest = Math.max(highest, meal.order))
 
     const newMeal = new MealData(
       v4(),
@@ -49,7 +50,7 @@ function MealPlanPage() {
         <DailyView
           day={state.selectedDay}
           AddMealHandler={AddMealHandler}
-          dailyMeals={state.meals.filter((item) => item.date === state.selectedDay.toDateString()).sort((a, b) => a.order - b.order)}
+          dailyMeals={selectedDayExistingMeals.sort((a, b) => a.order - b.order)}
         />
       </div>
 

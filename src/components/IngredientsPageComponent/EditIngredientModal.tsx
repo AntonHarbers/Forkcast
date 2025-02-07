@@ -1,6 +1,6 @@
 import { SubmitHandler, useForm, useWatch } from "react-hook-form"
 import { IngredientFormInputs } from "../../types"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import IngredientBlueprint from "../../classes/IngredientBlueprint"
 import { useAppContext } from "../../context/useAppContext"
 import TextInputElement from "../FormComponents/TextInputElement"
@@ -12,9 +12,6 @@ export default function EditIngredientModal({
     editingIngredientBlueprint: IngredientBlueprint | null,
     setEditingIngredientBlueprint: React.Dispatch<React.SetStateAction<IngredientBlueprint | null>>
 }) {
-
-    const { dispatch, state } = useAppContext()
-
     const {
         register,
         handleSubmit,
@@ -23,8 +20,17 @@ export default function EditIngredientModal({
         reset,
         control
     } = useForm<IngredientFormInputs>()
-
+    const { dispatch, state } = useAppContext()
     const selectedStoreId = useWatch({ control, name: "storeUid" })
+
+    const existingIngredientUnits = useMemo(() => state.ingredientUnits.filter(item => !item.isDeleted), [state.ingredientUnits])
+    const existingStores = useMemo(() => state.stores.filter(item => !item.isDeleted), [state.stores])
+    const categoriesOfSelectedStore = useMemo(
+        () => state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId),
+        [selectedStoreId, state.categories]
+    )
+
+
 
     const OnDeleteIngredientBlueprintBtnClick = () => {
         if (editingIngredientBlueprint) {
@@ -53,7 +59,6 @@ export default function EditIngredientModal({
     }, [setValue, editingIngredientBlueprint])
 
     useEffect(() => {
-        const categoriesOfSelectedStore = state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId)
         if (categoriesOfSelectedStore.length === 0) {
             setValue('categoryId', null)
         } else {
@@ -63,7 +68,7 @@ export default function EditIngredientModal({
                 setValue('categoryId', categoriesOfSelectedStore[0].id)
             }
         }
-    }, [state.categories, setValue, selectedStoreId, editingIngredientBlueprint])
+    }, [state.categories, setValue, selectedStoreId, editingIngredientBlueprint, categoriesOfSelectedStore])
 
     useEffect(() => {
         reset()
@@ -80,17 +85,14 @@ export default function EditIngredientModal({
                 <TextInputElement placeholder={editingIngredientBlueprint.name} register={register} registerName="name" required={true} />
                 {errors.name && <span>This field is required!</span>}
                 <select {...register('unitId')} defaultValue={editingIngredientBlueprint.unitId}>
-                    {state.ingredientUnits.map(item => !item.isDeleted &&
-                        <option key={item.id} value={item.id}>{item.name}</option>
-                    )}
+                    {existingIngredientUnits.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
                 </select>
                 <select {...register('storeUid')} defaultValue={editingIngredientBlueprint.storeUid}>
-                    {state.stores.filter(item => !item.isDeleted).map(item =>
-                        <option key={item.uid} value={item.uid} >{item.name}</option>
-                    )}
+                    {existingStores.map(item => <option key={item.uid} value={item.uid} >{item.name}</option>)}
                 </select>
-                {state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).length != 0 && <select {...register('categoryId')} defaultValue={editingIngredientBlueprint.categoryId || state.categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted)[0].id}>
-                    {state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId).sort((a, b) => a.order - b.order).map(item =>
+                {categoriesOfSelectedStore.length != 0 && 
+                <select {...register('categoryId')} defaultValue={editingIngredientBlueprint.categoryId || categoriesOfSelectedStore[0].id}>
+                    {categoriesOfSelectedStore.sort((a, b) => a.order - b.order).map(item =>
                         <option key={item.id} value={item.id} >{item.name}</option>
                     )}
                 </select>}
@@ -100,6 +102,3 @@ export default function EditIngredientModal({
         </div>
     )
 }
-
-
-// when selecting a new store only use first index if our category doesnt match any

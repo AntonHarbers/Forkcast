@@ -29,16 +29,18 @@ export default function DailyView({
   return (
     <>
       <div className="text-slate-800 text-3xl text-center my-10">{day?.toDateString()}</div>
-
       <NewMealForm onSubmit={onSubmit} />
-
       {/* Daily-view Meals */}
       <div>
         {dailyNonDeletedMeals.map((mealItem, index) => {
-          return <DailyViewMeals key={mealItem.uid} meal={mealItem} prevId={dailyNonDeletedMeals[index - 1] ? dailyNonDeletedMeals[index - 1].uid : null} nextId={dailyNonDeletedMeals[index + 1] ? dailyNonDeletedMeals[index + 1].uid : null} />;
+          return <DailyViewMeals
+            key={mealItem.uid}
+            meal={mealItem}
+            prevId={dailyNonDeletedMeals[index - 1]?.uid || null}
+            nextId={dailyNonDeletedMeals[index + 1]?.uid || null}
+          />;
         })}
       </div>
-
     </>
   );
 }

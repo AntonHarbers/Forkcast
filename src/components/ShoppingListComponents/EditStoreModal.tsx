@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import StoreData from "../../classes/StoreData"
 import { useAppContext } from "../../context/useAppContext"
@@ -44,10 +44,12 @@ export default function EditStoreModal({ editingStore, setEditingStore, }: { edi
         resetNested()
     }, [isSubmitSuccessfulNested, resetNested])
 
+    const existingCategoriesOfStore = useMemo(() => state.categories.filter(item => !item.isDeleted && item.storeId === editingStore?.uid), [state.categories, editingStore?.uid])
+
     const AddNewCategory: SubmitHandler<CategoryFormInputs> = (data) => {
         if (editingStore) {
             // figure out what the highest order is of all categories belonging to this store
-            const highest = state.categories.filter(item => item.storeId === editingStore.uid).reduce((max, cat) => {
+            const highest = existingCategoriesOfStore.reduce((max, cat) => {
                 return cat.order > max ? cat.order : max
             }, 0)
             const newCat = new Category(v4(), data.name, highest + 1, editingStore.uid, false, new Date().toDateString())
@@ -127,7 +129,7 @@ export default function EditStoreModal({ editingStore, setEditingStore, }: { edi
                     <SubmitInputElement submitInputText="Add Category" />
                 </form>
                 <div>Active Categories</div>
-                <div>{state.categories.filter(item => !item.isDeleted && item.storeId === editingStore.uid).map(item => {
+                <div>{existingCategoriesOfStore.map(item => {
                     if (currentEditingCategory != null && item.id === currentEditingCategory.id) {
                         return <form key={currentEditingCategory.id} className="flex flex-col" onSubmit={handleSubmitCategoryName(SubmitUpdateCategoryNameForm)}>
                             <TextInputElement placeholder="Name..." register={registerCategoryName} registerName="name" required defaultValue={currentEditingCategory.name} />

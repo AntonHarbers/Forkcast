@@ -37,21 +37,18 @@
 [✔] Soft Delete - Shops
 [✔] Soft Delete - Meals
 [✔] Soft Delete - Units
-
-Thursday
 [✔] Check why changing category and meal order has no effect
 [✔] make sure not to mutate date but to duplicate it with ... operator wherever needed
 [] useMemo implementation on anything that requires heavy compute
 [] virtualize data (ask gpt)
-Friday
 [] refactor everything
+[] dont allow 0 as amount inputs
 [] Move all types into types.ts
-[] use classes as types wherever possible
-[] Find components
-
-Saturday
-[] ready it for API intregration with dummy api calls and optimistic updates and loading states working
-[] Think about tying everything to certain users and set up clerk maybe
+[] turn classes into typed objects instead
+[] Comportmentalize the app
+[] copy meals
+[] move meals to different day
+[] dummy api calls, optimistic updates and loading states
 
 ### Styling:
 
@@ -64,8 +61,6 @@ Saturday
 
 [] Set up database connection to postgres using drizzle
 [] User Data/Accounts with clerk
-[] Backend API with Express or Appwrite server functions?
+[] Backend API with Express
 
 ## Notes:
-
-Sort the dropdown of the categories by their order #

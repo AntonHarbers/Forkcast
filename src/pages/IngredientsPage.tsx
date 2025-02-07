@@ -4,7 +4,7 @@ import IngredientBlueprint from "../classes/IngredientBlueprint";
 import { v4 } from "uuid";
 import { useAppContext } from "../context/useAppContext";
 import EditIngredientModal from "../components/IngredientsPageComponent/EditIngredientModal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import IngredientListItem from "../components/IngredientsPageComponent/IngredientListItem";
 
 type Inputs = {
@@ -24,6 +24,8 @@ export default function IngredientsPage() {
         dispatch({ type: 'SET_INGREDIENT_BLUEPRINTS', payload: [...state.ingredientBlueprints, newIngredient] })
     }
 
+    const existingIngredientBlueprints = useMemo(() => state.ingredientBlueprints.filter(item => !item.isDeleted), [state.ingredientBlueprints])
+
     return (
         <div>
             <h1 className="mx-auto w-full text-center text-5xl m-10">Ingredients</h1>
@@ -32,7 +34,7 @@ export default function IngredientsPage() {
             </div>
             <EditIngredientModal editingIngredientBlueprint={editingIngredientBlueprint} setEditingIngredientBlueprint={setEditingIngredientBlueprint} />
 
-            {state.ingredientBlueprints.filter(item => !item.isDeleted).map(item => {
+            {existingIngredientBlueprints.map(item => {
                 return (
                     <IngredientListItem key={item.uid} item={item} setEditingIngredientBlueprint={setEditingIngredientBlueprint} />
                 )
