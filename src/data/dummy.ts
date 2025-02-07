@@ -1,14 +1,63 @@
 import Category from '../classes/CategoryData';
+import Unit from '../classes/UnitData';
 import { IngredientBlueprintType, MealDataType } from '../types';
 
 // dummyData.ts
 export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
-  { uid: '1', name: 'Tomato', storeUid: '2', unitId: '0', categoryId: null },
-  { uid: '2', name: 'Cheese', storeUid: '2', unitId: '0', categoryId: null },
-  { uid: '3', name: 'Onion', storeUid: '2', unitId: '0', categoryId: '3' },
-  { uid: '4', name: 'Burger', storeUid: '2', unitId: '0', categoryId: null },
-  { uid: '5', name: 'Chips', storeUid: '3', unitId: '0', categoryId: null },
-  { uid: '6', name: 'Banana', storeUid: '3', unitId: '0', categoryId: null },
+  {
+    uid: '1',
+    name: 'Tomato',
+    storeUid: '2',
+    unitId: '0',
+    categoryId: null,
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    uid: '2',
+    name: 'Cheese',
+    storeUid: '2',
+    unitId: '0',
+    categoryId: null,
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    uid: '3',
+    name: 'Onion',
+    storeUid: '2',
+    unitId: '0',
+    categoryId: '3',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    uid: '4',
+    name: 'Burger',
+    storeUid: '2',
+    unitId: '0',
+    categoryId: null,
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    uid: '5',
+    name: 'Chips',
+    storeUid: '3',
+    unitId: '0',
+    categoryId: null,
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    uid: '6',
+    name: 'Banana',
+    storeUid: '3',
+    unitId: '0',
+    categoryId: null,
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
 ];
 
 export const StoreDataDB = [
@@ -65,6 +114,8 @@ export const dummyMeals: MealDataType[] = [
     date: new Date().toDateString(),
     order: 0,
     finished: false,
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
   },
   {
     id: '2',
@@ -74,8 +125,10 @@ export const dummyMeals: MealDataType[] = [
       { id: '3', blueprintId: '2', amount: 2, bought: false },
     ],
     date: new Date().toDateString(),
-    order: 1,
+    order: 4,
     finished: true,
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
   },
   {
     id: '3',
@@ -86,8 +139,10 @@ export const dummyMeals: MealDataType[] = [
       { id: '7', blueprintId: '2', amount: 5, bought: true },
     ],
     date: new Date().toDateString(),
-    order: 1,
+    order: 3,
     finished: false,
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
   },
   {
     id: '4',
@@ -97,14 +152,36 @@ export const dummyMeals: MealDataType[] = [
       { id: '9', blueprintId: '2', amount: 1, bought: true },
     ],
     date: new Date().toDateString(),
-    order: 0,
+    order: 2,
     finished: false,
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
   },
 ];
 
-export const UnitData = [
-  { id: '0', name: 'KG' },
-  { id: '1', name: 'Litres' },
-  { id: '2', name: 'Pieces' },
-  { id: '3', name: 'Bottles' },
+export const UnitData: Unit[] = [
+  {
+    id: '0',
+    name: 'KG',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    id: '1',
+    name: 'Litres',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    id: '2',
+    name: 'Pieces',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
+  {
+    id: '3',
+    name: 'Bottles',
+    isDeleted: false,
+    deletedAt: new Date().toDateString(),
+  },
 ];

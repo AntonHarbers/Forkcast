@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MealData from "../../classes/MealData";
 import { useAppContext } from "../../context/useAppContext";
 import { useFieldArray, useForm } from "react-hook-form";
 import { MealIngredientType } from "../../types";
 import IngredientBlueprint from "../../classes/IngredientBlueprint";
 import { v4 } from "uuid";
+import Unit from "../../classes/UnitData";
+import debounce from "lodash.debounce";
 
 // Type Def.
 type Inputs = {
@@ -35,30 +37,28 @@ export default function DailyViewMeals({
 
   const ToggleMealDone = () => {
     const newMeals = state.meals.map(mealData => {
-      if (mealData.uid === meal.uid) {
-        const copy = meal
-        copy.finished = !meal.finished
-        return copy
-      } else {
-        return mealData
-      }
+      return mealData.uid != meal.uid ? mealData : { ...mealData, finished: !meal.finished }
     })
     dispatch({ type: "SET_MEALS", payload: newMeals })
   }
 
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [filteredIngredients, setFilteredIngredients] = useState<IngredientBlueprint[]>([])
-  const HandleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
 
-    if (!e.target.value) {
+  const debouncedFilter = useMemo(() => debounce((value: string, ingredientBlueprints: IngredientBlueprint[]) => {
+    if (!value) {
       setFilteredIngredients([])
       return
     }
-
-    const regex = new RegExp(e.target.value, "i")
-    const filtered = state.ingredientBlueprints.filter(ingredient => regex.test(ingredient.name) && !ingredient.isDeleted)
+    const regex = new RegExp(value, 'i')
+    const filtered = ingredientBlueprints.filter(ingredient => !ingredient.isDeleted && regex.test(ingredient.name))
     setFilteredIngredients(filtered)
+  }, 250), [])
+
+  const HandleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setSearchTerm(val)
+    debouncedFilter(val, state.ingredientBlueprints)
   }
 
   const DeleteMeal = () => {
@@ -66,77 +66,50 @@ export default function DailyViewMeals({
   }
 
   const EditMeal = () => {
-    // put this mealData into the new Meal form and let that form handle the update
     setEditing(!editing)
     meal.ingredients.forEach(data => append({ amount: data.amount, id: data.id, blueprintId: data.blueprintId, bought: data.bought }))
   }
 
   const SubmitEditMeal = (data: Inputs) => {
     setEditing(false)
-
-    // set the corresponding ingredient data
-    const newMeal = new MealData(
-      meal.uid,
-      data.name,
-      data.ingredients,
-      meal.date,
-      meal.order,
-      meal.finished,
-      meal.isDeleted,
-      meal.deletedAt
-    );
-
     const UpdatedMeals = state.meals.map(mealData => {
-      if (mealData.uid === meal.uid) {
-        return newMeal
-      }
-      return mealData
+      return mealData.uid != meal.uid ? mealData : { ...meal, name: data.name, ingredients: data.ingredients }
     })
 
     dispatch({ type: "SET_MEALS", payload: UpdatedMeals })
   }
 
-  const ShiftMealUp = () => {
-    const nextMeal = state.meals.find(mealData => mealData.uid === nextId)
-    if (!nextMeal) return
-    const savedOrder = nextMeal.order
-    nextMeal.order = meal.order
-    meal.order = savedOrder
+  const SwapMealOrder = (swapId: string) => {
+    const swapMeal = state.meals.find(mealData => mealData.uid === swapId)
+    if (!swapMeal) return
+    const savedOrder = swapMeal.order
     const newMeals = state.meals.map(mealData => {
-      if (mealData.uid === nextId) {
-        return nextMeal
-      } else if (mealData.uid === meal.uid) {
-        return meal
-      } else {
-        return mealData
-      }
+      return mealData.uid === swapId
+        ? { ...swapMeal, order: meal.order }
+        : mealData.uid === meal.uid
+          ? { ...meal, order: savedOrder }
+          : mealData
     })
-
-    dispatch({ type: "SET_MEALS", payload: newMeals })
-  }
-
-  const ShiftMealDown = () => {
-    const prevMeal = state.meals.find(mealData => mealData.uid === prevId)
-    if (!prevMeal) return
-    const savedOrder = prevMeal.order
-    prevMeal.order = meal.order
-    meal.order = savedOrder
-    const newMeals = state.meals.map(mealData => {
-      if (mealData.uid === prevId) {
-        return prevMeal
-      } else if (mealData.uid === meal.uid) {
-        return meal
-      } else {
-        return mealData
-      }
-    })
-
     dispatch({ type: "SET_MEALS", payload: newMeals })
   }
 
   useEffect(() => {
     reset({ ingredients: [] })
   }, [isSubmitSuccessful, reset])
+
+  const blueprintsById = useMemo(() => {
+    return state.ingredientBlueprints.reduce((acc: { [key: string]: IngredientBlueprint }, ingredient) => {
+      acc[ingredient.uid] = ingredient
+      return acc
+    }, {})
+  }, [state.ingredientBlueprints])
+
+  const unitsById = useMemo(() => {
+    return state.ingredientUnits.reduce((acc: { [key: string]: Unit }, unit) => {
+      acc[unit.id] = unit
+      return acc
+    }, {})
+  }, [state.ingredientUnits])
 
   return (
     <div className={`w-auto border-b p-2 m-10 text-2xl text-start ${meal.finished ? "bg-slate-400" : editing ? 'bg-green-300' : 'bg-slate-100'}`}>
@@ -166,18 +139,18 @@ export default function DailyViewMeals({
 
             <button onClick={DeleteMeal} type="button" className="bg-red-300 p-1 text-lg rounded-sm hover:bg-red-400 active:bg-red-500">Delete</button>
             <div className="flex flex-col">
-              {prevId && <button type="button" onClick={ShiftMealDown}>Down</button>}
-              {nextId && <button type="button" onClick={ShiftMealUp}>Up</button>}
+              {prevId && <button type="button" onClick={() => SwapMealOrder(prevId)}>Up</button>}
+              {nextId && <button type="button" onClick={() => SwapMealOrder(nextId)}>Down</button>}
             </div>
             <input type="submit" className="bg-blue-300 hover:bg-blue-400 active:bg-blue-500 rounded-sm p-1 text-lg" />
           </div>
           {fields.map((field, index) => (
             <div key={field.id} className="flex justify-between gap-2">
-              <div className="text-lg">{state.ingredientBlueprints.find(item => item.uid === field.blueprintId)?.name || "Name Err"}</div>
+              <div className="text-lg">{blueprintsById[field.blueprintId].name || "Name Err"}</div>
               <input hidden {...register(`ingredients.${index}.blueprintId`)} />
               <div className="flex gap-1">
-                <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`)} />
-                <div>{state.ingredientUnits.find(unitItem => unitItem.id === state.ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
+                <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`, { valueAsNumber: true })} />
+                <div>{unitsById[blueprintsById[field.blueprintId].unitId].name || "ERR"}</div>
               </div>
               <button className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1" type="button" onClick={() => remove(index)}>
                 Remove
@@ -197,10 +170,10 @@ export default function DailyViewMeals({
         {meal.ingredients.map(ingredient => {
           return (
             <div key={ingredient.id} className="flex justify-between gap-2">
-              <div className="text-lg">{state.ingredientBlueprints.find(item => item.uid === ingredient.blueprintId)?.name || "Name Err"}</div>
+              <div className="text-lg">{blueprintsById[ingredient.blueprintId].name || "Name Err"}</div>
               <div className="flex gap-1">
                 <div className="text-lg font-bold">{ingredient.amount}</div>
-                <div className="text-lg">{state.ingredientUnits.find(unit => unit.id === state.ingredientBlueprints.find(item => item.uid === ingredient.blueprintId)?.unitId)?.name || "Unit Err"}</div>
+                <div className="text-lg">{unitsById[blueprintsById[ingredient.blueprintId].unitId].name || "Unit Err"}</div>
               </div>
             </div>
           )

@@ -3,6 +3,7 @@ import MealData from "../classes/MealData";
 import NewMealForm from "./MealPlanningComponents/NewMealForm";
 import DailyViewMeals from "./MealPlanningComponents/DailyViewMeals";
 import { MealIngredientType } from "../types";
+import { useMemo } from "react";
 
 type Inputs = {
   name: string;
@@ -23,19 +24,23 @@ export default function DailyView({
     AddMealHandler(day, data.name, data.ingredients);
   };
 
+  const dailyNonDeletedMeals = useMemo(() => dailyMeals.filter(item => !item.isDeleted), [dailyMeals])
+
   return (
     <>
       <div className="text-slate-800 text-3xl text-center my-10">{day?.toDateString()}</div>
-
       <NewMealForm onSubmit={onSubmit} />
-
       {/* Daily-view Meals */}
       <div>
-        {dailyMeals.filter(item => !item.isDeleted).map((mealItem, index) => {
-          return <DailyViewMeals key={mealItem.uid} meal={mealItem} prevId={dailyMeals[index - 1] ? dailyMeals[index - 1].uid : null} nextId={dailyMeals[index + 1] ? dailyMeals[index + 1].uid : null} />;
+        {dailyNonDeletedMeals.map((mealItem, index) => {
+          return <DailyViewMeals
+            key={mealItem.uid}
+            meal={mealItem}
+            prevId={dailyNonDeletedMeals[index - 1]?.uid || null}
+            nextId={dailyNonDeletedMeals[index + 1]?.uid || null}
+          />;
         })}
       </div>
-
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { useForm, useWatch } from "react-hook-form"
 import TextInputElement from "../FormComponents/TextInputElement"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { IngredientFormInputs } from "../../types"
 import { useAppContext } from "../../context/useAppContext"
 
@@ -19,6 +19,13 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
     const selectedStoreId = useWatch({ control, name: 'storeUid' })
 
     const { state } = useAppContext()
+
+    const existingIngredientUnits = useMemo(() => state.ingredientUnits.filter(item => !item.isDeleted), [state.ingredientUnits])
+    const existingStores = useMemo(() => state.stores.filter(item => !item.isDeleted), [state.stores])
+    const categoriesOfSelectedStore = useMemo(
+        () => state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId),
+        [selectedStoreId, state.categories]
+    )
 
     useEffect(() => {
         reset()
@@ -40,20 +47,16 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
             {/* A select with every possible store as an option */}
             {errors.name && <span>This field is required!</span>}
             <select {...register('unitId')}>
-                {state.ingredientUnits.map(item => !item.isDeleted &&
-                    <option key={item.id} value={item.id}>{item.name}</option>
-                )}
+                {existingIngredientUnits.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
             </select>
             <select {...register('storeUid')}>
-                {state.stores.filter(item => !item.isDeleted).map(item => {
-                    return <option key={item.uid} value={item.uid}>{item.name}</option>
-                })}
+                {existingStores.map(item => <option key={item.uid} value={item.uid}>{item.name}</option>)}
             </select>
-            {state.categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted).length != 0 && <select {...register('categoryId')}>
-                {state.categories.filter(item => item.storeId === selectedStoreId && !item.isDeleted).sort((a, b) => a.order - b.order).map(item => <option key={item.id} value={item.id}>{item.name}</option>
+            {categoriesOfSelectedStore.length != 0 && <select {...register('categoryId')}>
+                {categoriesOfSelectedStore.sort((a, b) => a.order - b.order).map(item =>
+                    <option key={item.id} value={item.id}>{item.name}</option>
                 )}
             </select>}
-
             <SubmitInputElement submitInputText="Add New Ingredient" />
         </form>
     )

@@ -1,11 +1,12 @@
 import { useFieldArray, useForm } from "react-hook-form";
 import TextInputElement from "../FormComponents/TextInputElement";
 import SubmitInputElement from "../FormComponents/SubmitInputElement";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppContext } from "../../context/useAppContext";
-import { MealIngredientType } from "../../types";
+import { IngredientUnit, MealIngredientType } from "../../types";
 import { v4 } from "uuid";
 import IngredientBlueprint from "../../classes/IngredientBlueprint";
+import debounce from "lodash.debounce";
 
 // Type Def.
 type Inputs = {
@@ -34,21 +35,38 @@ export default function NewMealForm({
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [filteredIngredients, setFilteredIngredients] = useState<IngredientBlueprint[]>([])
 
+  const blueprintsById = useMemo(() => {
+    return state.ingredientBlueprints.reduce((acc: { [key: string]: IngredientBlueprint }, ingredient) => {
+      acc[ingredient.uid] = ingredient
+      return acc
+    }, {} as { [key: string]: IngredientBlueprint })
+  }, [state.ingredientBlueprints])
+
+  const unitsById = useMemo(() => {
+    return state.ingredientUnits.reduce((acc, unit) => {
+      acc[unit.id] = unit
+      return acc
+    }, {} as { [key: string]: IngredientUnit })
+  }, [state.ingredientUnits])
+
   useEffect(() => {
     reset({ ingredients: [] })
   }, [isSubmitSuccessful, reset])
 
-  const HandleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-
-    if (!e.target.value) {
+  const debouncedFilter = useMemo(() => debounce((value: string, ingredientBlueprints: IngredientBlueprint[]) => {
+    if (!value) {
       setFilteredIngredients([])
       return
     }
-
-    const regex = new RegExp(e.target.value, "i")
-    const filtered = state.ingredientBlueprints.filter(ingredient => regex.test(ingredient.name) && !ingredient.isDeleted)
+    const regex = new RegExp(value, 'i')
+    const filtered = ingredientBlueprints.filter(ingredient => regex.test(ingredient.name) && !ingredient.isDeleted)
     setFilteredIngredients(filtered)
+  }, 250), [])
+
+  const HandleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setSearchTerm(val)
+    debouncedFilter(val, state.ingredientBlueprints)
   }
 
   return (
@@ -78,10 +96,10 @@ export default function NewMealForm({
         </div>
         {fields.map((field, index) => (
           <div className="flex items-center gap-2" key={field.id}>
-            <div className="w-[50%]">{state.ingredientBlueprints.find(item => item.uid === field.blueprintId)?.name}</div>
+            <div className="w-[50%]">{blueprintsById[field.blueprintId].name}</div>
             <input hidden {...register(`ingredients.${index}.blueprintId`)} />
             <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`, { valueAsNumber: true })} />
-            <div>{state.ingredientUnits.find(unitItem => unitItem.id === state.ingredientBlueprints.find(item => item.uid === field.blueprintId)?.unitId)?.name || "Err"}</div>
+            <div>{unitsById[blueprintsById[field.blueprintId].unitId].name || "Err"}</div>
             <button className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1" type="button" onClick={() => remove(index)}>
               Remove
             </button>
