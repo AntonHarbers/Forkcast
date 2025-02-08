@@ -2,7 +2,7 @@ import { useForm, useWatch } from "react-hook-form"
 import TextInputElement from "../FormComponents/TextInputElement"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
 import { useEffect, useMemo } from "react"
-import { IngredientFormInputs } from "../../types"
+import { IngredientFormInputs } from "../../ts/types"
 import { useAppContext } from "../../context/useAppContext"
 
 
@@ -50,7 +50,7 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
                 {existingIngredientUnits.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
             </select>
             <select {...register('storeUid')}>
-                {existingStores.map(item => <option key={item.uid} value={item.uid}>{item.name}</option>)}
+                {existingStores.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
             </select>
             {categoriesOfSelectedStore.length != 0 && <select {...register('categoryId')}>
                 {categoriesOfSelectedStore.sort((a, b) => a.order - b.order).map(item =>

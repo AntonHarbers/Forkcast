@@ -1,14 +1,10 @@
 import { SubmitHandler } from "react-hook-form";
-import MealData from "../classes/MealData";
 import NewMealForm from "./MealPlanningComponents/NewMealForm";
 import DailyViewMeals from "./MealPlanningComponents/DailyViewMeals";
-import { MealIngredientType } from "../types";
+import { MealFormInputType } from "../ts/types";
 import { useMemo } from "react";
+import { MealIngredientInterface, MealInterface } from "../ts/interfaces";
 
-type Inputs = {
-  name: string;
-  ingredients: MealIngredientType[];
-};
 
 export default function DailyView({
   day,
@@ -16,10 +12,10 @@ export default function DailyView({
   dailyMeals,
 }: {
   day: Date;
-  AddMealHandler: (newDay: Date, name: string, ingredients: MealIngredientType[]) => void;
-  dailyMeals: MealData[];
+  AddMealHandler: (newDay: Date, name: string, ingredients: MealIngredientInterface[]) => void;
+  dailyMeals: MealInterface[];
 }) {
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<MealFormInputType> = (data) => {
     // Create the MealData object and save it to AllMeals Array
     AddMealHandler(day, data.name, data.ingredients);
   };
@@ -34,10 +30,10 @@ export default function DailyView({
       <div>
         {dailyNonDeletedMeals.map((mealItem, index) => {
           return <DailyViewMeals
-            key={mealItem.uid}
+            key={mealItem.id}
             meal={mealItem}
-            prevId={dailyNonDeletedMeals[index - 1]?.uid || null}
-            nextId={dailyNonDeletedMeals[index + 1]?.uid || null}
+            prevId={dailyNonDeletedMeals[index - 1]?.id ?? null}
+            nextId={dailyNonDeletedMeals[index + 1]?.id || null}
           />;
         })}
       </div>

@@ -1,31 +1,22 @@
 import { useEffect, useMemo, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
-import StoreData from "../../classes/StoreData"
 import { useAppContext } from "../../context/useAppContext"
-import Category from "../../classes/CategoryData"
 import { v4 } from "uuid"
 import TextInputElement from "../FormComponents/TextInputElement"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
+import { CategoryFormInputs, ShopFormInputType } from "../../ts/types"
+import { CategoryInterface, StoreInterface } from "../../ts/interfaces"
 
-type Inputs = {
-    name: string,
-    location: string,
-}
-
-type CategoryFormInputs = {
-    name: string
-}
-
-export default function EditStoreModal({ editingStore, setEditingStore, }: { editingStore: StoreData | null, setEditingStore: React.Dispatch<React.SetStateAction<StoreData | null>> }) {
+export default function EditStoreModal({ editingStore, setEditingStore, }: { editingStore: StoreInterface | null, setEditingStore: React.Dispatch<React.SetStateAction<StoreInterface | null>> }) {
     const { state, dispatch } = useAppContext()
-    const [currentEditingCategory, setCurrentEditingCategory] = useState<null | Category>(null)
+    const [currentEditingCategory, setCurrentEditingCategory] = useState<null | CategoryInterface>(null)
 
     const {
         register,
         handleSubmit,
         formState: { errors },
         setValue
-    } = useForm<Inputs>()
+    } = useForm<ShopFormInputType>()
 
     const {
         register: registerCategoryName,
@@ -44,7 +35,7 @@ export default function EditStoreModal({ editingStore, setEditingStore, }: { edi
         resetNested()
     }, [isSubmitSuccessfulNested, resetNested])
 
-    const existingCategoriesOfStore = useMemo(() => state.categories.filter(item => !item.isDeleted && item.storeId === editingStore?.uid), [state.categories, editingStore?.uid])
+    const existingCategoriesOfStore = useMemo(() => state.categories.filter(item => !item.isDeleted && item.storeId === editingStore?.id), [state.categories, editingStore?.id])
 
     const AddNewCategory: SubmitHandler<CategoryFormInputs> = (data) => {
         if (editingStore) {
@@ -52,25 +43,25 @@ export default function EditStoreModal({ editingStore, setEditingStore, }: { edi
             const highest = existingCategoriesOfStore.reduce((max, cat) => {
                 return cat.order > max ? cat.order : max
             }, 0)
-            const newCat = new Category(v4(), data.name, highest + 1, editingStore.uid, false, new Date().toDateString())
+            const newCat: CategoryInterface = { id: v4(), name: data.name, order: highest + 1, storeId: editingStore.id, isDeleted: false, deletedAt: new Date().toDateString() }
             dispatch({ type: 'SET_CATEGORIES', payload: [...state.categories, newCat] })
         }
     }
 
     const OnDeleteStoreBtnClick = () => {
         if (editingStore) {
-            dispatch({ type: "DELETE_STORE", payload: editingStore.uid })
+            dispatch({ type: "DELETE_STORE", payload: editingStore.id })
         }
         setEditingStore(null)
         dispatch({ type: "SET_CURRENT_STORE_TAB", payload: state.stores[0] })
     }
 
-    const SubmitUpdateStoreForm: SubmitHandler<Inputs> = (data) => {
+    const SubmitUpdateStoreForm: SubmitHandler<ShopFormInputType> = (data) => {
         if (!editingStore) return
         const updatedStoreData = { ...editingStore, name: data.name, location: data.location }
         if (editingStore) {
             const updatedStores = state.stores.map(store => {
-                return store.uid === editingStore.uid ? updatedStoreData : store
+                return store.id === editingStore.id ? updatedStoreData : store
             })
             dispatch({ type: "SET_STORES", payload: updatedStores })
         }

@@ -1,26 +1,19 @@
 import NewIngredientForm from "../components/IngredientsPageComponent/NewIngredientForm";
 import { SubmitHandler } from "react-hook-form";
-import IngredientBlueprint from "../classes/IngredientBlueprint";
 import { v4 } from "uuid";
 import { useAppContext } from "../context/useAppContext";
 import EditIngredientModal from "../components/IngredientsPageComponent/EditIngredientModal";
 import { useMemo, useState } from "react";
 import IngredientListItem from "../components/IngredientsPageComponent/IngredientListItem";
-
-type Inputs = {
-    name: string,
-    storeUid: string,
-    unitId: string,
-    categoryId: string | null
-}
-
+import { IngredientFormInputs } from "../ts/types";
+import { IngredientBlueprintInterface } from "../ts/interfaces";
 
 export default function IngredientsPage() {
     const { state, dispatch } = useAppContext()
-    const [editingIngredientBlueprint, setEditingIngredientBlueprint] = useState<IngredientBlueprint | null>(null)
-    const HandleNewIngredientFormSubmit: SubmitHandler<Inputs> = (data) => {
+    const [editingIngredientBlueprint, setEditingIngredientBlueprint] = useState<IngredientBlueprintInterface | null>(null)
+    const HandleNewIngredientFormSubmit: SubmitHandler<IngredientFormInputs> = (data) => {
         if (!data.categoryId) data.categoryId = null
-        const newIngredient = new IngredientBlueprint(v4(), data.name, data.storeUid, data.unitId, data.categoryId, false, new Date().toDateString())
+        const newIngredient: IngredientBlueprintInterface = { ...data, id: v4(), deletedAt: new Date().toDateString(), isDeleted: false }
         dispatch({ type: 'SET_INGREDIENT_BLUEPRINTS', payload: [...state.ingredientBlueprints, newIngredient] })
     }
 
@@ -36,7 +29,7 @@ export default function IngredientsPage() {
 
             {existingIngredientBlueprints.map(item => {
                 return (
-                    <IngredientListItem key={item.uid} item={item} setEditingIngredientBlueprint={setEditingIngredientBlueprint} />
+                    <IngredientListItem key={item.id} item={item} setEditingIngredientBlueprint={setEditingIngredientBlueprint} />
                 )
             })}
         </div>

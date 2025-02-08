@@ -39,12 +39,14 @@
 [✔] Soft Delete - Units
 [✔] Check why changing category and meal order has no effect
 [✔] make sure not to mutate date but to duplicate it with ... operator wherever needed
-[] useMemo implementation on anything that requires heavy compute
-[] virtualize data (ask gpt)
-[] refactor everything
-[] dont allow 0 as amount inputs
-[] Move all types into types.ts
-[] turn classes into typed objects instead
+[✔] useMemo implementation on anything that requires heavy compute
+[in progress] refactor everything
+[✔] when deleting a category, the ingredients belonging to that category should be listed under not categorized
+[✔] when deleting a store, ingredients with the deleted store should show up in default until reassigned
+[✔] dont allow 0 as amount inputs
+[✔] make sure that you cannot add the same ingredientblueprint to the same meal more than one time
+[✔] Move all types into types.ts
+[✔] turn classes into typed objects instead
 [] Comportmentalize the app
 [] copy meals
 [] move meals to different day
@@ -62,5 +64,9 @@
 [] Set up database connection to postgres using drizzle
 [] User Data/Accounts with clerk
 [] Backend API with Express
+
+MAYBE Secion
+[] virtualize data (react-window for frontend only rendering portion of data)
+[] virtualize data (paginate the api responses to only get a certain amount of data at a time when needed)
 
 ## Notes:

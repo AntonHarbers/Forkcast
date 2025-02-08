@@ -1,25 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
-import MealData from "../../classes/MealData";
 import { useAppContext } from "../../context/useAppContext";
 import { useFieldArray, useForm } from "react-hook-form";
-import { MealIngredientType } from "../../types";
-import IngredientBlueprint from "../../classes/IngredientBlueprint";
 import { v4 } from "uuid";
-import Unit from "../../classes/UnitData";
 import debounce from "lodash.debounce";
-
-// Type Def.
-type Inputs = {
-  name: string;
-  ingredients: MealIngredientType[];
-};
+import { MealFormInputType } from "../../ts/types";
+import { IngredientBlueprintInterface, MealInterface, UnitInterface } from "../../ts/interfaces";
 
 export default function DailyViewMeals({
   meal,
   prevId,
   nextId,
 }: {
-  meal: MealData,
+  meal: MealInterface,
   prevId: string | null,
   nextId: string | null
 }) {
@@ -31,21 +23,22 @@ export default function DailyViewMeals({
     formState: { errors, isSubmitSuccessful },
     reset,
     control,
-    handleSubmit
-  } = useForm<Inputs>()
+    handleSubmit,
+    setValue
+  } = useForm<MealFormInputType>()
   const { fields, append, remove } = useFieldArray({ control, name: "ingredients" })
 
   const ToggleMealDone = () => {
     const newMeals = state.meals.map(mealData => {
-      return mealData.uid != meal.uid ? mealData : { ...mealData, finished: !meal.finished }
+      return mealData.id != meal.id ? mealData : { ...mealData, finished: !meal.isFinished }
     })
     dispatch({ type: "SET_MEALS", payload: newMeals })
   }
 
   const [searchTerm, setSearchTerm] = useState<string>("")
-  const [filteredIngredients, setFilteredIngredients] = useState<IngredientBlueprint[]>([])
+  const [filteredIngredients, setFilteredIngredients] = useState<IngredientBlueprintInterface[]>([])
 
-  const debouncedFilter = useMemo(() => debounce((value: string, ingredientBlueprints: IngredientBlueprint[]) => {
+  const debouncedFilter = useMemo(() => debounce((value: string, ingredientBlueprints: IngredientBlueprintInterface[]) => {
     if (!value) {
       setFilteredIngredients([])
       return
@@ -62,7 +55,7 @@ export default function DailyViewMeals({
   }
 
   const DeleteMeal = () => {
-    dispatch({ type: "DELETE_MEAL", payload: meal.uid })
+    dispatch({ type: "DELETE_MEAL", payload: meal.id })
   }
 
   const EditMeal = () => {
@@ -70,23 +63,23 @@ export default function DailyViewMeals({
     meal.ingredients.forEach(data => append({ amount: data.amount, id: data.id, blueprintId: data.blueprintId, bought: data.bought }))
   }
 
-  const SubmitEditMeal = (data: Inputs) => {
+  const SubmitEditMeal = (data: MealFormInputType) => {
     setEditing(false)
     const UpdatedMeals = state.meals.map(mealData => {
-      return mealData.uid != meal.uid ? mealData : { ...meal, name: data.name, ingredients: data.ingredients }
+      return mealData.id != meal.id ? mealData : { ...meal, name: data.name, ingredients: data.ingredients }
     })
 
     dispatch({ type: "SET_MEALS", payload: UpdatedMeals })
   }
 
   const SwapMealOrder = (swapId: string) => {
-    const swapMeal = state.meals.find(mealData => mealData.uid === swapId)
+    const swapMeal = state.meals.find(mealData => mealData.id === swapId)
     if (!swapMeal) return
     const savedOrder = swapMeal.order
     const newMeals = state.meals.map(mealData => {
-      return mealData.uid === swapId
+      return mealData.id === swapId
         ? { ...swapMeal, order: meal.order }
-        : mealData.uid === meal.uid
+        : mealData.id === meal.id
           ? { ...meal, order: savedOrder }
           : mealData
     })
@@ -98,21 +91,21 @@ export default function DailyViewMeals({
   }, [isSubmitSuccessful, reset])
 
   const blueprintsById = useMemo(() => {
-    return state.ingredientBlueprints.reduce((acc: { [key: string]: IngredientBlueprint }, ingredient) => {
-      acc[ingredient.uid] = ingredient
+    return state.ingredientBlueprints.reduce((acc: { [key: string]: IngredientBlueprintInterface }, ingredient) => {
+      acc[ingredient.id] = ingredient
       return acc
     }, {})
   }, [state.ingredientBlueprints])
 
   const unitsById = useMemo(() => {
-    return state.ingredientUnits.reduce((acc: { [key: string]: Unit }, unit) => {
+    return state.ingredientUnits.reduce((acc: { [key: string]: UnitInterface }, unit) => {
       acc[unit.id] = unit
       return acc
     }, {})
   }, [state.ingredientUnits])
 
   return (
-    <div className={`w-auto border-b p-2 m-10 text-2xl text-start ${meal.finished ? "bg-slate-400" : editing ? 'bg-green-300' : 'bg-slate-100'}`}>
+    <div className={`w-auto border-b p-2 m-10 text-2xl text-start ${meal.isFinished ? "bg-slate-400" : editing ? 'bg-green-300' : 'bg-slate-100'}`}>
       {editing ? <div>
         <form onSubmit={handleSubmit(SubmitEditMeal)}>
           <div className="flex justify-between">
@@ -125,10 +118,15 @@ export default function DailyViewMeals({
             <div className="flex flex-col">
               {filteredIngredients.map(item => {
                 return (
-                  <div className="bg-green-100 p-3 rounded-md border border-slate-600 m-2 flex justify-between items-center" key={item.uid}>
+                  <div className="bg-green-100 p-3 rounded-md border border-slate-600 m-2 flex justify-between items-center" key={item.id}>
                     <div>{item.name}</div>
                     <button type="button" className="bg-green-500 rounded-md p-2 hover:bg-green-600 active:bg-green-800" onClick={() => {
-                      append({ amount: 0, id: v4(), blueprintId: item.uid, bought: false })
+                      if (fields.find(field => field.blueprintId === item.id)) {
+                        window.alert('Meal already contains this ingredient!')
+                        return
+                      }
+                      append({ amount: 0, id: v4(), blueprintId: item.id, bought: false })
+                      setValue(`ingredients.${fields.length}.amount`, 1)
                       setFilteredIngredients([])
                       setSearchTerm("")
                     }}>Add</button>
@@ -149,7 +147,7 @@ export default function DailyViewMeals({
               <div className="text-lg">{blueprintsById[field.blueprintId].name || "Name Err"}</div>
               <input hidden {...register(`ingredients.${index}.blueprintId`)} />
               <div className="flex gap-1">
-                <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`, { valueAsNumber: true })} />
+                <input className="w-20 text-center p-1 rounded-sm" defaultValue={1} min={1} type="number" {...register(`ingredients.${index}.amount`, { min: 1, valueAsNumber: true })} />
                 <div>{unitsById[blueprintsById[field.blueprintId].unitId].name || "ERR"}</div>
               </div>
               <button className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1" type="button" onClick={() => remove(index)}>
@@ -164,7 +162,7 @@ export default function DailyViewMeals({
           <button onClick={EditMeal} className="bg-blue-300 hover:bg-blue-400 active:bg-blue-500 rounded-sm p-1 text-lg">Edit</button>
           <div className="flex gap-2">
             <div className="text-lg">Done</div>
-            <input type="checkbox" checked={meal.finished} onChange={ToggleMealDone} />
+            <input type="checkbox" checked={meal.isFinished} onChange={ToggleMealDone} />
           </div>
         </div>
         {meal.ingredients.map(ingredient => {

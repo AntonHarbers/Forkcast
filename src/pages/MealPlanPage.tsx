@@ -1,11 +1,10 @@
 import Calendar from "react-calendar";
 import { Value } from "react-calendar/src/shared/types.js";
 import DailyView from "../components/DailyView";
-import MealData from "../classes/MealData";
 import { v4 } from "uuid";
 import { useAppContext } from "../context/useAppContext";
-import { MealIngredientType } from "../types";
 import { useMemo } from "react";
+import { MealIngredientInterface, MealInterface } from "../ts/interfaces";
 
 function MealPlanPage() {
   const { state, dispatch } = useAppContext()
@@ -13,7 +12,7 @@ function MealPlanPage() {
   const AddMealHandler = (
     newDay: Date,
     name: string,
-    ingredients: MealIngredientType[]
+    ingredients: MealIngredientInterface[]
   ) => {
 
     // get the highest order of this day
@@ -21,16 +20,17 @@ function MealPlanPage() {
 
     selectedDayExistingMeals.forEach(meal => highest = Math.max(highest, meal.order))
 
-    const newMeal = new MealData(
-      v4(),
+    const newMeal: MealInterface = {
+      id: v4(),
       name,
       ingredients,
-      newDay.toDateString(),
-      highest + 1,
-      false,
-      false,
-      new Date().toDateString()
-    );
+      date: newDay.toDateString(),
+      order: highest + 1,
+      isFinished: false,
+      isDeleted: false,
+      deletedAt: new Date().toDateString()
+    }
+
     dispatch({ type: "SET_MEALS", payload: [...state.meals, newMeal] })
   };
 

@@ -1,20 +1,17 @@
 import { useMemo, useState } from "react";
-import StoreData from "../classes/StoreData";
 import NewShopForm from "../components/ShoppingListComponents/NewShopForm";
 import StoreTabItem from "../components/ShoppingListComponents/StoreTabItem";
 import EditStoreModal from "../components/ShoppingListComponents/EditStoreModal";
 import { useAppContext } from "../context/useAppContext";
-import { MealIngredientType } from "../types";
-import IngredientBlueprint from "../classes/IngredientBlueprint";
-import Unit from "../classes/UnitData";
+import { ShoppingListItemType } from "../ts/types";
+import { IngredientBlueprintInterface, MealIngredientInterface, StoreInterface, UnitInterface } from "../ts/interfaces";
 
-type ShoppingListItemType = {
-    BlueprintIngredients: Map<IngredientBlueprint, MealIngredientType[]>
-}
+
 
 export default function ShoppingListPage() {
     const { state, dispatch } = useAppContext()
-    const [editingStore, setEditingStore] = useState<StoreData | null>(null)
+    const [editingStore, setEditingStore] = useState<StoreInterface | null>(null)
+    const existingStores = useMemo(() => state.stores.filter(item => !item.isDeleted), [state.stores])
 
     const shoppingList: ShoppingListItemType = useMemo(() => {
         const shopIngredients: ShoppingListItemType = { BlueprintIngredients: new Map() }
@@ -23,13 +20,23 @@ export default function ShoppingListPage() {
             const mealDate = new Date(meal.date)
             const currentDate = new Date()
             currentDate.setHours(0, 0, 0, 0) // Normalizes the date for comparison
-            if (meal.finished || mealDate < currentDate) {
+            if (meal.isFinished || mealDate < currentDate) {
                 return
             }
             meal.ingredients.forEach(mealIngredients => {
-                const blueprint = state.ingredientBlueprints.find(blueprint => blueprint.uid == mealIngredients.blueprintId)
+                const blueprint = state.ingredientBlueprints.find(blueprint => blueprint.id == mealIngredients.blueprintId)
                 if (!blueprint) return
-                if (blueprint?.storeUid === state.currentStoreTab?.uid) {
+                // if the store of this ingredient is deleted, then add the ingredients to the default page
+                if (blueprint?.storeUid === state.currentStoreTab?.id) {
+                    if (shopIngredients.BlueprintIngredients.has(blueprint)) {
+                        shopIngredients.BlueprintIngredients.get(blueprint)?.push(mealIngredients)
+                    } else {
+                        shopIngredients.BlueprintIngredients.set(blueprint, [mealIngredients])
+                    }
+                }
+
+                // make sure that deleted store ingredients show up on default page
+                if (state.currentStoreTab?.id === '1' && !existingStores.find(item => item.id === blueprint.storeUid)) {
                     if (shopIngredients.BlueprintIngredients.has(blueprint)) {
                         shopIngredients.BlueprintIngredients.get(blueprint)?.push(mealIngredients)
                     } else {
@@ -39,28 +46,37 @@ export default function ShoppingListPage() {
             })
         })
         return shopIngredients
-    }, [state.currentStoreTab, state.ingredientBlueprints, state.meals,])
-    const existingStores = useMemo(() => state.stores.filter(item => !item.isDeleted), [state.stores])
+    }, [state.currentStoreTab, state.ingredientBlueprints, state.meals, existingStores])
     const existingSelectedStoreCategories = useMemo(() =>
-        state.categories.filter(item => !item.isDeleted && item.storeId === state.currentStoreTab?.uid).sort((a, b) => a.order - b.order)
+        state.categories.filter(item => !item.isDeleted && item.storeId === state.currentStoreTab?.id).sort((a, b) => a.order - b.order)
         , [state.categories, state.currentStoreTab])
     const blueprintIngredientEntries = useMemo(() => Array.from(shoppingList.BlueprintIngredients.entries()), [shoppingList])
     const ingredientUnitLookup = useMemo(() => {
-        return state.ingredientUnits.reduce((acc: { [key: string]: Unit }, unit) => {
+        return state.ingredientUnits.reduce((acc: { [key: string]: UnitInterface }, unit) => {
             acc[unit.id] = unit
             return acc
         }, {})
     }, [state.ingredientUnits])
+
     const categorizedBlueprintIngredients = useMemo(() => {
-        return blueprintIngredientEntries.reduce((acc: { [key: string]: [IngredientBlueprint, MealIngredientType[]][] }, [blueprint, ingredients]) => {
-            const categoryKey = blueprint.categoryId ?? 'uncategorized';
-            if (!acc[categoryKey]) {
-                acc[categoryKey] = []
-            }
-            acc[categoryKey].push([blueprint, ingredients])
-            return acc
-        }, {})
-    }, [blueprintIngredientEntries])
+        return blueprintIngredientEntries.reduce(
+            (acc: {
+                [key: string]: [IngredientBlueprintInterface, MealIngredientInterface[]][]
+            },
+                [blueprint, ingredients]
+            ) => {
+                const categoryKey =
+                    (blueprint.categoryId && existingSelectedStoreCategories.find(item => item.id === blueprint.categoryId))
+                        ? blueprint.categoryId
+                        : 'uncategorized';
+
+                if (!acc[categoryKey]) {
+                    acc[categoryKey] = []
+                }
+                acc[categoryKey].push([blueprint, ingredients])
+                return acc
+            }, {})
+    }, [blueprintIngredientEntries, existingSelectedStoreCategories])
 
     const ToggleMealIngredientsBought = (checked: boolean, blueprintId: string) => {
         const newMeals = state.meals.map(meal => ({
@@ -94,7 +110,7 @@ export default function ShoppingListPage() {
                 {/* Shop Tabs */}
                 <div>
                     <div className="flex bg-slate-200 justify-center">
-                        {existingStores.map(item => <div key={item.uid}><StoreTabItem item={item} /></div>)}
+                        {existingStores.map(item => <div key={item.id}><StoreTabItem item={item} /></div>)}
                     </div>
                 </div>
                 <EditStoreModal editingStore={editingStore} setEditingStore={setEditingStore} />
@@ -149,7 +165,7 @@ export default function ShoppingListPage() {
                                                         totalUnbought += item.amount
                                                     }
                                                 })
-                                                return <div className="flex justify-between" key={blueprint.uid}>
+                                                return <div className="flex justify-between" key={blueprint.id}>
                                                     <div className="flex gap-1">
                                                         <div className="flex gap-2">
                                                             {totalUnbought != 0 && <div className="font-bold">{totalUnbought}</div>}
@@ -159,7 +175,11 @@ export default function ShoppingListPage() {
                                                         <div>{ingredientUnitLookup[blueprint.unitId].name}</div>
                                                     </div>
                                                     <div>{blueprint.name}</div>
-                                                    <input type="checkbox" checked={ingredients.every(item => item.bought)} onChange={(e) => ToggleMealIngredientsBought(e.target.checked, blueprint.uid)} />
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={ingredients.every(item => item.bought)}
+                                                        onChange={(e) => ToggleMealIngredientsBought(e.target.checked, blueprint.id)}
+                                                    />
                                                 </div>
                                             })}
                                         </div>
@@ -180,7 +200,7 @@ export default function ShoppingListPage() {
                                                 totalUnbought += item.amount
                                             }
                                         })
-                                        return <div className="flex justify-between" key={blueprint.uid}>
+                                        return <div className="flex justify-between" key={blueprint.id}>
                                             <div className="flex gap-1">
                                                 <div className="flex gap-2">
                                                     {totalUnbought != 0 && <div className="font-bold">{totalUnbought}</div>}
@@ -190,7 +210,11 @@ export default function ShoppingListPage() {
                                                 <div>{ingredientUnitLookup[blueprint.unitId].name}</div>
                                             </div>
                                             <div>{blueprint.name}</div>
-                                            <input type="checkbox" checked={ingredients.every(item => item.bought)} onChange={(e) => ToggleMealIngredientsBought(e.target.checked, blueprint.uid)} />
+                                            <input
+                                                type="checkbox"
+                                                checked={ingredients.every(item => item.bought)}
+                                                onChange={(e) => ToggleMealIngredientsBought(e.target.checked, blueprint.id)}
+                                            />
                                         </div>
                                     })}
                             </div>

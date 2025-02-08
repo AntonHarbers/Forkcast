@@ -1,4 +1,4 @@
-import { AppAction, AppState } from '../types';
+import { AppAction, AppState } from '../ts/types';
 
 export default function reducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
@@ -7,7 +7,7 @@ export default function reducer(state: AppState, action: AppAction): AppState {
       return { ...state, ingredientBlueprints: action.payload };
     case 'DELETE_INGREDIENT_BLUEPRINT': {
       const updatedIngredients = state.ingredientBlueprints.map((item) => {
-        return item.uid != action.payload
+        return item.id != action.payload
           ? item
           : {
               ...item,
@@ -23,7 +23,7 @@ export default function reducer(state: AppState, action: AppAction): AppState {
       return { ...state, stores: action.payload };
     case 'DELETE_STORE': {
       const updatedStores = state.stores.map((store) => {
-        return store.uid != action.payload
+        return store.id != action.payload
           ? store
           : {
               ...store,
@@ -69,7 +69,7 @@ export default function reducer(state: AppState, action: AppAction): AppState {
       return { ...state, meals: action.payload };
     case 'DELETE_MEAL': {
       const updatedMeals = state.meals.map((meal) => {
-        return meal.uid != action.payload
+        return meal.id != action.payload
           ? meal
           : {
               ...meal,

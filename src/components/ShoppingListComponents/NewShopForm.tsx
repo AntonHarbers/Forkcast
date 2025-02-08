@@ -1,11 +1,11 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import StoreData from "../../classes/StoreData";
 import TextInputElement from "../FormComponents/TextInputElement";
 import SubmitInputElement from "../FormComponents/SubmitInputElement";
 import { useEffect } from "react";
 import { v4 } from "uuid";
-import { ShopFormInputType } from "../../types";
+import { ShopFormInputType } from "../../ts/types";
 import { useAppContext } from "../../context/useAppContext";
+import { StoreInterface } from "../../ts/interfaces";
 
 
 export default function NewShopForm() {
@@ -19,7 +19,13 @@ export default function NewShopForm() {
     const { dispatch, state } = useAppContext()
 
     const SubmitNewShopForm: SubmitHandler<ShopFormInputType> = (data) => {
-        const newStore = new StoreData(v4(), data.name, data.location, false, new Date().toDateString())
+        const newStore: StoreInterface = {
+            id: v4(),
+            name: data.name,
+            location: data.location,
+            isDeleted: false,
+            deletedAt: new Date().toDateString()
+        }
         dispatch({ type: "SET_STORES", payload: [...state.stores, newStore] })
     }
 
