@@ -3,29 +3,26 @@ import TextInputElement from "../FormComponents/TextInputElement";
 import SubmitInputElement from "../FormComponents/SubmitInputElement";
 import { useEffect, useMemo, useState } from "react";
 import { useAppContext } from "../../context/useAppContext";
-import { IngredientUnit, MealIngredientType } from "../../types";
+import { MealFormInputType } from "../../ts/types";
 import { v4 } from "uuid";
-import IngredientBlueprint from "../../classes/IngredientBlueprint";
 import debounce from "lodash.debounce";
-
-// Type Def.
-type Inputs = {
-  name: string;
-  ingredients: MealIngredientType[];
-};
+import { IngredientBlueprintInterface, UnitInterface } from "../../ts/interfaces";
 
 export default function NewMealForm({
   onSubmit,
 }: {
-  onSubmit: (data: Inputs) => void;
+  onSubmit: (data: MealFormInputType) => void;
 }) {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitSuccessful },
     reset,
-    control
-  } = useForm<Inputs>();
+    control,
+    setValue
+  } = useForm<MealFormInputType>({
+
+  });
 
 
   const { fields, append, remove } = useFieldArray({ control, name: "ingredients" })
@@ -33,27 +30,27 @@ export default function NewMealForm({
   const { state } = useAppContext()
 
   const [searchTerm, setSearchTerm] = useState<string>("")
-  const [filteredIngredients, setFilteredIngredients] = useState<IngredientBlueprint[]>([])
+  const [filteredIngredients, setFilteredIngredients] = useState<IngredientBlueprintInterface[]>([])
 
   const blueprintsById = useMemo(() => {
-    return state.ingredientBlueprints.reduce((acc: { [key: string]: IngredientBlueprint }, ingredient) => {
-      acc[ingredient.uid] = ingredient
+    return state.ingredientBlueprints.reduce((acc: { [key: string]: IngredientBlueprintInterface }, ingredient) => {
+      acc[ingredient.id] = ingredient
       return acc
-    }, {} as { [key: string]: IngredientBlueprint })
+    }, {} as { [key: string]: IngredientBlueprintInterface })
   }, [state.ingredientBlueprints])
 
   const unitsById = useMemo(() => {
     return state.ingredientUnits.reduce((acc, unit) => {
       acc[unit.id] = unit
       return acc
-    }, {} as { [key: string]: IngredientUnit })
+    }, {} as { [key: string]: UnitInterface })
   }, [state.ingredientUnits])
 
   useEffect(() => {
     reset({ ingredients: [] })
   }, [isSubmitSuccessful, reset])
 
-  const debouncedFilter = useMemo(() => debounce((value: string, ingredientBlueprints: IngredientBlueprint[]) => {
+  const debouncedFilter = useMemo(() => debounce((value: string, ingredientBlueprints: IngredientBlueprintInterface[]) => {
     if (!value) {
       setFilteredIngredients([])
       return
@@ -83,10 +80,11 @@ export default function NewMealForm({
         <div className="flex flex-col">
           {filteredIngredients.map(item => {
             return (
-              <div className="bg-green-100 p-3 rounded-md border border-slate-600 m-2 flex justify-between items-center" key={item.uid}>
+              <div className="bg-green-100 p-3 rounded-md border border-slate-600 m-2 flex justify-between items-center" key={item.id}>
                 <div>{item.name}</div>
                 <button type="button" className="bg-green-500 rounded-md p-2 hover:bg-green-600 active:bg-green-800" onClick={() => {
-                  append({ amount: 0, id: v4(), blueprintId: item.uid, bought: false })
+                  append({ amount: 0, id: v4(), blueprintId: item.id, bought: false })
+                  setValue(`ingredients.${fields.length}.amount`, 1)
                   setFilteredIngredients([])
                   setSearchTerm("")
                 }}>Add</button>
@@ -98,7 +96,7 @@ export default function NewMealForm({
           <div className="flex items-center gap-2" key={field.id}>
             <div className="w-[50%]">{blueprintsById[field.blueprintId].name}</div>
             <input hidden {...register(`ingredients.${index}.blueprintId`)} />
-            <input className="w-20 text-center p-1 rounded-sm" type="number" {...register(`ingredients.${index}.amount`, { valueAsNumber: true })} />
+            <input className="w-20 text-center p-1 rounded-sm" min={1} defaultValue={1} type="number" {...register(`ingredients.${index}.amount`, { min: 1, valueAsNumber: true })} />
             <div>{unitsById[blueprintsById[field.blueprintId].unitId].name || "Err"}</div>
             <button className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1" type="button" onClick={() => remove(index)}>
               Remove

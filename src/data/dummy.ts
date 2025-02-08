@@ -1,11 +1,14 @@
-import Category from '../classes/CategoryData';
-import Unit from '../classes/UnitData';
-import { IngredientBlueprintType, MealDataType } from '../types';
+import {
+  CategoryInterface,
+  IngredientBlueprintInterface,
+  MealInterface,
+  StoreInterface,
+  UnitInterface,
+} from '../ts/interfaces';
 
-// dummyData.ts
-export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
+export const IngredientBlueprintDataDB: IngredientBlueprintInterface[] = [
   {
-    uid: '1',
+    id: '1',
     name: 'Tomato',
     storeUid: '2',
     unitId: '0',
@@ -14,7 +17,7 @@ export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
     deletedAt: new Date().toDateString(),
   },
   {
-    uid: '2',
+    id: '2',
     name: 'Cheese',
     storeUid: '2',
     unitId: '0',
@@ -23,7 +26,7 @@ export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
     deletedAt: new Date().toDateString(),
   },
   {
-    uid: '3',
+    id: '3',
     name: 'Onion',
     storeUid: '2',
     unitId: '0',
@@ -32,7 +35,7 @@ export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
     deletedAt: new Date().toDateString(),
   },
   {
-    uid: '4',
+    id: '4',
     name: 'Burger',
     storeUid: '2',
     unitId: '0',
@@ -41,7 +44,7 @@ export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
     deletedAt: new Date().toDateString(),
   },
   {
-    uid: '5',
+    id: '5',
     name: 'Chips',
     storeUid: '3',
     unitId: '0',
@@ -50,7 +53,7 @@ export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
     deletedAt: new Date().toDateString(),
   },
   {
-    uid: '6',
+    id: '6',
     name: 'Banana',
     storeUid: '3',
     unitId: '0',
@@ -60,15 +63,45 @@ export const IngredientBlueprintDataDB: IngredientBlueprintType[] = [
   },
 ];
 
-export const StoreDataDB = [
-  { uid: '1', name: 'Default', location: 'Default' },
-  { uid: '2', name: 'ALDI', location: 'CP' },
-  { uid: '3', name: 'REWE', location: 'CP' },
-  { uid: '4', name: 'GLOBUS', location: '-' },
-  { uid: '5', name: 'LIDL', location: '-' },
+export const StoreDataDB: StoreInterface[] = [
+  {
+    id: '1',
+    name: 'Default',
+    location: 'Default',
+    deletedAt: new Date().toDateString(),
+    isDeleted: false,
+  },
+  {
+    id: '2',
+    name: 'ALDI',
+    location: 'CP',
+    deletedAt: new Date().toDateString(),
+    isDeleted: false,
+  },
+  {
+    id: '3',
+    name: 'REWE',
+    location: 'CP',
+    deletedAt: new Date().toDateString(),
+    isDeleted: false,
+  },
+  {
+    id: '4',
+    name: 'GLOBUS',
+    location: '-',
+    deletedAt: new Date().toDateString(),
+    isDeleted: false,
+  },
+  {
+    id: '5',
+    name: 'LIDL',
+    location: '-',
+    deletedAt: new Date().toDateString(),
+    isDeleted: false,
+  },
 ];
 
-export const CategoryDummyData: Category[] = [
+export const CategoryDummyData: CategoryInterface[] = [
   {
     id: '1',
     name: 'Veggies',
@@ -103,7 +136,7 @@ export const CategoryDummyData: Category[] = [
   },
 ];
 
-export const dummyMeals: MealDataType[] = [
+export const dummyMeals: MealInterface[] = [
   {
     id: '1',
     name: 'Pizza',
@@ -113,7 +146,7 @@ export const dummyMeals: MealDataType[] = [
     ],
     date: new Date().toDateString(),
     order: 0,
-    finished: false,
+    isFinished: false,
     isDeleted: false,
     deletedAt: new Date().toDateString(),
   },
@@ -126,7 +159,7 @@ export const dummyMeals: MealDataType[] = [
     ],
     date: new Date().toDateString(),
     order: 4,
-    finished: true,
+    isFinished: true,
     isDeleted: false,
     deletedAt: new Date().toDateString(),
   },
@@ -140,7 +173,7 @@ export const dummyMeals: MealDataType[] = [
     ],
     date: new Date().toDateString(),
     order: 3,
-    finished: false,
+    isFinished: false,
     isDeleted: false,
     deletedAt: new Date().toDateString(),
   },
@@ -153,13 +186,13 @@ export const dummyMeals: MealDataType[] = [
     ],
     date: new Date().toDateString(),
     order: 2,
-    finished: false,
+    isFinished: false,
     isDeleted: false,
     deletedAt: new Date().toDateString(),
   },
 ];
 
-export const UnitData: Unit[] = [
+export const UnitData: UnitInterface[] = [
   {
     id: '0',
     name: 'KG',

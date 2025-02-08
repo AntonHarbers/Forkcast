@@ -1,7 +1,7 @@
-import StoreData from "../../classes/StoreData";
 import { useAppContext } from "../../context/useAppContext";
+import { StoreInterface } from "../../ts/interfaces";
 
-export default function StoreTabItem({ item }: { item: StoreData, }) {
+export default function StoreTabItem({ item }: { item: StoreInterface, }) {
     const { state, dispatch } = useAppContext()
 
     return (

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import Unit from "../../classes/UnitData";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { IngredientUnitFormInputType } from "../../types";
+import { IngredientUnitFormInputType } from "../../ts/types";
 import { useAppContext } from "../../context/useAppContext";
 import TextInputElement from "../FormComponents/TextInputElement";
 import SubmitInputElement from "../FormComponents/SubmitInputElement";
+import { UnitInterface } from "../../ts/interfaces";
 
-export default function UnitListItem({ unit }: { unit: Unit }) {
+export default function UnitListItem({ unit }: { unit: UnitInterface }) {
 
     const [isEditing, setIsEditing] = useState<boolean>(false)
 

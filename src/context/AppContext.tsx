@@ -1,11 +1,6 @@
 import { createContext, ReactNode, useEffect, useReducer } from "react";
-import { AppContextType, AppState } from "../types";
-import IngredientBlueprint from "../classes/IngredientBlueprint";
-import StoreData from "../classes/StoreData";
-import MealData from "../classes/MealData";
+import { AppContextType, AppState } from "../ts/types";
 import { CategoryDummyData, dummyMeals, IngredientBlueprintDataDB, StoreDataDB, UnitData } from "../data/dummy";
-import Unit from "../classes/UnitData";
-import Category from "../classes/CategoryData";
 import reducer from "./reducer";
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -27,23 +22,23 @@ const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     useEffect(() => {
         dispatch({
             type: "SET_INGREDIENT_BLUEPRINTS",
-            payload: IngredientBlueprintDataDB.map(item => new IngredientBlueprint(item.uid, item.name, item.storeUid, "0", item.categoryId, false, new Date().toDateString()))
+            payload: IngredientBlueprintDataDB
         })
         dispatch({
             type: "SET_STORES",
-            payload: StoreDataDB.map(item => new StoreData(item.uid, item.name, item.location, false, new Date().toDateString()))
+            payload: StoreDataDB
         })
         dispatch({
             type: "SET_MEALS",
-            payload: dummyMeals.map(item => new MealData(item.id, item.name, item.ingredients, item.date, item.order, item.finished, false, new Date().toDateString()))
+            payload: dummyMeals
         })
         dispatch({
             type: "SET_INGREDIENT_UNITS",
-            payload: UnitData.map(item => new Unit(item.id, item.name, false, new Date().toDateString()))
+            payload: UnitData
         })
         dispatch({
             type: "SET_CATEGORIES",
-            payload: CategoryDummyData.map(item => new Category(item.id, item.name, item.order, item.storeId, item.isDeleted, item.deletedAt))
+            payload: CategoryDummyData
         })
     }, [])
 
