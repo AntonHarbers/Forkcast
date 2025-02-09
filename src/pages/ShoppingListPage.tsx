@@ -5,6 +5,7 @@ import EditStoreModal from "../components/ShoppingListComponents/EditStoreModal"
 import { useAppContext } from "../context/useAppContext";
 import { ShoppingListItemType } from "../ts/types";
 import { IngredientBlueprintInterface, MealIngredientInterface, StoreInterface, UnitInterface } from "../ts/interfaces";
+import Header from "../components/Global/Header";
 
 
 
@@ -102,8 +103,8 @@ export default function ShoppingListPage() {
     }
 
     return (
-        <div>
-            <h1 className="mx-auto w-full text-center text-5xl m-10">Shopping List</h1>
+        <>
+            <Header text="Shopping List" />
             <NewShopForm />
             {/* Shopping List Container */}
             <div className="bg-slate-200 w-[80%] mx-auto flex flex-col gap-10 p-2 m-10">
@@ -221,6 +222,6 @@ export default function ShoppingListPage() {
                         </div>
                     </>}
             </div>
-        </div>
+        </>
     )
 }

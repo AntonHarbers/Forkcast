@@ -17,6 +17,11 @@ export default function TextInputElement<InputType extends Record<string, unknow
         }
 ) {
     return (
-        <input defaultValue={defaultValue} className="p-2 bg-blue-500 rounded-md m-2 text-white placeholder-slate-300" placeholder={placeholder} {...register(registerName, { required: required })} />
+        <input
+            defaultValue={defaultValue}
+            className="p-2 bg-blue-500 rounded-md m-2 text-white placeholder-slate-300"
+            placeholder={placeholder}
+            {...register(registerName, { required: required })}
+        />
     )
 }

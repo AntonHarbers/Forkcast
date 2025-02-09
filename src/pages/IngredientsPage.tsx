@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import IngredientListItem from "../components/IngredientsPageComponent/IngredientListItem";
 import { IngredientFormInputs } from "../ts/types";
 import { IngredientBlueprintInterface } from "../ts/interfaces";
+import Header from "../components/Global/Header";
 
 export default function IngredientsPage() {
     const { state, dispatch } = useAppContext()
@@ -20,8 +21,8 @@ export default function IngredientsPage() {
     const existingIngredientBlueprints = useMemo(() => state.ingredientBlueprints.filter(item => !item.isDeleted), [state.ingredientBlueprints])
 
     return (
-        <div>
-            <h1 className="mx-auto w-full text-center text-5xl m-10">Ingredients</h1>
+        <>
+            <Header text="Ingredients" />
             <div className=" justify-center flex ">
                 <NewIngredientForm onSubmit={HandleNewIngredientFormSubmit} />
             </div>
@@ -32,6 +33,6 @@ export default function IngredientsPage() {
                     <IngredientListItem key={item.id} item={item} setEditingIngredientBlueprint={setEditingIngredientBlueprint} />
                 )
             })}
-        </div>
+        </>
     )
 }

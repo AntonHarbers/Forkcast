@@ -5,6 +5,7 @@ import { v4 } from "uuid";
 import { useAppContext } from "../context/useAppContext";
 import { useMemo } from "react";
 import { MealIngredientInterface, MealInterface } from "../ts/interfaces";
+import Header from "../components/Global/Header";
 
 function MealPlanPage() {
   const { state, dispatch } = useAppContext()
@@ -36,24 +37,21 @@ function MealPlanPage() {
 
   return (
     <>
-      <h1 className="mx-auto w-full text-center text-5xl m-10">Meal Plan</h1>
-      <div>
-        <div className="justify-center flex">
-          <Calendar
-            className={"react-calendar"}
-            onChange={(e: Value) => {
-              if (e instanceof Date) dispatch({ type: 'SET_SELECTED_DAY', payload: e })
-            }}
-          />
-        </div>
-
-        <DailyView
-          day={state.selectedDay}
-          AddMealHandler={AddMealHandler}
-          dailyMeals={selectedDayExistingMeals.sort((a, b) => a.order - b.order)}
+      <Header text="Meal Plan" />
+      <div className="justify-center flex">
+        <Calendar
+          className={"react-calendar"}
+          onChange={(e: Value) => {
+            if (e instanceof Date) dispatch({ type: 'SET_SELECTED_DAY', payload: e })
+          }}
         />
       </div>
 
+      <DailyView
+        day={state.selectedDay}
+        AddMealHandler={AddMealHandler}
+        dailyMeals={selectedDayExistingMeals.sort((a, b) => a.order - b.order)}
+      />
     </>
   );
 }

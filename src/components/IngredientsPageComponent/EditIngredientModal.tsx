@@ -30,8 +30,6 @@ export default function EditIngredientModal({
         [selectedStoreId, state.categories]
     )
 
-
-
     const OnDeleteIngredientBlueprintBtnClick = () => {
         if (editingIngredientBlueprint) {
             dispatch({ type: "DELETE_INGREDIENT_BLUEPRINT", payload: editingIngredientBlueprint.id })
