@@ -47,7 +47,7 @@
 [✔] make sure that you cannot add the same ingredientblueprint to the same meal more than one time
 [✔] Move all types into types.ts
 [✔] turn classes into typed objects instead
-[] Comportmentalize the app
+[✔] Comportmentalize the app
 [] copy meals
 [] move meals to different day
 [] dummy api calls, optimistic updates and loading states

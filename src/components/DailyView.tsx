@@ -16,7 +16,6 @@ export default function DailyView({
   dailyMeals: MealInterface[];
 }) {
   const onSubmit: SubmitHandler<MealFormInputType> = (data) => {
-    // Create the MealData object and save it to AllMeals Array
     AddMealHandler(day, data.name, data.ingredients);
   };
 
@@ -26,16 +25,15 @@ export default function DailyView({
     <>
       <div className="text-slate-800 text-3xl text-center my-10">{day?.toDateString()}</div>
       <NewMealForm onSubmit={onSubmit} />
-      {/* Daily-view Meals */}
       <div>
-        {dailyNonDeletedMeals.map((mealItem, index) => {
-          return <DailyViewMeals
+        {dailyNonDeletedMeals.map((mealItem, index) =>
+          <DailyViewMeals
             key={mealItem.id}
             meal={mealItem}
             prevId={dailyNonDeletedMeals[index - 1]?.id ?? null}
             nextId={dailyNonDeletedMeals[index + 1]?.id || null}
-          />;
-        })}
+          />
+        )}
       </div>
     </>
   );

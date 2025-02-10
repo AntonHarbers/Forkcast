@@ -6,6 +6,7 @@ import TextInputElement from "../FormComponents/TextInputElement"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
 import { CategoryFormInputs, ShopFormInputType } from "../../ts/types"
 import { CategoryInterface, StoreInterface } from "../../ts/interfaces"
+import FormError from "../FormComponents/FormError"
 
 export default function EditStoreModal({ editingStore, setEditingStore, }: { editingStore: StoreInterface | null, setEditingStore: React.Dispatch<React.SetStateAction<StoreInterface | null>> }) {
     const { state, dispatch } = useAppContext()
@@ -99,47 +100,40 @@ export default function EditStoreModal({ editingStore, setEditingStore, }: { edi
         }
     }, [currentEditingCategory, setValueCategoryName])
 
-    if (editingStore) {
-        return (
-            <div className="absolute bg-blue-200 left-[40%] w-[20%] flex flex-col">
-                <div className="flex justify-between">
-                    <p className="m-2 text-lg">Edit {editingStore.name}</p>
-                    <button onClick={() => { setEditingStore(null); setCurrentEditingCategory(null) }} className=" text-red-800 text-lg m-2">X</button>
-                </div>
-                <form onSubmit={handleSubmit(SubmitUpdateStoreForm)} className="flex flex-col gap-2 p-2">
-                    <input className="p-2 rounded-md" defaultValue={editingStore.name} {...register("name", { required: true })} />
-                    {errors.name && <span>This field is required!</span>}
-                    <input className="p-2 rounded-md" defaultValue={editingStore.location} {...register("location", { required: true })} />
-                    {errors.location && <span>This field is required!</span>}
-
-                    <input type="submit" />
-                </form >
-                <form onSubmit={handleSubmitNested(AddNewCategory)}>
-                    <TextInputElement placeholder="Category Name..." register={registerNested} registerName="name" required />
-                    {errosNested.name && <span>This field is required</span>}
-                    <SubmitInputElement submitInputText="Add Category" />
-                </form>
-                <div>Active Categories</div>
-                <div>{existingCategoriesOfStore.map(item => {
-                    if (currentEditingCategory != null && item.id === currentEditingCategory.id) {
-                        return <form key={currentEditingCategory.id} className="flex flex-col" onSubmit={handleSubmitCategoryName(SubmitUpdateCategoryNameForm)}>
-                            <TextInputElement placeholder="Name..." register={registerCategoryName} registerName="name" required defaultValue={currentEditingCategory.name} />
-                            <button type="button" onClick={() => RemoveCategory(item.id)}>Remove</button>
-                            <SubmitInputElement submitInputText="Submit" />
-                        </form>
-                    }
-
-                    return <div className="flex gap-2" key={item.id}>
-                        <div>{item.name}</div>
-                        <button type="button" onClick={() => { setCurrentEditingCategory(item) }}>Edit</button>
-                    </div>
+    return editingStore && (
+        <div className="absolute bg-blue-200 left-[40%] w-[20%] flex flex-col">
+            <div className="flex justify-between">
+                <p className="m-2 text-lg">Edit {editingStore.name}</p>
+                <button onClick={() => { setEditingStore(null); setCurrentEditingCategory(null) }} className=" text-red-800 text-lg m-2">X</button>
+            </div>
+            <form onSubmit={handleSubmit(SubmitUpdateStoreForm)} className="flex flex-col gap-2 p-2">
+                <input className="p-2 rounded-md" defaultValue={editingStore.name} {...register("name", { required: true })} />
+                {errors.name && <FormError />}
+                <input className="p-2 rounded-md" defaultValue={editingStore.location} {...register("location", { required: true })} />
+                {errors.location && <FormError />}
+                <input type="submit" />
+            </form >
+            <form onSubmit={handleSubmitNested(AddNewCategory)}>
+                <TextInputElement placeholder="Category Name..." register={registerNested} registerName="name" required />
+                {errosNested.name && <FormError />}
+                <SubmitInputElement submitInputText="Add Category" />
+            </form>
+            <div>Active Categories</div>
+            <div>{existingCategoriesOfStore.map(item => {
+                if (currentEditingCategory != null && item.id === currentEditingCategory.id) {
+                    return <form key={currentEditingCategory.id} className="flex flex-col" onSubmit={handleSubmitCategoryName(SubmitUpdateCategoryNameForm)}>
+                        <TextInputElement placeholder="Name..." register={registerCategoryName} registerName="name" required defaultValue={currentEditingCategory.name} />
+                        <button type="button" onClick={() => RemoveCategory(item.id)}>Remove</button>
+                        <SubmitInputElement submitInputText="Submit" />
+                    </form>
                 }
-                )}</div>
-                <button onClick={() => OnDeleteStoreBtnClick()}>DELETE STORE</button>
-            </div >
-        )
-    } else {
-        return <></>
-    }
-
+                return <div className="flex gap-2" key={item.id}>
+                    <div>{item.name}</div>
+                    <button type="button" onClick={() => { setCurrentEditingCategory(item) }}>Edit</button>
+                </div>
+            }
+            )}</div>
+            <button onClick={() => OnDeleteStoreBtnClick()}>DELETE STORE</button>
+        </div >
+    )
 }

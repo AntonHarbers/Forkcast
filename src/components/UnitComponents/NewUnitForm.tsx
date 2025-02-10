@@ -6,6 +6,7 @@ import { useEffect } from "react"
 import TextInputElement from "../FormComponents/TextInputElement"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
 import { UnitInterface } from "../../ts/interfaces"
+import FormError from "../FormComponents/FormError"
 
 export default function NewUnitForm() {
     const { state, dispatch } = useAppContext()
@@ -30,7 +31,7 @@ export default function NewUnitForm() {
     return (
         <form onSubmit={handleSubmit(HandleNewUnitSubmit)}>
             <TextInputElement register={register} placeholder="Unit Name..." registerName="name" required={true} />
-            {errors.name && <span>This field is required!</span>}
+            {errors.name && <FormError />}
             <SubmitInputElement submitInputText="Add Unit" />
         </form>
     )
