@@ -26,7 +26,10 @@ export default function IngredientsPage() {
             <div className=" justify-center flex ">
                 <NewIngredientForm onSubmit={HandleNewIngredientFormSubmit} />
             </div>
-            <EditIngredientModal editingIngredientBlueprint={editingIngredientBlueprint} setEditingIngredientBlueprint={setEditingIngredientBlueprint} />
+            <EditIngredientModal
+                editingIngredientBlueprint={editingIngredientBlueprint}
+                setEditingIngredientBlueprint={setEditingIngredientBlueprint}
+            />
 
             {existingIngredientBlueprints.map(item => {
                 return (

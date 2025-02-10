@@ -24,6 +24,5 @@ createRoot(document.getElementById('root')!).render(
         </Routes>
       </BrowserRouter>
     </AppProvider>
-
-  </StrictMode>,
+  </StrictMode>
 )

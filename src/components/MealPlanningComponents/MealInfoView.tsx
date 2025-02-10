@@ -7,13 +7,9 @@ export default function MealInfoView(
         :
         {
             meal: MealInterface, editing: boolean, setEditing: React.Dispatch<React.SetStateAction<boolean>>,
-            blueprintsById: {
-                [key: string]: IngredientBlueprintInterface;
-            },
+            blueprintsById: { [key: string]: IngredientBlueprintInterface; },
             unitsById:
-            {
-                [key: string]: UnitInterface;
-            }
+            { [key: string]: UnitInterface; }
         }
 ) {
     const { state, dispatch } = useAppContext()

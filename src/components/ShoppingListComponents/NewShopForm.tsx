@@ -6,6 +6,7 @@ import { v4 } from "uuid";
 import { ShopFormInputType } from "../../ts/types";
 import { useAppContext } from "../../context/useAppContext";
 import { StoreInterface } from "../../ts/interfaces";
+import FormError from "../FormComponents/FormError";
 
 
 export default function NewShopForm() {
@@ -37,9 +38,9 @@ export default function NewShopForm() {
         <div>
             <form className="flex flex-col w-96 mx-auto" onSubmit={handleSubmit(SubmitNewShopForm)}>
                 <TextInputElement register={register} placeholder={"Name..."} registerName={'name'} required={true} />
-                {errors.name && <span>This field is required!</span>}
+                {errors.name && <FormError />}
                 <TextInputElement register={register} placeholder={"Location..."} registerName={"location"} required={false} />
-                {errors.location && <span>This field is required!</span>}
+                {errors.location && <FormError />}
                 <SubmitInputElement submitInputText="Add new Store" />
             </form>
         </div>

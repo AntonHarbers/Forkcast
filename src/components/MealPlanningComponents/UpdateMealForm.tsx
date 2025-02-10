@@ -11,6 +11,7 @@ import debounce from "lodash.debounce";
 import { v4 } from "uuid";
 import NumberInputElement from "../FormComponents/NumberInputElement";
 import DateInputElement from "../FormComponents/DateInputElement";
+import FormError from "../FormComponents/FormError";
 
 export default function UpdateMealForm({
   meal,
@@ -72,8 +73,8 @@ export default function UpdateMealForm({
       return mealData.id === swapId
         ? { ...swapMeal, order: meal.order }
         : mealData.id === meal.id
-        ? { ...meal, order: savedOrder }
-        : mealData;
+          ? { ...meal, order: savedOrder }
+          : mealData;
     });
     dispatch({ type: "SET_MEALS", payload: newMeals });
   };
@@ -110,6 +111,7 @@ export default function UpdateMealForm({
           const filtered = ingredientBlueprints.filter(
             (ingredient) => !ingredient.isDeleted && regex.test(ingredient.name)
           );
+
           setFilteredIngredients(filtered);
         },
         250
@@ -136,7 +138,7 @@ export default function UpdateMealForm({
             {...register("name", { required: true })}
             className="text-2xl font-bold"
           />
-          {errors.name && <span>This field is required</span>}
+          {errors.name && <FormError />}
 
           <div>
             <input
@@ -192,7 +194,7 @@ export default function UpdateMealForm({
           <DateInputElement
             defaultValue={new Date(meal.date).toLocaleDateString("en-CA")}
             value={new Date(meal.date).toLocaleDateString("en-CA")}
-            onChange={() => {}}
+            onChange={() => { }}
           />
           <div className="flex flex-col">
             {prevId && (

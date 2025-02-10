@@ -11,6 +11,7 @@ import {
   UnitInterface,
 } from "../../ts/interfaces";
 import NumberInputElement from "../FormComponents/NumberInputElement";
+import FormError from "../FormComponents/FormError";
 
 export default function NewMealForm({
   onSubmit,
@@ -100,7 +101,7 @@ export default function NewMealForm({
           registerName={"name"}
           required={true}
         />
-        {errors.name && <span>This field is required</span>}
+        {errors.name && <FormError />}
         <div>
           <input
             type="text"

@@ -4,6 +4,9 @@ import SubmitInputElement from "../FormComponents/SubmitInputElement"
 import { useEffect, useMemo } from "react"
 import { IngredientFormInputs } from "../../ts/types"
 import { useAppContext } from "../../context/useAppContext"
+import DropdownInputElement from "../FormComponents/DropdownInputElement"
+import FormError from "../FormComponents/FormError"
+import useExistingStores from "../../hooks/useExistingStores"
 
 
 export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: IngredientFormInputs) => void }) {
@@ -15,13 +18,12 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
         control,
         setValue
     } = useForm<IngredientFormInputs>()
+    const { state } = useAppContext()
 
     const selectedStoreId = useWatch({ control, name: 'storeUid' })
 
-    const { state } = useAppContext()
-
     const existingIngredientUnits = useMemo(() => state.ingredientUnits.filter(item => !item.isDeleted), [state.ingredientUnits])
-    const existingStores = useMemo(() => state.stores.filter(item => !item.isDeleted), [state.stores])
+    const existingStores = useExistingStores(state)
     const categoriesOfSelectedStore = useMemo(
         () => state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId),
         [selectedStoreId, state.categories]
@@ -32,31 +34,33 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
     }, [isSubmitSuccessful, reset])
 
     useEffect(() => {
-        const categoriesOfStore = state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId)
-
-        if (categoriesOfStore.length === 0) {
+        if (categoriesOfSelectedStore.length === 0) {
             setValue('categoryId', null)
         } else {
-            setValue('categoryId', categoriesOfStore[0].id)
+            setValue('categoryId', categoriesOfSelectedStore[0].id)
         }
-    }, [setValue, selectedStoreId, state.categories])
+    }, [setValue, categoriesOfSelectedStore])
 
     return (
         <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
             <TextInputElement register={register} placeholder={"Name..."} registerName={"name"} required={true} />
-            {/* A select with every possible store as an option */}
-            {errors.name && <span>This field is required!</span>}
-            <select {...register('unitId')}>
-                {existingIngredientUnits.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
-            </select>
-            <select {...register('storeUid')}>
-                {existingStores.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
-            </select>
-            {categoriesOfSelectedStore.length != 0 && <select {...register('categoryId')}>
-                {categoriesOfSelectedStore.sort((a, b) => a.order - b.order).map(item =>
-                    <option key={item.id} value={item.id}>{item.name}</option>
-                )}
-            </select>}
+            {errors.name && <FormError />}
+            <DropdownInputElement
+                register={register}
+                array={existingIngredientUnits}
+                name="unitId"
+            />
+            <DropdownInputElement
+                register={register}
+                array={existingStores}
+                name="storeUid"
+            />
+            {categoriesOfSelectedStore.length != 0
+                && <DropdownInputElement
+                    register={register}
+                    array={categoriesOfSelectedStore.sort((a, b) => a.order - b.order)}
+                    name="categoryId" />
+            }
             <SubmitInputElement submitInputText="Add New Ingredient" />
         </form>
     )

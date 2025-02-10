@@ -4,6 +4,10 @@ import { useEffect, useMemo } from "react"
 import { useAppContext } from "../../context/useAppContext"
 import TextInputElement from "../FormComponents/TextInputElement"
 import { IngredientBlueprintInterface } from "../../ts/interfaces"
+import DropdownInputElement from "../FormComponents/DropdownInputElement"
+import FormError from "../FormComponents/FormError"
+import SubmitInputElement from "../FormComponents/SubmitInputElement"
+import useExistingStores from "../../hooks/useExistingStores"
 
 export default function EditIngredientModal({
     editingIngredientBlueprint,
@@ -24,7 +28,7 @@ export default function EditIngredientModal({
     const selectedStoreId = useWatch({ control, name: "storeUid" })
 
     const existingIngredientUnits = useMemo(() => state.ingredientUnits.filter(item => !item.isDeleted), [state.ingredientUnits])
-    const existingStores = useMemo(() => state.stores.filter(item => !item.isDeleted), [state.stores])
+    const existingStores = useExistingStores(state)
     const categoriesOfSelectedStore = useMemo(
         () => state.categories.filter(item => !item.isDeleted && item.storeId === selectedStoreId),
         [selectedStoreId, state.categories]
@@ -72,7 +76,6 @@ export default function EditIngredientModal({
         reset()
     }, [isSubmitSuccessful, reset])
 
-
     return editingIngredientBlueprint && (
         <div className="absolute bg-blue-200 left-[10%] w-[80%] flex flex-col">
             <div className="flex justify-between">
@@ -81,20 +84,28 @@ export default function EditIngredientModal({
             </div>
             <form onSubmit={handleSubmit(SubmitUpdateIngredientBlueprintForm)} className="flex flex-col gap-2 p-2">
                 <TextInputElement placeholder={editingIngredientBlueprint.name} register={register} registerName="name" required={true} />
-                {errors.name && <span>This field is required!</span>}
-                <select {...register('unitId')} defaultValue={editingIngredientBlueprint.unitId}>
-                    {existingIngredientUnits.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
-                </select>
-                <select {...register('storeUid')} defaultValue={editingIngredientBlueprint.storeUid}>
-                    {existingStores.map(item => <option key={item.id} value={item.id} >{item.name}</option>)}
-                </select>
-                {categoriesOfSelectedStore.length != 0 &&
-                    <select {...register('categoryId')} defaultValue={editingIngredientBlueprint.categoryId || categoriesOfSelectedStore[0].id}>
-                        {categoriesOfSelectedStore.sort((a, b) => a.order - b.order).map(item =>
-                            <option key={item.id} value={item.id} >{item.name}</option>
-                        )}
-                    </select>}
-                <input type="submit" />
+                {errors.name && <FormError />}
+                <DropdownInputElement
+                    array={existingIngredientUnits}
+                    name="unitId"
+                    register={register}
+                    defaultValue={editingIngredientBlueprint.unitId}
+                />
+                <DropdownInputElement
+                    array={existingStores}
+                    register={register}
+                    defaultValue={editingIngredientBlueprint.storeUid}
+                    name="storeUid"
+                />
+                {categoriesOfSelectedStore.length != 0
+                    && <DropdownInputElement
+                        register={register}
+                        defaultValue={editingIngredientBlueprint.categoryId || categoriesOfSelectedStore[0].id}
+                        array={categoriesOfSelectedStore.sort((a, b) => a.order - b.order)}
+                        name="categoryId"
+                    />
+                }
+                <SubmitInputElement submitInputText="Submut" />
             </form>
             <button onClick={() => OnDeleteIngredientBlueprintBtnClick()}>DELETE INGREDIENT BLUEPRINT</button>
         </div>
