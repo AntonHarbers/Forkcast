@@ -1,21 +1,18 @@
 export default function DateInputElement({
-  defaultValue,
   value,
   onChange,
   styles,
 }: {
-  defaultValue: string;
   value: string;
-  onChange: () => void;
+  onChange: (newDate: Date) => void;
   styles?: string;
 }) {
   return (
     <input
       type="date"
       className={`${styles}`}
-      defaultValue={defaultValue}
       value={value}
-      onChange={onChange}
+      onChange={(e) => onChange(new Date(e.target.value))}
     ></input>
   );
 }

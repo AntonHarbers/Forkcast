@@ -10,10 +10,14 @@ export default function DailyView({
   day,
   AddMealHandler,
   dailyMeals,
+  copyMeal,
+  ToggleCopyMeal,
 }: {
   day: Date;
   AddMealHandler: (newDay: Date, name: string, ingredients: MealIngredientInterface[]) => void;
   dailyMeals: MealInterface[];
+  copyMeal: MealInterface | null;
+  ToggleCopyMeal: (mealToSet: MealInterface) => void
 }) {
   const onSubmit: SubmitHandler<MealFormInputType> = (data) => {
     AddMealHandler(day, data.name, data.ingredients);
@@ -32,6 +36,8 @@ export default function DailyView({
             meal={mealItem}
             prevId={dailyNonDeletedMeals[index - 1]?.id ?? null}
             nextId={dailyNonDeletedMeals[index + 1]?.id || null}
+            copyMeal={copyMeal}
+            ToggleCopyMeal={ToggleCopyMeal}
           />
         )}
       </div>
