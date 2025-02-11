@@ -8,10 +8,14 @@ export default function DailyViewMeals({
   meal,
   prevId,
   nextId,
+  copyMeal,
+  ToggleCopyMeal,
 }: {
   meal: MealInterface,
   prevId: string | null,
-  nextId: string | null
+  nextId: string | null,
+  copyMeal: MealInterface | null;
+  ToggleCopyMeal: (mealToSet: MealInterface) => void
 }) {
   const { state } = useAppContext()
   const [editing, setEditing] = useState<boolean>(false)
@@ -57,6 +61,8 @@ export default function DailyViewMeals({
           meal={meal}
           unitsById={unitsById}
           blueprintsById={blueprintsById}
+          copyMeal={copyMeal}
+          ToggleCopyMeal={ToggleCopyMeal}
         />
       }
     </div>

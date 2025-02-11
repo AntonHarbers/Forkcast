@@ -48,8 +48,8 @@
 [✔] Move all types into types.ts
 [✔] turn classes into typed objects instead
 [✔] Comportmentalize the app
-[] copy meals
-[] move meals to different day
+[✔] copy meals
+[✔] move meals to different day
 [] dummy api calls, optimistic updates and loading states
 
 ### Styling:

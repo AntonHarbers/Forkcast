@@ -65,6 +65,12 @@ export default function UpdateMealForm({
     dispatch({ type: "SET_MEALS", payload: UpdatedMeals });
   };
 
+  const UpdateMealDate = (newDate: Date) => {
+    setEditing(false)
+    const UpdatedMeals = state.meals.map((mealData) => mealData.id == meal.id ? { ...meal, date: newDate.toDateString() } : mealData)
+    dispatch({ type: "SET_MEALS", payload: UpdatedMeals })
+  }
+
   const SwapMealOrder = (swapId: string) => {
     const swapMeal = state.meals.find((mealData) => mealData.id === swapId);
     if (!swapMeal) return;
@@ -192,9 +198,8 @@ export default function UpdateMealForm({
             Delete
           </button>
           <DateInputElement
-            defaultValue={new Date(meal.date).toLocaleDateString("en-CA")}
             value={new Date(meal.date).toLocaleDateString("en-CA")}
-            onChange={() => { }}
+            onChange={UpdateMealDate}
           />
           <div className="flex flex-col">
             {prevId && (
