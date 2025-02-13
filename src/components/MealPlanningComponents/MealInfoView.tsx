@@ -1,4 +1,5 @@
 import { useAppContext } from '../../context/useAppContext'
+import { updateMeal } from '../../DB/indexedDB';
 import { IngredientBlueprintInterface, MealInterface, UnitInterface } from '../../ts/interfaces'
 import EditMealButton from './Local/EditButton';
 
@@ -16,13 +17,19 @@ export default function MealInfoView(
 ) {
     const { state, dispatch } = useAppContext()
 
-    const ToggleMealDone = () => {
-        const newMeals = state.meals.map(mealData => {
-            return mealData.id != meal.id ? mealData : { ...mealData, finished: !meal.isFinished }
-        })
-        dispatch({ type: "SET_MEALS", payload: newMeals })
-    }
+    const ToggleMealDone = async () => {
+        try {
+            const updatedMeal = { ...meal, isFinished: !meal.isFinished }
+            const newMeals = state.meals.map(mealData => {
+                return mealData.id != meal.id ? mealData : updatedMeal
+            })
+            await updateMeal(updatedMeal)
+            dispatch({ type: "SET_MEALS", payload: newMeals })
 
+        } catch (error) {
+            console.log("Error toggle meal done: ", error)
+        }
+    }
 
     const EditMeal = () => {
         setEditing(!editing)

@@ -6,6 +6,7 @@ import { useAppContext } from "../context/useAppContext";
 import { useMemo, useState } from "react";
 import { MealIngredientInterface, MealInterface } from "../ts/interfaces";
 import Header from "../components/Global/Header";
+import { addMeal } from "../DB/indexedDB";
 
 function MealPlanPage() {
   const { state, dispatch } = useAppContext()
@@ -13,7 +14,7 @@ function MealPlanPage() {
   const [copyMeal, setCopyMeal] = useState<MealInterface | null>(null)
   const [mealCopyDates, setMealCopyDates] = useState<string[]>([])
 
-  const ToggleCopyMeal = (mealToSet: MealInterface) => {
+  const ToggleCopyMeal = async (mealToSet: MealInterface) => {
     if (copyMeal === null) {
       setCopyMeal(mealToSet)
       return
@@ -21,45 +22,67 @@ function MealPlanPage() {
 
     if (copyMeal.id != mealToSet.id) return
 
-    const mealsToAdd: MealInterface[] = []
-    mealCopyDates.forEach(newMealDate => {
-      const maxOrder = state.meals.reduce((acc, cur) => {
-        if (cur.date === newMealDate) {
-          acc = Math.max(acc, cur.order);
-        }
-        return acc;
-      }, 0);
+    try {
+      const mealsToAdd = await Promise.all(
+        mealCopyDates.map(async (newMealDate) => {
+          const maxOrder = state.meals.reduce((acc, cur) => {
+            if (cur.date === newMealDate) {
+              acc = Math.max(acc, cur.order);
+            }
+            return acc;
+          }, 0);
+          const newMeal = {
+            ...mealToSet,
+            date: newMealDate,
+            id: v4(),
+            order: maxOrder + 1,
+            ingredients: mealToSet.ingredients.map(ing => { return { ...ing, id: v4(), bought: false } })
+          }
 
-      mealsToAdd.push({ ...mealToSet, date: newMealDate, id: v4(), order: maxOrder + 1, ingredients: mealToSet.ingredients.map(ing => { return { ...ing, id: v4(), bought: false } }) })
-    })
-    dispatch({ type: "SET_MEALS", payload: [...state.meals, ...mealsToAdd] })
+          await addMeal(newMeal)
+
+          return newMeal
+        })
+      )
+      dispatch({ type: "SET_MEALS", payload: [...state.meals, ...mealsToAdd] })
+
+    } catch (error) {
+      console.error('Issue copying meals: ', error)
+    }
+
     setCopyMeal(null)
     setMealCopyDates([])
   }
 
   const selectedDayExistingMeals = useMemo(() => state.meals.filter(item => !item.isDeleted && item.date === state.selectedDay.toDateString()), [state.selectedDay, state.meals])
-  const AddMealHandler = (
+
+  const AddMealHandler = async (
     newDay: Date,
     name: string,
     ingredients: MealIngredientInterface[]
   ) => {
-    const highest = selectedDayExistingMeals.reduce((acc, cur) => {
-      acc = Math.max(acc, cur.order)
-      return acc
-    }, 0)
+    try {
+      const highest = selectedDayExistingMeals.reduce((acc, cur) => {
+        acc = Math.max(acc, cur.order)
+        return acc
+      }, 0)
 
-    const newMeal: MealInterface = {
-      id: v4(),
-      name,
-      ingredients,
-      date: newDay.toDateString(),
-      order: highest + 1,
-      isFinished: false,
-      isDeleted: false,
-      deletedAt: new Date().toDateString()
+      const newMeal: MealInterface = {
+        id: v4(),
+        name,
+        ingredients,
+        date: newDay.toDateString(),
+        order: highest + 1,
+        isFinished: false,
+        isDeleted: false,
+        deletedAt: new Date().toDateString()
+      }
+
+      await addMeal(newMeal)
+      dispatch({ type: "SET_MEALS", payload: [...state.meals, newMeal] })
+    } catch (error) {
+      console.log('Adding meal failed: ', error)
     }
-
-    dispatch({ type: "SET_MEALS", payload: [...state.meals, newMeal] })
   };
 
   return (

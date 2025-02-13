@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useEffect, useReducer } from "react";
 import { AppContextType, AppState } from "../ts/types";
 import reducer from "./reducer";
+import { getAllMeals } from "../DB/indexedDB";
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
 
@@ -15,17 +16,17 @@ const initialState: AppState = {
 };
 
 const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [state, dispatch] = useReducer(reducer, localStorage.getItem('forkcastData') ? { ...JSON.parse(localStorage.getItem('forkcastData')!), selectedDay: new Date() } : initialState)
+    const [state, dispatch] = useReducer(reducer, initialState)
 
     // useFetchData("test.com", dispatch)
 
     // Init State Data
     useEffect(() => {
-        if (localStorage.getItem('forkcastData') != null) {
-            const localData: AppState = JSON.parse(localStorage.getItem('forkcastData')!)
-            console.log(localStorage.getItem('forkcastData'))
-            console.log(localData)
+        const fetchMealData = async () => {
+            const mealData = await getAllMeals()
+            dispatch({ type: "SET_MEALS", payload: mealData })
         }
+        fetchMealData()
         // if it does then get data from there
         // if it doesnt then dont set any data yet
         // either way we fire out the fetch request and update the state based on its response
@@ -57,10 +58,6 @@ const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             dispatch({ type: "SET_CURRENT_STORE_TAB", payload: state.stores[0] })
         }
     }, [state.stores, state.currentStoreTab])
-
-    useEffect(() => {
-        localStorage.setItem('forkcastData', JSON.stringify(state))
-    }, [state])
 
     return (
         <AppContext.Provider value={{ state, dispatch }}>
