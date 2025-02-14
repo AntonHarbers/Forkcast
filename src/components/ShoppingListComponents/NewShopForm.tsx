@@ -7,6 +7,7 @@ import { ShopFormInputType } from "../../ts/types";
 import { useAppContext } from "../../context/useAppContext";
 import { StoreInterface } from "../../ts/interfaces";
 import FormError from "../FormComponents/FormError";
+import { addStore } from "../../DB/storesCRUD";
 
 
 export default function NewShopForm() {
@@ -19,15 +20,21 @@ export default function NewShopForm() {
 
     const { dispatch, state } = useAppContext()
 
-    const SubmitNewShopForm: SubmitHandler<ShopFormInputType> = (data) => {
-        const newStore: StoreInterface = {
-            id: v4(),
-            name: data.name,
-            location: data.location,
-            isDeleted: false,
-            deletedAt: new Date().toDateString()
+    const SubmitNewShopForm: SubmitHandler<ShopFormInputType> = async (data) => {
+        try {
+            const newStore: StoreInterface = {
+                id: v4(),
+                name: data.name,
+                location: data.location,
+                isDeleted: false,
+                deletedAt: new Date().toDateString()
+            }
+            await addStore(newStore)
+            dispatch({ type: "SET_STORES", payload: [...state.stores, newStore] })
+            dispatch({ type: "SET_CURRENT_STORE_TAB", payload: newStore })
+        } catch (error) {
+            console.error("Error adding new store: ", error)
         }
-        dispatch({ type: "SET_STORES", payload: [...state.stores, newStore] })
     }
 
     useEffect(() => {

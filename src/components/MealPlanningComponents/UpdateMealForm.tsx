@@ -12,6 +12,7 @@ import { v4 } from "uuid";
 import NumberInputElement from "../FormComponents/NumberInputElement";
 import DateInputElement from "../FormComponents/DateInputElement";
 import FormError from "../FormComponents/FormError";
+import { updateMeal } from "../../DB/mealsCrud";
 
 export default function UpdateMealForm({
   meal,
@@ -54,35 +55,64 @@ export default function UpdateMealForm({
     name: "ingredients",
   });
 
-  const SubmitEditMeal = (data: MealFormInputType) => {
-    setEditing(false);
-    const UpdatedMeals = state.meals.map((mealData) => {
-      return mealData.id != meal.id
-        ? mealData
-        : { ...meal, name: data.name, ingredients: data.ingredients };
-    });
+  const SubmitEditMeal = async (data: MealFormInputType) => {
+    try {
+      setEditing(false);
+      const updatedMeal = { ...meal, name: data.name, ingredients: data.ingredients }
+      const UpdatedMeals = state.meals.map((mealData) => {
+        return mealData.id != meal.id
+          ? mealData
+          : updatedMeal
+      });
+      await updateMeal(updatedMeal)
+      dispatch({ type: "SET_MEALS", payload: UpdatedMeals });
+    } catch (error) {
+      console.error("Edit meal failed: ", error)
+    }
 
-    dispatch({ type: "SET_MEALS", payload: UpdatedMeals });
   };
 
-  const UpdateMealDate = (newDate: Date) => {
-    setEditing(false)
-    const UpdatedMeals = state.meals.map((mealData) => mealData.id == meal.id ? { ...meal, date: newDate.toDateString() } : mealData)
-    dispatch({ type: "SET_MEALS", payload: UpdatedMeals })
+  const UpdateMealDate = async (newDate: Date) => {
+    try {
+      setEditing(false)
+      // get highest order of new day
+      const maxOrder = state.meals.reduce((acc, cur) => {
+        if (cur.date === newDate.toDateString()) {
+          acc = Math.max(acc, cur.order);
+        }
+        return acc;
+      }, 0);
+      const updatedMeal = { ...meal, date: newDate.toDateString(), order: maxOrder + 1 }
+      const UpdatedMeals = state.meals.map((mealData) => mealData.id == meal.id ? updatedMeal : mealData)
+      await updateMeal(updatedMeal)
+      dispatch({ type: "SET_MEALS", payload: UpdatedMeals })
+    } catch (error) {
+      console.error("Update meal date error: ", error)
+    }
   }
 
-  const SwapMealOrder = (swapId: string) => {
-    const swapMeal = state.meals.find((mealData) => mealData.id === swapId);
-    if (!swapMeal) return;
-    const savedOrder = swapMeal.order;
-    const newMeals = state.meals.map((mealData) => {
-      return mealData.id === swapId
-        ? { ...swapMeal, order: meal.order }
-        : mealData.id === meal.id
-          ? { ...meal, order: savedOrder }
-          : mealData;
-    });
-    dispatch({ type: "SET_MEALS", payload: newMeals });
+  const SwapMealOrder = async (swapId: string) => {
+    try {
+      const swapMeal = state.meals.find((mealData) => mealData.id === swapId);
+      if (!swapMeal) return;
+      const savedOrder = swapMeal.order;
+      const updatedMeal = { ...meal, order: savedOrder }
+      const updatedSwapMeal = { ...swapMeal, order: meal.order }
+
+      await Promise.all([updateMeal(updatedMeal), updateMeal(updatedSwapMeal)])
+
+      const newMeals = state.meals.map((mealData) =>
+        mealData.id === swapId
+          ? updatedSwapMeal
+          : mealData.id === meal.id
+            ? updatedMeal
+            : mealData
+      );
+      dispatch({ type: "SET_MEALS", payload: newMeals });
+    } catch (error) {
+      console.error('Sweap meal order error: ', error)
+    }
+
   };
 
   useEffect(() => {
@@ -131,8 +161,14 @@ export default function UpdateMealForm({
     debouncedFilter(val, state.ingredientBlueprints);
   };
 
-  const DeleteMeal = () => {
-    dispatch({ type: "DELETE_MEAL", payload: meal.id });
+  const DeleteMeal = async () => {
+    try {
+      const deletedMeal: MealInterface = { ...meal, isDeleted: true, deletedAt: new Date().toDateString() }
+      await updateMeal(deletedMeal)
+      dispatch({ type: "DELETE_MEAL", payload: meal.id });
+    } catch (error) {
+      console.error("Deleting meal failed: ", error)
+    }
   };
 
   return (

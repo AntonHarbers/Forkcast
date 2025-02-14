@@ -8,6 +8,7 @@ import DropdownInputElement from "../FormComponents/DropdownInputElement"
 import FormError from "../FormComponents/FormError"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
 import useExistingStores from "../../hooks/useExistingStores"
+import { updateIngredientBlueprint } from "../../DB/ingredientBlueprintsCRUD"
 
 export default function EditIngredientModal({
     editingIngredientBlueprint,
@@ -34,22 +35,38 @@ export default function EditIngredientModal({
         [selectedStoreId, state.categories]
     )
 
-    const OnDeleteIngredientBlueprintBtnClick = () => {
-        if (editingIngredientBlueprint) {
+    const OnDeleteIngredientBlueprintBtnClick = async () => {
+        if (editingIngredientBlueprint === null) return
+        try {
+
+            const updatedItem: IngredientBlueprintInterface = {
+                ...editingIngredientBlueprint,
+                isDeleted: true,
+                deletedAt: new Date().toDateString(),
+            };
+            await updateIngredientBlueprint(updatedItem);
             dispatch({ type: "DELETE_INGREDIENT_BLUEPRINT", payload: editingIngredientBlueprint.id })
+            setEditingIngredientBlueprint(null)
+
+        } catch (error) {
+            console.error("Error deleting ingredient blueprint: ", error)
         }
-        setEditingIngredientBlueprint(null)
     }
 
-    const SubmitUpdateIngredientBlueprintForm: SubmitHandler<IngredientFormInputs> = (data) => {
-        if (editingIngredientBlueprint) {
+    const SubmitUpdateIngredientBlueprintForm: SubmitHandler<IngredientFormInputs> = async (data) => {
+        if (!editingIngredientBlueprint) return
+        try {
             if (!data.categoryId) data.categoryId = null
+            const updatedBlueprint: IngredientBlueprintInterface = { ...editingIngredientBlueprint, ...data }
             const updatedIngredientBlueprints = state.ingredientBlueprints.map(blueprint => {
-                return blueprint.id === editingIngredientBlueprint.id ? { ...blueprint, ...data } as IngredientBlueprintInterface : blueprint
+                return blueprint.id === editingIngredientBlueprint.id ? updatedBlueprint : blueprint
             })
+            await updateIngredientBlueprint(updatedBlueprint)
             dispatch({ type: "SET_INGREDIENT_BLUEPRINTS", payload: updatedIngredientBlueprints })
+            setEditingIngredientBlueprint(null)
+        } catch (error) {
+            console.error("Error updating ingredient blueprint: ", error)
         }
-        setEditingIngredientBlueprint(null)
     }
 
     useEffect(() => {
@@ -105,7 +122,7 @@ export default function EditIngredientModal({
                         name="categoryId"
                     />
                 }
-                <SubmitInputElement submitInputText="Submut" />
+                <SubmitInputElement submitInputText="Submit" />
             </form>
             <button onClick={() => OnDeleteIngredientBlueprintBtnClick()}>DELETE INGREDIENT BLUEPRINT</button>
         </div>
