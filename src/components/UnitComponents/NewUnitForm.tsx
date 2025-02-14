@@ -7,13 +7,25 @@ import TextInputElement from "../FormComponents/TextInputElement"
 import SubmitInputElement from "../FormComponents/SubmitInputElement"
 import { UnitInterface } from "../../ts/interfaces"
 import FormError from "../FormComponents/FormError"
+import { addIngredientUnit } from "../../DB/ingredientUnitsCRUD"
 
 export default function NewUnitForm() {
     const { state, dispatch } = useAppContext()
 
-    const HandleNewUnitSubmit: SubmitHandler<IngredientUnitFormInputType> = (data) => {
-        const newUnit: UnitInterface = { id: v4(), name: data.name, isDeleted: false, deletedAt: new Date().toDateString() }
-        dispatch({ type: "SET_INGREDIENT_UNITS", payload: [...state.ingredientUnits, newUnit] })
+    const HandleNewUnitSubmit: SubmitHandler<IngredientUnitFormInputType> = async (data) => {
+        try {
+            const newUnit: UnitInterface = {
+                id: v4(),
+                name: data.name,
+                isDeleted: false,
+                deletedAt: new Date().toDateString()
+            }
+            await addIngredientUnit(newUnit)
+            dispatch({ type: "SET_INGREDIENT_UNITS", payload: [...state.ingredientUnits, newUnit] })
+        } catch (error) {
+            console.error("Error adding new ingredient unit: ", error)
+        }
+
     }
 
     const {

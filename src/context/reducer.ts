@@ -1,3 +1,4 @@
+import { IngredientBlueprintInterface } from '../ts/interfaces';
 import { AppAction, AppState } from '../ts/types';
 
 export default function reducer(state: AppState, action: AppAction): AppState {
@@ -6,14 +7,19 @@ export default function reducer(state: AppState, action: AppAction): AppState {
     case 'SET_INGREDIENT_BLUEPRINTS':
       return { ...state, ingredientBlueprints: action.payload };
     case 'DELETE_INGREDIENT_BLUEPRINT': {
+      const itemToDelete = state.ingredientBlueprints.find(
+        (item) => item.id === action.payload
+      );
+      if (!itemToDelete) return { ...state };
+
+      const updatedItem: IngredientBlueprintInterface = {
+        ...itemToDelete,
+        isDeleted: true,
+        deletedAt: new Date().toDateString(),
+      };
+
       const updatedIngredients = state.ingredientBlueprints.map((item) => {
-        return item.id != action.payload
-          ? item
-          : {
-              ...item,
-              isDeleted: true,
-              deletedAt: new Date().toDateString(),
-            };
+        return item.id != action.payload ? item : updatedItem;
       });
 
       return { ...state, ingredientBlueprints: updatedIngredients };

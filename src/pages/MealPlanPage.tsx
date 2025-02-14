@@ -6,7 +6,7 @@ import { useAppContext } from "../context/useAppContext";
 import { useMemo, useState } from "react";
 import { MealIngredientInterface, MealInterface } from "../ts/interfaces";
 import Header from "../components/Global/Header";
-import { addMeal } from "../DB/indexedDB";
+import { addMeal } from "../DB/mealsCrud";
 
 function MealPlanPage() {
   const { state, dispatch } = useAppContext()
@@ -81,7 +81,7 @@ function MealPlanPage() {
       await addMeal(newMeal)
       dispatch({ type: "SET_MEALS", payload: [...state.meals, newMeal] })
     } catch (error) {
-      console.log('Adding meal failed: ', error)
+      console.error('Adding meal failed: ', error)
     }
   };
 

@@ -8,6 +8,9 @@ import Header from "../components/Global/Header";
 import CategorizedIngredients from "../components/ShoppingListComponents/CategorizedIngredients";
 import useShoppingList from "../hooks/useShoppingList";
 import useExistingStores from "../hooks/useExistingStores";
+import Loading from "../components/Global/Loading";
+import { updateStoreCategories } from "../DB/storeCategoriesCRUD";
+import { updateMeal } from "../DB/mealsCrud";
 
 export default function ShoppingListPage() {
     const { state, dispatch } = useAppContext()
@@ -47,27 +50,67 @@ export default function ShoppingListPage() {
             }, {})
     }, [blueprintIngredientEntries, existingSelectedStoreCategories])
 
-    const ToggleMealIngredientsBought = (checked: boolean, blueprintId: string) => {
-        const newMeals = state.meals.map(meal => ({
-            ...meal,
-            ingredients: meal.ingredients.map(ingredientDataItem => {
-                if (ingredientDataItem.blueprintId === blueprintId) {
-                    return { ...ingredientDataItem, bought: checked }
-                }
-
-                return ingredientDataItem
+    const ToggleMealIngredientsBought = async (checked: boolean, blueprintId: string) => {
+        try {
+            // find all the meals that have ingredients that are blueprintId
+            // for all those meals make a updateMeal req passing in the meal with that blueprintsId set to bought
+            const mealsWithBlueprint = state.meals.filter(meal => {
+                let hasIngredient = false
+                meal.ingredients.forEach(ing => {
+                    if (ing.blueprintId === blueprintId) hasIngredient = true
+                })
+                return hasIngredient
             })
-        }))
-        dispatch({ type: 'SET_MEALS', payload: newMeals })
+
+            const updatedMeals = mealsWithBlueprint.map(meal => ({
+                ...meal,
+                ingredients: meal.ingredients.map(ingredientDataItem => {
+                    if (ingredientDataItem.blueprintId === blueprintId) {
+                        return { ...ingredientDataItem, bought: checked }
+                    }
+
+                    return ingredientDataItem
+                })
+            }))
+
+            await Promise.all(updatedMeals.map(meal => updateMeal(meal)))
+
+            const newMeals = state.meals.map(meal => ({
+                ...meal,
+                ingredients: meal.ingredients.map(ingredientDataItem => {
+                    if (ingredientDataItem.blueprintId === blueprintId) {
+                        return { ...ingredientDataItem, bought: checked }
+                    }
+
+                    return ingredientDataItem
+                })
+            }))
+            dispatch({ type: 'SET_MEALS', payload: newMeals })
+        } catch (error) {
+            console.error("Error meal ingredient bought toggle: ", error)
+        }
     }
 
-    const SwapCategoryOrder = (selectedCategoryId: string, swapCategoryId: string | null, selectedOrder: number, swapOrder: number) => {
+    const SwapCategoryOrder = async (selectedCategoryId: string, swapCategoryId: string | null, selectedOrder: number, swapOrder: number) => {
         if (swapCategoryId === null) return
-        const newCategories = state.categories.map(cat => ({
-            ...cat,
-            order: cat.id === selectedCategoryId ? swapOrder : cat.id === swapCategoryId ? selectedOrder : cat.order
-        }))
-        dispatch({ type: 'SET_CATEGORIES', payload: newCategories })
+        const oldCategory = state.categories.find(cat => cat.id === selectedCategoryId)
+        const swapCategory = state.categories.find(cat => cat.id === swapCategoryId)
+        if (!oldCategory || !swapCategory) return
+        try {
+
+            const newCategories = state.categories.map(cat => ({
+                ...cat,
+                order: cat.id === selectedCategoryId ? swapOrder : cat.id === swapCategoryId ? selectedOrder : cat.order
+            }))
+            const updatedStoreCategory = { ...state.categories.find(cat => cat.id === selectedCategoryId)!, order: swapOrder }
+            const updatedSwapStoreCategory = { ...state.categories.find(cat => cat.id === swapCategoryId)!, order: selectedOrder }
+            await updateStoreCategories(updatedStoreCategory)
+            await updateStoreCategories(updatedSwapStoreCategory)
+            dispatch({ type: 'SET_CATEGORIES', payload: newCategories })
+        } catch (error) {
+            console.error("Error changing store category order: ", error)
+        }
+
     }
 
     return (
@@ -79,7 +122,7 @@ export default function ShoppingListPage() {
                     {existingStores.map(item => <div key={item.id}><StoreTabItem item={item} /></div>)}
                 </div>
                 <EditStoreModal editingStore={editingStore} setEditingStore={setEditingStore} />
-                {state.currentStoreTab != null &&
+                {state.currentStoreTab != null ?
                     <div className="flex flex-col gap-4">
                         <div className="flex justify-between w-full">
                             <p className="text-xl">{state.currentStoreTab.name} Shopping List</p>
@@ -141,6 +184,7 @@ export default function ShoppingListPage() {
                                 })}
                         </div>
                     </div>
+                    : <Loading />
                 }
             </div>
         </>

@@ -12,7 +12,7 @@ import { v4 } from "uuid";
 import NumberInputElement from "../FormComponents/NumberInputElement";
 import DateInputElement from "../FormComponents/DateInputElement";
 import FormError from "../FormComponents/FormError";
-import { deleteMeal, updateMeal } from "../../DB/indexedDB";
+import { updateMeal } from "../../DB/mealsCrud";
 
 export default function UpdateMealForm({
   meal,
@@ -163,10 +163,11 @@ export default function UpdateMealForm({
 
   const DeleteMeal = async () => {
     try {
-      await deleteMeal(meal.id)
+      const deletedMeal: MealInterface = { ...meal, isDeleted: true, deletedAt: new Date().toDateString() }
+      await updateMeal(deletedMeal)
       dispatch({ type: "DELETE_MEAL", payload: meal.id });
     } catch (error) {
-      console.log("Deleting meal failed: ", error)
+      console.error("Deleting meal failed: ", error)
     }
   };
 

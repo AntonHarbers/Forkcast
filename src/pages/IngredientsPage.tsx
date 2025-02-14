@@ -8,14 +8,21 @@ import IngredientListItem from "../components/IngredientsPageComponent/Ingredien
 import { IngredientFormInputs } from "../ts/types";
 import { IngredientBlueprintInterface } from "../ts/interfaces";
 import Header from "../components/Global/Header";
+import { addIngredientBlueprint } from "../DB/ingredientBlueprintsCRUD";
 
 export default function IngredientsPage() {
     const { state, dispatch } = useAppContext()
     const [editingIngredientBlueprint, setEditingIngredientBlueprint] = useState<IngredientBlueprintInterface | null>(null)
-    const HandleNewIngredientFormSubmit: SubmitHandler<IngredientFormInputs> = (data) => {
-        if (!data.categoryId) data.categoryId = null
-        const newIngredient: IngredientBlueprintInterface = { ...data, id: v4(), deletedAt: new Date().toDateString(), isDeleted: false }
-        dispatch({ type: 'SET_INGREDIENT_BLUEPRINTS', payload: [...state.ingredientBlueprints, newIngredient] })
+    const HandleNewIngredientFormSubmit: SubmitHandler<IngredientFormInputs> = async (data) => {
+        try {
+            if (!data.categoryId) data.categoryId = null
+            const newIngredient: IngredientBlueprintInterface = { ...data, id: v4(), deletedAt: new Date().toDateString(), isDeleted: false }
+            await addIngredientBlueprint(newIngredient)
+            dispatch({ type: 'SET_INGREDIENT_BLUEPRINTS', payload: [...state.ingredientBlueprints, newIngredient] })
+        } catch (error) {
+            console.error("Error adding new ingredient blueprint: ", error)
+        }
+
     }
 
     const existingIngredientBlueprints = useMemo(() => state.ingredientBlueprints.filter(item => !item.isDeleted), [state.ingredientBlueprints])

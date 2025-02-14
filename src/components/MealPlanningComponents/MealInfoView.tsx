@@ -1,5 +1,5 @@
 import { useAppContext } from '../../context/useAppContext'
-import { updateMeal } from '../../DB/indexedDB';
+import { updateMeal } from '../../DB/mealsCrud';
 import { IngredientBlueprintInterface, MealInterface, UnitInterface } from '../../ts/interfaces'
 import EditMealButton from './Local/EditButton';
 
@@ -27,7 +27,7 @@ export default function MealInfoView(
             dispatch({ type: "SET_MEALS", payload: newMeals })
 
         } catch (error) {
-            console.log("Error toggle meal done: ", error)
+            console.error("Error toggle meal done: ", error)
         }
     }
 
