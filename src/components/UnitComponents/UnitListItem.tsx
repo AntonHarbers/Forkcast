@@ -39,17 +39,19 @@ export default function UnitListItem({ unit }: { unit: UnitInterface }) {
     useEffect(() => reset(), [isSubmitSuccessful, reset])
 
     return isEditing ? (
-        <form className="flex gap-2" onSubmit={handleSubmit(HandleSubmitUpdateUnit)}>
-            <TextInputElement placeholder="Unit Name..." register={register} registerName="name" required defaultValue={unit.name} />
+        <>
+            <form className="flex gap-2 text-2xl my-2 justify-between w-[40%] mx-auto" onSubmit={handleSubmit(HandleSubmitUpdateUnit)}>
+                <TextInputElement placeholder="Unit Name..." register={register} registerName="name" required defaultValue={unit.name} styles="m-0" />
+                <SubmitInputElement submitInputText="🔁" styles="text-4xl px-2 pl-5 hover:scale-125 active:scale-90 transition-all ease-in-out  bg-transparent active:bg-transparent hover:bg-transparent " />
+                <button className="ml-10 text-3xl hover:scale-125 active:scale-90 transition-all duration-100 ease-in-out" type='button' onClick={HandleDeleteUnit}>❌</button>
+            </form>
             {errors.name && <FormError />}
-            <button type='button' onClick={HandleDeleteUnit}>Delete</button>
-            <SubmitInputElement submitInputText="Update Unit" />
-        </form>
+        </>
     ) : (
-        <div className="flex gap-2">
+        <div className="flex gap-2 text-white text-2xl my-2 justify-between w-[40%] mx-auto">
             <div>{unit.name}</div>
             {unit.id != '1'
-                && <button onClick={() => setIsEditing(true)}>Edit</button>
+                && <button className="hover:scale-125 active:scale-90 transition-all duration-100 ease-in-out" onClick={() => setIsEditing(true)}>✏</button>
             }
         </div>
     )
