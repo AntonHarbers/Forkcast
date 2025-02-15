@@ -10,7 +10,7 @@ export default function DateInputElement({
   return (
     <input
       type="date"
-      className={`${styles}`}
+      className={`rounded-md px-2 ${styles}`}
       value={value}
       onChange={(e) => onChange(new Date(e.target.value))}
     ></input>

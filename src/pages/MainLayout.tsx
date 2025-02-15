@@ -6,7 +6,10 @@ export default function MainLayout() {
 
   return (
     <>
-      <Navbar />
+      <div className="sticky top-0 ">
+        <Navbar />
+
+      </div>
       <Outlet />
     </>
   );

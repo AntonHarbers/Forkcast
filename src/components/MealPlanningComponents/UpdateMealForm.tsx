@@ -13,6 +13,7 @@ import NumberInputElement from "../FormComponents/NumberInputElement";
 import DateInputElement from "../FormComponents/DateInputElement";
 import FormError from "../FormComponents/FormError";
 import { updateMeal } from "../../DB/mealsCrud";
+import SubmitInputElement from "../FormComponents/SubmitInputElement";
 
 export default function UpdateMealForm({
   meal,
@@ -174,108 +175,122 @@ export default function UpdateMealForm({
   return (
     <div>
       <form onSubmit={handleSubmit(SubmitEditMeal)}>
-        <div className="flex justify-between">
+        <div className='flex justify-between mx-6 items-center mb-2'>
           <input
             defaultValue={meal.name}
             {...register("name", { required: true })}
-            className="text-2xl font-bold"
+            className="text-2xl font-bold rounded-md px-2 w-1/2 bg-[#aaaaaa] text-white"
           />
           {errors.name && <FormError />}
-
-          <div>
+          <div className="flex gap-2">
+            <div className="flex gap-4">
+              {prevId && (
+                <button type="button" onClick={() => SwapMealOrder(prevId)}>
+                  👆
+                </button>
+              )}
+              {nextId && (
+                <button type="button" onClick={() => SwapMealOrder(nextId)}>
+                  👇
+                </button>
+              )}
+            </div>
+            <SubmitInputElement submitInputText="📝" />
+            <button className='hover:scale-125 transition-all duration-100 ease-in-out active:scale-90' onClick={() => { }}>⬆️</button>
+          </div>
+        </div>
+        <div className="flex justify-between">
+          <div className="flex bg-[#aaaaaa] rounded-md">
             <input
+              id="search"
               type="text"
               value={searchTerm}
               onChange={HandleSearchChange}
-              className="p-2 rounded-md w-full"
+              className=" outline-none px-2 text-center py-1 rounded-md w-max bg-[#aaaaaa] text-white"
             />
-          </div>
-          <div className="flex flex-col">
-            {filteredIngredients.map((item) => {
-              return (
-                <div
-                  className="bg-green-100 p-3 rounded-md border border-slate-600 m-2 flex justify-between items-center"
-                  key={item.id}
-                >
-                  <div>{item.name}</div>
-                  <button
-                    type="button"
-                    className="bg-green-500 rounded-md p-2 hover:bg-green-600 active:bg-green-800"
-                    onClick={() => {
-                      if (
-                        fields.find((field) => field.blueprintId === item.id)
-                      ) {
-                        window.alert("Meal already contains this ingredient!");
-                        return;
-                      }
-                      append({
-                        amount: 0,
-                        id: v4(),
-                        blueprintId: item.id,
-                        bought: false,
-                      });
-                      setValue(`ingredients.${fields.length}.amount`, 1);
-                      setFilteredIngredients([]);
-                      setSearchTerm("");
-                    }}
-                  >
-                    Add
-                  </button>
-                </div>
-              );
-            })}
+            <label className="px-2 pt-1 select-none hover:cursor-pointer" htmlFor="search">🔍</label>
+
           </div>
 
-          <button
-            onClick={DeleteMeal}
-            type="button"
-            className="bg-red-300 p-1 text-lg rounded-sm hover:bg-red-400 active:bg-red-500"
-          >
-            Delete
-          </button>
           <DateInputElement
             value={new Date(meal.date).toLocaleDateString("en-CA")}
             onChange={UpdateMealDate}
+            styles="bg-[#aaaaaa] text-white hover:cursor-pointer"
           />
-          <div className="flex flex-col">
-            {prevId && (
-              <button type="button" onClick={() => SwapMealOrder(prevId)}>
-                Up
-              </button>
-            )}
-            {nextId && (
-              <button type="button" onClick={() => SwapMealOrder(nextId)}>
-                Down
-              </button>
-            )}
-          </div>
-          <input
-            type="submit"
-            className="bg-blue-300 hover:bg-blue-400 active:bg-blue-500 rounded-sm p-1 text-lg"
-          />
+
+
         </div>
+        <div className="flex flex-col">
+          {filteredIngredients.map((item) => {
+            return (
+              <div
+                className="bg-green-100 p-3 rounded-md border border-slate-600 m-2 flex justify-between items-center"
+                key={item.id}
+              >
+                <div>{item.name}</div>
+                <button
+                  type="button"
+                  className="bg-green-500 rounded-md p-2 hover:bg-green-600 active:bg-green-800"
+                  onClick={() => {
+                    if (
+                      fields.find((field) => field.blueprintId === item.id)
+                    ) {
+                      window.alert("Meal already contains this ingredient!");
+                      return;
+                    }
+                    append({
+                      amount: 0,
+                      id: v4(),
+                      blueprintId: item.id,
+                      bought: false,
+                    });
+                    setValue(`ingredients.${fields.length}.amount`, 1);
+                    setFilteredIngredients([]);
+                    setSearchTerm("");
+                  }}
+                >
+                  Add
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <div className='text-lg text-white text-center my-2 border-b pb-1'>-Ingredients-</div>
+
         {fields.map((field, index) => (
-          <div key={field.id} className="flex justify-between gap-2">
-            <div className="text-lg">
-              {blueprintsById[field.blueprintId].name || "Name Err"}
+          <div key={field.id} className="flex justify-between gap-2 my-2 mx-[10vw] text-white">
+            <div className="flex items-center gap-6">
+              <button
+                className="text-sm hover:scale-125 transition-all duration-100 ease-in-out active:scale-90"
+                type="button"
+                onClick={() => remove(index)}
+              >
+                ❌
+              </button>
+              <div className="text-lg">
+                {blueprintsById[field.blueprintId].name || "Name Err"}
+              </div>
             </div>
+
             <input hidden {...register(`ingredients.${index}.blueprintId`)} />
             <div className="flex gap-1">
-              <NumberInputElement register={register} index={index} styles="" />
+              <NumberInputElement register={register} index={index} styles="text-2xl font-bold rounded-md px-2 bg-[#aaaaaa] text-white" />
               <div>
                 {unitsById[blueprintsById[field.blueprintId].unitId].name ||
                   "ERR"}
               </div>
             </div>
-            <button
-              className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1"
-              type="button"
-              onClick={() => remove(index)}
-            >
-              Remove
-            </button>
+
           </div>
         ))}
+
+        <button
+          onClick={DeleteMeal}
+          type="button"
+          className="bg-red-300 p-1 text-lg rounded-sm hover:bg-red-400 active:bg-red-500 w-full"
+        >
+          Delete Meal
+        </button>
       </form>
     </div>
   );

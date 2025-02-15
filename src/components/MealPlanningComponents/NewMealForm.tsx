@@ -92,7 +92,7 @@ export default function NewMealForm({
     <div className="flex w-full">
       {/* New Meal Form */}
       <form
-        className="flex flex-col w-80 mx-auto gap-2"
+        className="flex flex-col w-72 mx-auto gap-2"
         onSubmit={handleSubmit(onSubmit)}
       >
         <TextInputElement
@@ -102,25 +102,27 @@ export default function NewMealForm({
           required={true}
         />
         {errors.name && <FormError />}
-        <div>
+        <div className="flex bg-[#aaa] rounded-md mx-2">
           <input
+            id="searchInput"
             type="text"
             value={searchTerm}
             onChange={HandleSearchChange}
-            className="p-2 rounded-md w-full"
+            className="p-2 rounded-md w-full bg-[#aaa] text-white outline-none text-center"
           />
+          <label htmlFor="searchInput" className="p-1 text-lg hover:cursor-pointer">🔍</label>
         </div>
         <div className="flex flex-col">
           {filteredIngredients.map((item) => {
             return (
               <div
-                className="bg-green-100 p-3 rounded-md border border-slate-600 m-2 flex justify-between items-center"
+                className="bg-green-100 p-3 rounded-md m-2 flex justify-between items-center"
                 key={item.id}
               >
                 <div>{item.name}</div>
                 <button
                   type="button"
-                  className="bg-green-500 rounded-md p-2 hover:bg-green-600 active:bg-green-800"
+                  className="rounded-full p-2 hover:scale-110 active:scale-90 transition-all ease-in-out"
                   onClick={() => {
                     append({
                       amount: 0,
@@ -133,30 +135,32 @@ export default function NewMealForm({
                     setSearchTerm("");
                   }}
                 >
-                  Add
+                  ➕
                 </button>
               </div>
             );
           })}
         </div>
+        {fields.length == 0 && <p className="text-white text-center my-2">No ingredients added!</p>}
         {fields.map((field, index) => (
-          <div className="flex items-center gap-2" key={field.id}>
+          <div className="flex items-center gap-2 text-white" key={field.id}>
+            <button
+              className=" hover:scale-110 transition-all ease-in-out active:scale-90 p-1"
+              type="button"
+              onClick={() => remove(index)}
+            >
+              ❌
+            </button>
             <div className="w-[50%]">
               {blueprintsById[field.blueprintId].name}
             </div>
             <input hidden {...register(`ingredients.${index}.blueprintId`)} />
-            <NumberInputElement register={register} index={index} styles="" />
+            <NumberInputElement register={register} index={index} styles="bg-[#aaa]" />
             <div>
               {unitsById[blueprintsById[field.blueprintId].unitId].name ||
                 "Err"}
             </div>
-            <button
-              className="bg-red-300 hover:bg-red-400 active:bg-red-500 rounded-md p-1"
-              type="button"
-              onClick={() => remove(index)}
-            >
-              Remove
-            </button>
+
           </div>
         ))}
 

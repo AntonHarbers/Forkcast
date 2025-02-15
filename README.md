@@ -51,9 +51,9 @@
 [✔] copy meals
 [✔] move meals to different day
 [✔] implement indexDb as a local storage solution
+[] done for now, setup api server with CRUD routes for the data
 [] dummy api calls using indexDB, optimistic updates and loading states
 [] setup the code for syncing meals that were sent during offline mode to api
-[] done for now, setup api server with CRUD routes for the data
 
 ### Styling:
 
