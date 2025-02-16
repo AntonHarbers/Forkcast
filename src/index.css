@@ -14,8 +14,12 @@ a {
 .react-calendar {
   width: 350px;
   max-width: 100%;
-  background: transparent;
-  color: white;
+  padding: 5px;
+  background-color: #191c28;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4),
+    0px 0px 15px rgba(255, 255, 255, 0.6);
+  color: rgb(255, 255, 255);
   font-family: 'Arial', 'Helvetica', sans-serif;
   line-height: 1.125em;
 }
@@ -102,7 +106,7 @@ a {
 .react-calendar__month-view__days__day--neighboringMonth,
 .react-calendar__decade-view__years__year--neighboringDecade,
 .react-calendar__century-view__decades__decade--neighboringCentury {
-  color: #353535;
+  color: #777777;
 }
 
 .react-calendar__year-view .react-calendar__tile,

@@ -94,25 +94,30 @@ export default function EditIngredientModal({
     }, [isSubmitSuccessful, reset])
 
     return editingIngredientBlueprint && (
-        <div className="absolute bg-blue-200 left-[10%] w-[80%] flex flex-col">
-            <div className="flex justify-between">
-                <p className="m-2 text-lg">Edit {editingIngredientBlueprint.name}</p>
-                <button onClick={() => setEditingIngredientBlueprint(null)} className=" text-red-800 text-lg m-2">X</button>
+        <div className="absolute bg-slate-700 rounded-md text-white left-[10%] w-[80%] flex flex-col">
+            <div className="flex px-10 mt-2 items-center justify-between">
+                <p className="m-2 text-3xl">Edit {editingIngredientBlueprint.name}</p>
+                <button onClick={() => setEditingIngredientBlueprint(null)} className="text-lg m-2 hover:scale-125 active:scale-90 transition-all ease-in-out">❌</button>
             </div>
             <form onSubmit={handleSubmit(SubmitUpdateIngredientBlueprintForm)} className="flex flex-col gap-2 p-2">
-                <TextInputElement placeholder={editingIngredientBlueprint.name} register={register} registerName="name" required={true} />
+                <TextInputElement placeholder={editingIngredientBlueprint.name} register={register} registerName="name" styles="w-[90%] mx-auto text-center text-2xl" required={true} />
                 {errors.name && <FormError />}
                 <DropdownInputElement
                     array={existingIngredientUnits}
                     name="unitId"
                     register={register}
                     defaultValue={editingIngredientBlueprint.unitId}
+                    labelText="Unit: "
+                    styles="mx-auto text-slate-800"
                 />
                 <DropdownInputElement
                     array={existingStores}
                     register={register}
                     defaultValue={editingIngredientBlueprint.storeUid}
                     name="storeUid"
+                    labelText="Store:"
+                    styles="mx-auto text-slate-800"
+
                 />
                 {categoriesOfSelectedStore.length != 0
                     && <DropdownInputElement
@@ -122,9 +127,9 @@ export default function EditIngredientModal({
                         name="categoryId"
                     />
                 }
-                <SubmitInputElement submitInputText="Submit" />
+                <SubmitInputElement submitInputText="Update" styles="text-slate-800 my-2 w-[90%] mx-auto" />
             </form>
-            <button onClick={() => OnDeleteIngredientBlueprintBtnClick()}>DELETE INGREDIENT BLUEPRINT</button>
+            <button className="bg-red-600 mx-auto w-[90%] rounded-md my-2 font-bold text-xl hover:bg-red-900 active:bg-red-400 transition-all ease-in-out" onClick={() => OnDeleteIngredientBlueprintBtnClick()}>DELETE INGREDIENT BLUEPRINT</button>
         </div>
     )
 }

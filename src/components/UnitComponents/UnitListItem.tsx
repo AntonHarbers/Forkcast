@@ -41,7 +41,7 @@ export default function UnitListItem({ unit }: { unit: UnitInterface }) {
     return isEditing ? (
         <>
             <form className="flex gap-2 text-2xl my-2 justify-between w-[40%] mx-auto" onSubmit={handleSubmit(HandleSubmitUpdateUnit)}>
-                <TextInputElement placeholder="Unit Name..." register={register} registerName="name" required defaultValue={unit.name} styles="m-0" />
+                <TextInputElement placeholder="Unit Name..." register={register} registerName="name" required defaultValue={unit.name} styles="m-0 px-1" />
                 <SubmitInputElement submitInputText="🔁" styles="text-4xl px-2 pl-5 hover:scale-125 active:scale-90 transition-all ease-in-out  bg-transparent active:bg-transparent hover:bg-transparent " />
                 <button className="ml-10 text-3xl hover:scale-125 active:scale-90 transition-all duration-100 ease-in-out" type='button' onClick={HandleDeleteUnit}>❌</button>
             </form>

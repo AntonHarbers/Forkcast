@@ -13,6 +13,8 @@ import { addIngredientBlueprint } from "../DB/ingredientBlueprintsCRUD";
 export default function IngredientsPage() {
     const { state, dispatch } = useAppContext()
     const [editingIngredientBlueprint, setEditingIngredientBlueprint] = useState<IngredientBlueprintInterface | null>(null)
+    const [isShowingForm, setIsShowingForm] = useState<boolean>(false)
+
     const HandleNewIngredientFormSubmit: SubmitHandler<IngredientFormInputs> = async (data) => {
         try {
             if (!data.categoryId) data.categoryId = null
@@ -25,24 +27,31 @@ export default function IngredientsPage() {
 
     }
 
-    const existingIngredientBlueprints = useMemo(() => state.ingredientBlueprints.filter(item => !item.isDeleted), [state.ingredientBlueprints])
+    const existingIngredientBlueprints = useMemo(() => state.ingredientBlueprints.filter(item => !item.isDeleted).sort((a, b) => a.name.localeCompare(b.name)), [state.ingredientBlueprints])
 
     return (
-        <>
-            <Header text="Ingredients" />
-            <div className=" justify-center flex ">
-                <NewIngredientForm onSubmit={HandleNewIngredientFormSubmit} />
+        <div className="relative">
+            <div className="flex items-center border-b justify-between mx-10">
+                <Header text="Ingredients" styles="border-none mb-0 text-center w-full" />
+                <div onClick={() => setIsShowingForm(!isShowingForm)} className="pt-2 text-2xl hover:scale-110 active:scale-90 transition-all duration-100 ease-in-out hover:cursor-pointer select-none">{isShowingForm ? "➖" : "➕"}</div>
             </div>
-            <EditIngredientModal
-                editingIngredientBlueprint={editingIngredientBlueprint}
-                setEditingIngredientBlueprint={setEditingIngredientBlueprint}
-            />
-
+            {isShowingForm &&
+                <div className="justify-center flex ">
+                    <NewIngredientForm onSubmit={HandleNewIngredientFormSubmit} />
+                </div>
+            }
             {existingIngredientBlueprints.map(item => {
                 return (
                     <IngredientListItem key={item.id} item={item} setEditingIngredientBlueprint={setEditingIngredientBlueprint} />
                 )
             })}
-        </>
+            <div className="fixed w-full top-[20vh]">
+                <EditIngredientModal
+                    editingIngredientBlueprint={editingIngredientBlueprint}
+                    setEditingIngredientBlueprint={setEditingIngredientBlueprint}
+                />
+            </div>
+
+        </div>
     )
 }
