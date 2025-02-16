@@ -94,7 +94,7 @@ export default function EditIngredientModal({
     }, [isSubmitSuccessful, reset])
 
     return editingIngredientBlueprint && (
-        <div className="absolute bg-slate-700 rounded-md text-white left-[10%] w-[80%] flex flex-col">
+        <div className="absolute bg-slate-700/60 backdrop-blur-md pb-4 rounded-md text-white left-[10%] w-[80%] flex flex-col">
             <div className="flex px-10 mt-2 items-center justify-between">
                 <p className="m-2 text-3xl">Edit {editingIngredientBlueprint.name}</p>
                 <button onClick={() => setEditingIngredientBlueprint(null)} className="text-lg m-2 hover:scale-125 active:scale-90 transition-all ease-in-out">❌</button>
@@ -125,6 +125,8 @@ export default function EditIngredientModal({
                         defaultValue={editingIngredientBlueprint.categoryId || categoriesOfSelectedStore[0].id}
                         array={categoriesOfSelectedStore.sort((a, b) => a.order - b.order)}
                         name="categoryId"
+                        styles="mx-auto text-slate-800"
+                        labelText="Category:"
                     />
                 }
                 <SubmitInputElement submitInputText="Update" styles="text-slate-800 my-2 w-[90%] mx-auto" />

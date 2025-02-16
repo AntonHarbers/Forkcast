@@ -9,7 +9,6 @@ export default function useFetchData(url: string, dispatch: React.Dispatch<AppAc
         const fetchData = async () => {
             try {
                 const res = await fetch(url)
-                console.log(res)
                 if (!res.ok) throw new Error(`Failed to fetch data from:  ${url}`)
                 const result = await res.json()
                 // what will the userData look like?

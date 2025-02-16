@@ -64,9 +64,9 @@ const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         // })
     }, [])
 
-    useEffect(() => {
-        console.log(state)
-    }, [state])
+    // useEffect(() => {
+    //     console.log(state)
+    // }, [state])
 
     // Set initial current store tab to first store
     useEffect(() => {
