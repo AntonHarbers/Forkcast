@@ -10,7 +10,7 @@ import FormError from "../FormComponents/FormError";
 import { addStore } from "../../DB/storesCRUD";
 
 
-export default function NewShopForm() {
+export default function NewShopForm({ setIsShowingForm }: { setIsShowingForm: React.Dispatch<React.SetStateAction<boolean>> }) {
     const {
         register,
         handleSubmit,
@@ -30,6 +30,7 @@ export default function NewShopForm() {
                 deletedAt: new Date().toDateString()
             }
             await addStore(newStore)
+            setIsShowingForm(false)
             dispatch({ type: "SET_STORES", payload: [...state.stores, newStore] })
             dispatch({ type: "SET_CURRENT_STORE_TAB", payload: newStore })
         } catch (error) {
@@ -44,11 +45,11 @@ export default function NewShopForm() {
     return (
         <div>
             <form className="flex flex-col w-96 mx-auto" onSubmit={handleSubmit(SubmitNewShopForm)}>
-                <TextInputElement register={register} placeholder={"Name..."} registerName={'name'} required={true} />
+                <TextInputElement styles="text-center text-xl" register={register} placeholder={"Name..."} registerName={'name'} required={true} />
                 {errors.name && <FormError />}
-                <TextInputElement register={register} placeholder={"Location..."} registerName={"location"} required={false} />
+                <TextInputElement styles="text-center text-xl" register={register} placeholder={"Location..."} registerName={"location"} required={false} />
                 {errors.location && <FormError />}
-                <SubmitInputElement submitInputText="Add new Store" />
+                <SubmitInputElement styles="my-2" submitInputText="Add new Store" />
             </form>
         </div>
     )

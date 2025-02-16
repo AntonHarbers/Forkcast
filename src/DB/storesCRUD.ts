@@ -34,7 +34,7 @@ export const getAllStores = async (): Promise<StoreInterface[]> => {
     const req = store.getAll();
     req.onsuccess = async () => {
       if (req.result.length === 0) {
-        const defaultStore = {
+        const defaultStore: StoreInterface  = {
           id: '1',
           deletedAt: new Date().toDateString(),
           isDeleted: false,

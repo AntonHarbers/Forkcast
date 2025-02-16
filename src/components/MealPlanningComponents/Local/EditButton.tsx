@@ -1,12 +1,12 @@
 
-export default function EditMealButton({ OnClick, text }: { OnClick: () => void, text: string }) {
+export default function EditMealButton({ OnClick }: { OnClick: () => void, }) {
     return (
         <button
             onClick={OnClick}
-            className="bg-blue-300 hover:bg-blue-400 active:bg-blue-500 p-1 text-lg rounded-md"
+            className="hover:scale-125 transition-all ease-in-out active:scale-90"
             type="button"
         >
-            {text}
+            ✏️
         </button>
     )
 }

@@ -97,6 +97,7 @@ export default function EditStoreModal({ editingStore, setEditingStore, }: { edi
                 name: cat.id === currentEditingCategory.id ? data.name : cat.name
             }))
             await updateStoreCategories(newCat)
+            setCurrentEditingCategory(null)
             dispatch({ type: 'SET_CATEGORIES', payload: updatedCategories })
         } catch (error) {
             console.error('Error updating store category: ', error)
@@ -127,39 +128,48 @@ export default function EditStoreModal({ editingStore, setEditingStore, }: { edi
     }, [currentEditingCategory, setValueCategoryName])
 
     return editingStore && (
-        <div className="absolute bg-blue-200 left-[40%] w-[20%] flex flex-col">
-            <div className="flex justify-between">
-                <p className="m-2 text-lg">Edit {editingStore.name}</p>
-                <button onClick={() => { setEditingStore(null); setCurrentEditingCategory(null) }} className=" text-red-800 text-lg m-2">X</button>
+        <div className="bg-slate-700/60 backdrop-blur-md rounded-md text-white w-[90%] mx-auto flex flex-col items-center justify-center">
+            <div className="flex justify-between w-[90%]">
+                <p className="m-2 text-3xl">Edit {editingStore.name}</p>
+                <button onClick={() => { setEditingStore(null); setCurrentEditingCategory(null) }} className=" text-2xl m-2 hover:scale-125 active:scale-90 transition-all ease-in-out">❌</button>
             </div>
             <form onSubmit={handleSubmit(SubmitUpdateStoreForm)} className="flex flex-col gap-2 p-2">
-                <input className="p-2 rounded-md" defaultValue={editingStore.name} {...register("name", { required: true })} />
+                <input className="p-2 text-slate-700 text-center rounded-md text-xl w-[90%] mx-auto placeholder:text-slate-500" placeholder="Name..." defaultValue={editingStore.name} {...register("name", { required: true })} />
                 {errors.name && <FormError />}
-                <input className="p-2 rounded-md" defaultValue={editingStore.location} {...register("location", { required: true })} />
+                <input className="p-2 text-slate-700 text-xl text-center rounded-md w-[90%] mx-auto placeholder:text-slate-500" placeholder="Location..." defaultValue={editingStore.location} {...register("location", { required: true })} />
                 {errors.location && <FormError />}
-                <input type="submit" />
+                <SubmitInputElement submitInputText="📝" styles="" />
             </form >
-            <form onSubmit={handleSubmitNested(AddNewCategory)}>
-                <TextInputElement placeholder="Category Name..." register={registerNested} registerName="name" required />
+            <button className="my-2 text-2xl bg-red-500 px-2 rounded-md hover:bg-red-700 active:bg-red-300 transition-all ease-in-out" onClick={() => OnDeleteStoreBtnClick()}>DELETE STORE</button>
+            <form className="flex items-center" onSubmit={handleSubmitNested(AddNewCategory)}>
+                <TextInputElement styles="mx-0 text-center text-xl" placeholder="New category name..." register={registerNested} registerName="name" required />
                 {errosNested.name && <FormError />}
-                <SubmitInputElement submitInputText="Add Category" />
+                <SubmitInputElement styles="px-2" submitInputText="➕" />
             </form>
-            <div>Active Categories</div>
-            <div>{existingCategoriesOfStore.map(item => {
+
+            <div className="text-2xl my-2 underline
+            ">Active Categories</div>
+            <div className="flex w-[90%] flex-col gap-2 text-xl">{existingCategoriesOfStore.map(item => {
                 if (currentEditingCategory != null && item.id === currentEditingCategory.id) {
-                    return <form key={currentEditingCategory.id} className="flex flex-col" onSubmit={handleSubmitCategoryName(SubmitUpdateCategoryNameForm)}>
+                    return <form key={currentEditingCategory.id} className="flex items-center justify-between gap-2" onSubmit={handleSubmitCategoryName(SubmitUpdateCategoryNameForm)}>
                         <TextInputElement placeholder="Name..." register={registerCategoryName} registerName="name" required defaultValue={currentEditingCategory.name} />
-                        <button type="button" onClick={() => RemoveCategory(item)}>Remove</button>
-                        <SubmitInputElement submitInputText="Submit" />
+                        <div className="flex gap-2">
+                            <SubmitInputElement
+                                styles="bg-transparent hover:bg-transparent scale-110 hover:scale-125 active:scale-90 transition-all ease-in-out" submitInputText="📝" />
+                            <button className="px-2 py-2 rounded-md bg-red-500 hover:bg-red-800 active:bg-red-200" type="button" onClick={() => RemoveCategory(item)}>DELETE</button>
+
+                        </div>
+
                     </form>
                 }
-                return <div className="flex gap-2" key={item.id}>
+                return <div className="flex gap-2 justify-between items-center pb-1 border-b border-b-slate-200 my-2" key={item.id}>
                     <div>{item.name}</div>
-                    <button type="button" onClick={() => { setCurrentEditingCategory(item) }}>Edit</button>
+                    <button
+                        className="hover:scale-125 active:scale-90 transition-all duration-100 ease-in-out"
+                        type="button" onClick={() => { setCurrentEditingCategory(item) }}>✏</button>
                 </div>
             }
             )}</div>
-            <button onClick={() => OnDeleteStoreBtnClick()}>DELETE STORE</button>
         </div >
     )
 }

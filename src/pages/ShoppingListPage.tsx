@@ -16,7 +16,7 @@ export default function ShoppingListPage() {
     const { state, dispatch } = useAppContext()
     const [editingStore, setEditingStore] = useState<StoreInterface | null>(null)
     const existingStores = useExistingStores(state)
-
+    const [isShowingForm, setIsShowingForm] = useState(false)
     const shoppingList = useShoppingList(state, existingStores)
 
     const existingSelectedStoreCategories = useMemo(() =>
@@ -114,24 +114,27 @@ export default function ShoppingListPage() {
     }
 
     return (
-        <>
-            <Header text="Shopping List" />
-            <NewShopForm />
-            <div className="bg-slate-200 w-[80%] mx-auto flex flex-col gap-10 p-2 m-10">
-                <div className="flex bg-slate-200 justify-center">
+        <div className="relative">
+            <div className="flex items-center border-b justify-between mx-10">
+                <Header text="Shopping List" styles="border-none mb-0 text-center w-full" />
+                <div onClick={() => setIsShowingForm(!isShowingForm)} className="pt-2 text-2xl hover:scale-110 active:scale-90 transition-all duration-100 ease-in-out hover:cursor-pointer select-none">{isShowingForm ? "➖" : "➕"}</div>
+            </div>
+            {isShowingForm && <NewShopForm setIsShowingForm={setIsShowingForm} />
+            }
+            <div className="bg-slate-700 text-white rounded-md w-[80%] mx-auto flex flex-col gap-10 p-2 m-10">
+                <div className="flex bg-slate-700 justify-center flex-wrap gap-y-2">
                     {existingStores.map(item => <div key={item.id}><StoreTabItem item={item} /></div>)}
                 </div>
-                <EditStoreModal editingStore={editingStore} setEditingStore={setEditingStore} />
                 {state.currentStoreTab != null ?
                     <div className="flex flex-col gap-4">
                         <div className="flex justify-between w-full">
-                            <p className="text-xl">{state.currentStoreTab.name} Shopping List</p>
+                            <p className="text-2xl underline font-bold">{state.currentStoreTab.name} Shopping List</p>
                             {state.currentStoreTab.name != "Default"
                                 && <button
-                                    className="text-xl hover:font-bold active:font-mono"
+                                    className="text-xl hover:scale-125 active:scale-90 transition-all ease-in-out"
                                     onClick={() => setEditingStore(state.currentStoreTab)}
                                 >
-                                    Edit
+                                    ✏
                                 </button>}
                         </div>
                         <div className="text-sm">{state.currentStoreTab.location}</div>
@@ -153,7 +156,7 @@ export default function ShoppingListPage() {
                         </div>
                         {/* Ingredients with a categoryID of null */}
                         <div>
-                            <div className="text-2xl my-2 underline font-semibold">Not Categorized:</div>
+                            <div className="text-xl text-center my-2 font-semibold">Not Categorized:</div>
                             {(categorizedBlueprintIngredients['uncategorized'] || [])
                                 .map(([blueprint, ingredients]) => {
                                     let total: number = 0
@@ -165,21 +168,26 @@ export default function ShoppingListPage() {
                                             totalUnbought += item.amount
                                         }
                                     })
-                                    return <div className="flex justify-between" key={blueprint.id}>
-                                        <div className="flex gap-1">
-                                            <div className="flex gap-2">
-                                                {totalUnbought != 0 && <div className="font-bold">{totalUnbought}</div>}
-                                                {totalUnbought != 0 && total != 0 && <div>/</div>}
-                                                {total != 0 && <div className="font-bold">{total + totalUnbought}</div>}
+                                    return <div className="flex justify-between mx-5 border-b border-slate-200" key={blueprint.id}>
+
+                                        <div>- {blueprint.name}</div>
+                                        <div className="flex gap-5">
+                                            <div className="flex gap-1">
+                                                <div className="flex gap-2">
+                                                    {totalUnbought != 0 && <div className="font-bold">{totalUnbought}</div>}
+                                                    {totalUnbought != 0 && total != 0 && <div>/</div>}
+                                                    {total != 0 && <div className="font-bold">{total + totalUnbought}</div>}
+                                                </div>
+                                                <div>{ingredientUnitLookup[blueprint.unitId].name}</div>
                                             </div>
-                                            <div>{ingredientUnitLookup[blueprint.unitId].name}</div>
+                                            <input
+                                                type="checkbox"
+                                                checked={ingredients.every(item => item.bought)}
+                                                onChange={(e) => ToggleMealIngredientsBought(e.target.checked, blueprint.id)}
+                                            />
                                         </div>
-                                        <div>{blueprint.name}</div>
-                                        <input
-                                            type="checkbox"
-                                            checked={ingredients.every(item => item.bought)}
-                                            onChange={(e) => ToggleMealIngredientsBought(e.target.checked, blueprint.id)}
-                                        />
+
+
                                     </div>
                                 })}
                         </div>
@@ -187,6 +195,9 @@ export default function ShoppingListPage() {
                     : <Loading />
                 }
             </div>
-        </>
+            <div className="fixed w-[100%] top-[20vh]">
+                <EditStoreModal editingStore={editingStore} setEditingStore={setEditingStore} />
+            </div>
+        </div>
     )
 }

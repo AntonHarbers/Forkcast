@@ -42,26 +42,31 @@ export default function NewIngredientForm({ onSubmit }: { onSubmit: (data: Ingre
     }, [setValue, categoriesOfSelectedStore])
 
     return (
-        <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-            <TextInputElement register={register} placeholder={"Name..."} registerName={"name"} required={true} />
+        <form className="flex min-w-60 flex-col gap-2 my-4 items-center" onSubmit={handleSubmit(onSubmit)}>
+
+            <TextInputElement register={register} placeholder={"Ingredient name..."} registerName={"name"} styles="text-center" required={true} />
             {errors.name && <FormError />}
             <DropdownInputElement
                 register={register}
                 array={existingIngredientUnits}
                 name="unitId"
+                labelText="Unit:"
             />
             <DropdownInputElement
                 register={register}
                 array={existingStores}
                 name="storeUid"
+                labelText="Store:"
             />
             {categoriesOfSelectedStore.length != 0
                 && <DropdownInputElement
                     register={register}
                     array={categoriesOfSelectedStore.sort((a, b) => a.order - b.order)}
-                    name="categoryId" />
+                    name="categoryId"
+                    labelText="Category:"
+                />
             }
-            <SubmitInputElement submitInputText="Add New Ingredient" />
+            <SubmitInputElement styles="my-2 w-[90%]" submitInputText="Add New Ingredient" />
         </form>
     )
 }

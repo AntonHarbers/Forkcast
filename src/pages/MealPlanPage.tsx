@@ -87,13 +87,14 @@ function MealPlanPage() {
 
   return (
     <>
-      <Header text="Meal Plan" />
+      <Header text={state.selectedDay.toDateString()} />
       <div className="justify-center flex">
         <Calendar
           className={"react-calendar"}
           tileContent={
             ({ date, view }) => view === 'month' && mealCopyDates.includes(date.toDateString()) ? <p className="text-xs">Copy</p> : null
           }
+          defaultValue={state.selectedDay}
           onChange={(e: Value) => {
             if (copyMeal == null) {
               if (e instanceof Date) dispatch({ type: 'SET_SELECTED_DAY', payload: e })

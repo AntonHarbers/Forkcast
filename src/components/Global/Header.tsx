@@ -1,6 +1,6 @@
 
-export default function Header({ text }: { text: string }) {
+export default function Header({ text, styles = "" }: { text: string, styles?: string }) {
     return (
-        <div className="mx-auto w-full text-center text-5xl m-10">{text}</div>
+        <div className={`w-auto text-center text-5xl m-10 text-white border-b pb-8 mx-10 ${styles}`}>{text}</div>
     )
 }

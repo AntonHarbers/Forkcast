@@ -19,6 +19,7 @@ export default function DailyViewMeals({
 }) {
   const { state } = useAppContext()
   const [editing, setEditing] = useState<boolean>(false)
+  const [isSmallView, setIsSmallView] = useState(true)
 
   const blueprintsById = useMemo(() => {
     return state.ingredientBlueprints.reduce((acc: { [key: string]: IngredientBlueprintInterface }, ingredient) => {
@@ -36,11 +37,10 @@ export default function DailyViewMeals({
 
   return (
     <div
-      className={`w-auto border-b p-2 m-10 text-2xl text-start ${meal.isFinished
-        ? "bg-slate-400"
-        : editing
-          ? 'bg-green-300'
-          : 'bg-slate-100'}`
+      className={`w-auto p-2 rounded-md m-10 text-2xl text-start ${meal.isFinished
+        ? "bg-slate-800"
+        : 'bg-gray-700'
+        }`
       }
     >
       {editing
@@ -63,6 +63,8 @@ export default function DailyViewMeals({
           blueprintsById={blueprintsById}
           copyMeal={copyMeal}
           ToggleCopyMeal={ToggleCopyMeal}
+          isSmallView={isSmallView}
+          setIsSmallView={setIsSmallView}
         />
       }
     </div>
